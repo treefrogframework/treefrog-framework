@@ -63,7 +63,7 @@ void Tf::setupAppLoggers(TLogger *logger)
             TLogger *lgr = TLoggerFactory::create(lg);
             if (lgr) {
                 loggers << lgr;
-                tSystemDebug("Logger added: {}", qUtf8Printable(lgr->key()));
+                tSystemDebug("Logger added: {}", lgr->key());
             }
         }
     }

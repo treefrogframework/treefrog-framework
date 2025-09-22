@@ -35,6 +35,11 @@ public:
     void setContext(TActionContext *context) { _context = context; }
     static QThread *currentThread() { return QThread::currentThread(); }
 
+    TAbstractController(const TAbstractController &) = delete;
+    TAbstractController &operator=(const TAbstractController &) = delete;
+    TAbstractController(TAbstractController &&) = delete;
+    TAbstractController &operator=(TAbstractController &&) = delete;
+
 protected:
     virtual TSession &session();
     virtual bool addCookie(const TCookie &cookie);
@@ -54,8 +59,6 @@ private:
     QVariantMap _exportVars;
     TActionContext *_context {nullptr};
 
-    T_DISABLE_COPY(TAbstractController)
-    T_DISABLE_MOVE(TAbstractController)
     friend class TDirectView;
 };
 

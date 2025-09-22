@@ -34,7 +34,7 @@ bool TMemcachedDriver::open(const QString &, const QString &, const QString &, c
 
     _host = (host.isEmpty()) ? "localhost" : host;
     _port = (port == 0) ? DEFAULT_PORT : port;
-    tSystemDebug("memcached open host:{}  port:{}", qUtf8Printable(_host), _port);
+    tSystemDebug("memcached open host:{}  port:{}", _host, _port);
 
     _client = new TTcpSocket;
     _client->setSocketOption(IPPROTO_TCP, TCP_NODELAY, 1);

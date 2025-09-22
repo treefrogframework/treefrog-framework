@@ -114,7 +114,7 @@ void TSqlDatabasePool::init()
 
             setDatabaseSettings(db, j);
             stack.push(db.connectionName());  // push onto stack
-            tSystemDebug("Add Database successfully. name:{}", qUtf8Printable(db.connectionName()));
+            tSystemDebug("Add Database successfully. name:{}", db.connectionName());
         }
     }
 
@@ -139,10 +139,10 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
                 name = cache.pop();
                 const auto &tdb = TSqlDatabase::database(name);
                 if (Q_LIKELY(tdb.sqlDatabase().isOpen())) {
-                    tSystemDebug("Gets cached database: {}", qUtf8Printable(tdb.connectionName()));
+                    tSystemDebug("Gets cached database: {}", tdb.connectionName());
                     return tdb.sqlDatabase();
                 } else {
-                    tSystemError("Pooled database is not open: {}  [{}:{}]", qUtf8Printable(tdb.connectionName()), __FILE__, __LINE__);
+                    tSystemError("Pooled database is not open: {}  [{}:{}]", tdb.connectionName(), __FILE__, __LINE__);
                     stack.push(name);
                     continue;
                 }
@@ -153,13 +153,13 @@ QSqlDatabase TSqlDatabasePool::database(int databaseId)
                 auto &tdb = TSqlDatabase::database(name);
                 if (Q_UNLIKELY(!openDatabase(tdb))) {
                     Tf::error("Database open error. Invalid database settings, or maximum number of SQL connection exceeded.");
-                    tSystemError("SQL database open error: {}", qUtf8Printable(tdb.sqlDatabase().connectionName()));
+                    tSystemError("SQL database open error: {}", tdb.sqlDatabase().connectionName());
                     stack.push(name);
                     return QSqlDatabase();
                 }
 
-                tSystemDebug("SQL database opened successfully (env:{})", qUtf8Printable(Tf::app()->databaseEnvironment()));
-                tSystemDebug("Gets database: {}", qUtf8Printable(tdb.sqlDatabase().connectionName()));
+                tSystemDebug("SQL database opened successfully (env:{})", Tf::app()->databaseEnvironment());
+                tSystemDebug("Gets database: {}", tdb.sqlDatabase().connectionName());
 
                 // Executes setup-queries
                 if (!tdb.postOpenStatements().isEmpty()) {
@@ -187,7 +187,7 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, int databaseI
         Tf::error("Database name empty string");
         return false;
     }
-    tSystemDebug("SQL driver name:{}  dbname:{}", qUtf8Printable(database.sqlDatabase().driverName()), qUtf8Printable(databaseName));
+    tSystemDebug("SQL driver name:{}  dbname:{}", database.sqlDatabase().driverName(), databaseName);
     if (database.dbmsType() == TSqlDatabase::SQLite) {
         if (!databaseName.contains(':')) {
             QFileInfo fi(databaseName);
@@ -200,7 +200,7 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, int databaseI
     database.sqlDatabase().setDatabaseName(databaseName);
 
     QString hostName = settings.value("HostName").toString().trimmed();
-    tSystemDebug("Database HostName: {}", qUtf8Printable(hostName));
+    tSystemDebug("Database HostName: {}", hostName);
     if (!hostName.isEmpty()) {
         database.sqlDatabase().setHostName(hostName);
     }
@@ -212,25 +212,25 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, int databaseI
     }
 
     QString userName = settings.value("UserName").toString().trimmed();
-    tSystemDebug("Database UserName: {}", qUtf8Printable(userName));
+    tSystemDebug("Database UserName: {}", userName);
     if (!userName.isEmpty()) {
         database.sqlDatabase().setUserName(userName);
     }
 
     QString password = settings.value("Password").toString().trimmed();
-    tSystemDebug("Database Password: {}", qUtf8Printable(password));
+    tSystemDebug("Database Password: {}", password);
     if (!password.isEmpty()) {
         database.sqlDatabase().setPassword(password);
     }
 
     QString connectOptions = settings.value("ConnectOptions").toString().trimmed();
-    tSystemDebug("Database ConnectOptions: {}", qUtf8Printable(connectOptions));
+    tSystemDebug("Database ConnectOptions: {}", connectOptions);
     if (!connectOptions.isEmpty()) {
         database.sqlDatabase().setConnectOptions(connectOptions);
     }
 
     QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", Tf::SkipEmptyParts);
-    tSystemDebug("Database postOpenStatements: {}", qUtf8Printable(postOpenStatements.join(";")));
+    tSystemDebug("Database postOpenStatements: {}", postOpenStatements.join(";"));
     if (!postOpenStatements.isEmpty()) {
         database.setPostOpenStatements(postOpenStatements);
     }
@@ -252,7 +252,7 @@ void TSqlDatabasePool::pool(QSqlDatabase &database, bool forceClose)
 
         if (databaseId >= 0 && databaseId < Tf::app()->sqlDatabaseSettingsCount()) {
             if (forceClose) {
-                tSystemWarn("Force close database: {}", qUtf8Printable(database.connectionName()));
+                tSystemWarn("Force close database: {}", database.connectionName());
                 TSqlDatabase &db = TSqlDatabase::database(database.connectionName());
                 closeDatabase(db);
             } else {
@@ -260,9 +260,9 @@ void TSqlDatabasePool::pool(QSqlDatabase &database, bool forceClose)
                     // pool
                     cachedDatabase[databaseId].push(database.connectionName());
                     lastCachedTime[databaseId].store((uint)std::time(nullptr));
-                    tSystemDebug("Pooled database: {}", qUtf8Printable(database.connectionName()));
+                    tSystemDebug("Pooled database: {}", database.connectionName());
                 } else {
-                    tSystemWarn("Closed SQL database connection, name: {}", qUtf8Printable(database.connectionName()));
+                    tSystemWarn("Closed SQL database connection, name: {}", database.connectionName());
                     availableNames[databaseId].push(database.connectionName());
                 }
             }
@@ -333,7 +333,7 @@ void TSqlDatabasePool::closeDatabase(TSqlDatabase &database)
     }
     database.setDriverExtension(nullptr);
 
-    tSystemDebug("Closed database connection, name: {}", qUtf8Printable(name));
+    tSystemDebug("Closed database connection, name: {}", name);
     availableNames[id].push(name);
 }
 

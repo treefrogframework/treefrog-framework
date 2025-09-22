@@ -25,7 +25,7 @@ TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool a
     if (file.exists() && file.isFile()) {
         _bodyFile = new QFile(file.absoluteFilePath());
         if (!_bodyFile->open(QIODevice::ReadOnly)) {
-            tSystemWarn("file open failed: {}", qUtf8Printable(file.absoluteFilePath()));
+            tSystemWarn("file open failed: {}", file.absoluteFilePath());
             release();
         }
     }
@@ -95,7 +95,7 @@ void *TSendBuffer::getData(int &size)
     _arrayBuffer.reserve(size);
     size = _bodyFile->read(_arrayBuffer.data(), size);
     if (Q_UNLIKELY(size < 0)) {
-        tSystemError("file read error: {}", qUtf8Printable(_bodyFile->fileName()));
+        tSystemError("file read error: {}", _bodyFile->fileName());
         size = 0;
         release();
         return nullptr;

@@ -56,14 +56,14 @@ bool TActionMailer::deliver(const QString &templateName)
     TDispatcher<TActionView> viewDispatcher(viewClassName(CONTROLLER_NAME, templateName));
     TActionView *view = viewDispatcher.object();
     if (!view) {
-        tSystemError("no such template : {}", qUtf8Printable(templateName));
+        tSystemError("no such template : {}", templateName);
         return false;
     }
 
     view->setVariantMap(allVariants());
     QString msg = view->toString();
     if (msg.isEmpty()) {
-        tSystemError("Mail Message Empty: template name:{}", qUtf8Printable(templateName));
+        tSystemError("Mail Message Empty: template name:{}", templateName);
         return false;
     }
 
@@ -82,7 +82,7 @@ bool TActionMailer::deliver(const QString &templateName)
         mailer->setAuthenticationEnabled(Tf::appSettings()->value(Tf::ActionMailerSmtpAuthentication).toBool());
         mailer->setUserName(Tf::appSettings()->value(Tf::ActionMailerSmtpUserName).toByteArray());
         mailer->setPassword(Tf::appSettings()->value(Tf::ActionMailerSmtpPassword).toByteArray());
-        tSystemDebug("{}", (const char*)mail.toByteArray().data());
+        tSystemDebug("{}", mail.toByteArray());
 
         // POP before SMTP
         if (Tf::appSettings()->value(Tf::ActionMailerSmtpEnablePopBeforeSmtp).toBool()) {

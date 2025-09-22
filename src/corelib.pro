@@ -7,6 +7,7 @@ QT      += sql network xml qml
 # C++ Standards Support
 CONFIG += c++20
 windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
+macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 14.0
 
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_MAKEDLL
@@ -444,27 +445,31 @@ freebsd {
 
 windows {
   DEFINES += MONGOC_COMPILATION BSON_COMPILATION
-  INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
-  LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
+  INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libbson/src
+  LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc2.lib ../3rdparty/mongo-driver/src/libbson/Release/bson2.lib
   LIBS += -lws2_32 -lpsapi -lAdvapi32
 }
 
 unix {
   wasm {
     # WASM
-    INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
-    OBJECTS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
+    INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libbson/src
+    OBJECTS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc2.a ../3rdparty/mongo-driver/src/libbson/libbson2.a
 
   } else {
     # UNIX
     isEmpty( enable_shared_mongoc ) {
       # Static link
-      INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
-      LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
+      INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libbson/src
+      LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc2.a ../3rdparty/mongo-driver/src/libbson/libbson2.a
     } else {
       # Shared link
+      LIBS += $$system("pkg-config --libs mongoc2 2>/dev/null")
+      QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I mongoc2 2>/dev/null")
       LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
       QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I libmongoc-1.0 2>/dev/null")
+      LIBS += $$system("pkg-config --libs  openblas 2>/dev/null")
+      QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I  openblas 2>/dev/null")
     }
   }
 }

@@ -48,7 +48,7 @@ bool TUrlRoute::parseConfigFile()
     }
 
     if (!routesFile.open(QIODevice::ReadOnly)) {
-        tSystemError("failed to read file : {}", qUtf8Printable(routesFile.fileName()));
+        tSystemError("failed to read file : {}", routesFile.fileName());
         return false;
     }
 
@@ -60,7 +60,7 @@ bool TUrlRoute::parseConfigFile()
 
         if (!line.isEmpty() && !line.startsWith('#')) {
             if (!addRouteFromString(line)) {
-                Tf::error("Error parsing route {} [line: {}]", qUtf8Printable(line), cnt);
+                Tf::error("Error parsing route {} [line: {}]", line, cnt);
             }
         }
     }
@@ -72,7 +72,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 {
     QStringList items = line.simplified().split(' ');
     if (items.count() != 3) {
-        Tf::error("Invalid directive, '{}'", qUtf8Printable(line));
+        Tf::error("Invalid directive, '{}'", line);
         return false;
     }
 
@@ -91,7 +91,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
     // Check method
     rt.method = directiveHash.value(items[0].toLower(), TRoute::Invalid);
     if (rt.method == TRoute::Invalid) {
-        Tf::error("Invalid directive, '{}'", qUtf8Printable(items[0]));
+        Tf::error("Invalid directive, '{}'", items[0]);
         return false;
     }
 
@@ -121,14 +121,14 @@ bool TUrlRoute::addRouteFromString(const QString &line)
             rt.controller = list[0].toLower().toLatin1() + "controller";
             rt.action = list[1].toLatin1();
         } else {
-            Tf::error("Invalid action, '{}'", qUtf8Printable(items[2]));
+            Tf::error("Invalid action, '{}'", items[2]);
             return false;
         }
     }
 
     _routes << rt;
     tSystemDebug("route: method:{} path:{}  ctrl:{} action:{} params:{}",
-        rt.method, qUtf8Printable(QLatin1String("/") + rt.componentList.join("/")), (const char*)rt.controller.data(),
+        rt.method, (QLatin1String("/") + rt.componentList.join("/")), (const char*)rt.controller.data(),
         (const char*)rt.action.data(), rt.hasVariableParams);
     return true;
 }

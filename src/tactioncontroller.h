@@ -1,6 +1,7 @@
 #pragma once
 #include <QHostAddress>
 #include <QtCore>
+#include <TGlobal>
 #include <TAbstractController>
 #include <TAccessValidator>
 #include <TActionHelper>
@@ -9,7 +10,6 @@
 #include <THttpResponse>
 #include <TActionContext>
 #include <TSession>
-#include <TGlobal>
 
 class TActionView;
 class TAbstractUser;

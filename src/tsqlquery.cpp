@@ -58,11 +58,11 @@ bool TSqlQuery::load(const QString &filename)
 
     QDir dir(queryDirPath());
     QFile file(dir.filePath(filename));
-    tSystemDebug("SQL_QUERY_ROOT: {}", qUtf8Printable(dir.dirName()));
-    tSystemDebug("filename: {}", qUtf8Printable(file.fileName()));
+    tSystemDebug("SQL_QUERY_ROOT: {}", dir.dirName());
+    tSystemDebug("filename: {}", file.fileName());
 
     if (!file.open(QIODevice::ReadOnly)) {
-        tSystemError("Unable to open file: {}", qUtf8Printable(file.fileName()));
+        tSystemError("Unable to open file: {}", file.fileName());
         return false;
     }
 

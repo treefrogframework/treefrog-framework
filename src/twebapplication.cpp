@@ -377,8 +377,8 @@ TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() 
             return Thread;
 #endif
         }
-        tSystemWarn("Unsupported MPM: {}", qUtf8Printable(str));
-        Tf::warn("Unsupported MPM: {}", qUtf8Printable(str));
+        tSystemWarn("Unsupported MPM: {}", str);
+        Tf::warn("Unsupported MPM: {}", str);
         return Thread;
     }();
     return module;
@@ -531,7 +531,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
         const auto filist = dir.entryInfoList(filters);
 
         if (filist.isEmpty()) {
-            tSystemWarn("No such config, {}", qUtf8Printable(configName));
+            tSystemWarn("No such config, {}", configName);
         } else {
             for (auto &fi : filist) {
                 auto suffix = fi.completeSuffix().toLower();
@@ -556,7 +556,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
                     }
 
                 } else {
-                    tSystemWarn("Invalid format config, {}", qUtf8Printable(fi.fileName()));
+                    tSystemWarn("Invalid format config, {}", fi.fileName());
                 }
             }
         }
