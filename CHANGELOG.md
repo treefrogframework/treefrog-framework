@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.11.2
+ - Updated the internally used MongoDB C Driver to version 2.1.0.
+ - Added support for std::format style formatting in logging functions.
+
 ## 2.11.1
  - Fixed a compilation error bug in tftest.h.
  - Updated test macros.
