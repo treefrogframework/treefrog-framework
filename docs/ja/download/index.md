@@ -29,7 +29,7 @@ Qt6 向けのインストーラを提供しています。セットアップす�
 
 | ソースパッケージ  | ファイル                         |
 |-------------------|----------------------------------|
-| バージョン 2.11.1 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.11.1.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.11.1.tar.gz) |
+| バージョン 2.11.2 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.11.2.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.11.2.tar.gz) |
 
 </div>
 
