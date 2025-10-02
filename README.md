@@ -2,7 +2,7 @@
 
 # Small but Powerful and Efficient
 
-[![ActionsCI](https://github.com/treefrogframework/treefrog-framework/actions/workflows/actions.yml/badge.svg)](https://github.com/treefrogframework/treefrog-framework/actions/workflows/actions.yml)
+[![ActionsCI](https://github.com/treefrogframework/treefrog-framework/actions/workflows/actions.yml/badge.svg?branch=develop)](https://github.com/treefrogframework/treefrog-framework/actions/workflows/actions.yml)
 [![CodeQL](https://github.com/treefrogframework/treefrog-framework/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/treefrogframework/treefrog-framework/actions/workflows/codeql-analysis.yml)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Release](https://img.shields.io/github/v/release/treefrogframework/treefrog-framework.svg)](https://github.com/treefrogframework/treefrog-framework/releases)
