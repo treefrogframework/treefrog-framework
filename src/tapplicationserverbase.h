@@ -35,6 +35,7 @@ private:
 
     friend class TThreadApplicationServer;
     friend class TMultiplexingServer;
+    friend class TURingServer;
     T_DISABLE_COPY(TApplicationServerBase)
     T_DISABLE_MOVE(TApplicationServerBase)
 };

@@ -397,8 +397,14 @@ windows {
 linux-* {
   HEADERS += tmultiplexingserver.h
   SOURCES += tmultiplexingserver_linux.cpp
+  HEADERS += turingserver.h
+  SOURCES += turingserver_linux.cpp
+  HEADERS += turingcoroutine.h
+  SOURCES += turingcoroutine_linux.cpp
   HEADERS += tactionworker.h
   SOURCES += tactionworker.cpp
+  HEADERS += tactionroutine.h
+  SOURCES += tactionroutine.cpp
   HEADERS += tepoll.h
   SOURCES += tepoll.cpp
   HEADERS += tepollsocket.h

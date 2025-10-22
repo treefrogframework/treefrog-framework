@@ -39,6 +39,8 @@ public:
     THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context);
     virtual ~THttpRequest();
     THttpRequest &operator=(const THttpRequest &other);
+    THttpRequest(THttpRequest&&) = default;
+    THttpRequest &operator=(THttpRequest &&) = default;
 
     const THttpRequestHeader &header() const { return d->header; }
     Tf::HttpMethod method() const;
