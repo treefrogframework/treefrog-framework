@@ -54,7 +54,12 @@ public:
         }
     }
 
-    int statusCode() const { return (_accessLog) ? _accessLog->statusCode : -1; }
+    inline int statusCode() const { return (_accessLog) ? _accessLog->statusCode : -1; }
+
+    inline void setStatusCode(Tf::StatusCode statusCode)
+    {
+        setStatusCode((int)statusCode);
+    }
 
     void setStatusCode(int statusCode)
     {
@@ -63,7 +68,7 @@ public:
         }
     }
 
-    int responseBytes() const { return (_accessLog) ? _accessLog->responseBytes : -1; }
+    inline int responseBytes() const { return (_accessLog) ? _accessLog->responseBytes : -1; }
 
     void setResponseBytes(int bytes)
     {

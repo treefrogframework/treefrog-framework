@@ -61,8 +61,8 @@ protected:
     bool layoutEnabled() const;
     void setLayout(const QString &layout);
     QString layout() const;
-    void setStatusCode(int code);
-    int statusCode() const { return _statCode; }
+    void setStatusCode(Tf::StatusCode code);
+    Tf::StatusCode statusCode() const { return static_cast<Tf::StatusCode>(_statCode); }
     void setFlashValidationErrors(const TFormValidator &validator, const QString &prefix = QString("err_"));
     TSession &session() override { return _sessionStore; }
     void setSession(const TSession &session);
@@ -93,8 +93,8 @@ protected:
     bool renderCbor(const QCborValue &value, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
     bool renderCbor(const QCborMap &map, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
     bool renderCbor(const QCborArray &array, QCborValue::EncodingOptions opt = QCborValue::NoTransformation);
-    bool renderErrorResponse(int statusCode);
-    void redirect(const QUrl &url, int statusCode = Tf::Found);
+    bool renderErrorResponse(Tf::StatusCode statusCode);
+    void redirect(const QUrl &url, Tf::StatusCode statusCode = Tf::StatusCode::Found);
     bool sendFile(const QString &filePath, const QByteArray &contentType, const QString &name = QString(), bool autoRemove = false);
     bool sendData(const QByteArray &data, const QByteArray &contentType, const QString &name = QString());
     void rollbackTransaction() { _rollback = true; }
@@ -144,7 +144,7 @@ private:
     mutable QString _ctrlName;
     QString _actionName;
     QStringList _args;
-    int _statCode {Tf::OK};  // 200 OK
+    int _statCode {(int)Tf::StatusCode::OK};  // 200 OK
     RenderState _rendered {RenderState::NotRendered};
     bool _layoutEnable {true};
     QString _layoutName;
@@ -198,9 +198,9 @@ inline QString TActionController::layout() const
     return _layoutName;
 }
 
-inline void TActionController::setStatusCode(int code)
+inline void TActionController::setStatusCode(Tf::StatusCode code)
 {
-    _statCode = code;
+    _statCode = (int)code;
 }
 
 // inline QString TActionController::flash(const QString &name) const

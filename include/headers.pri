@@ -202,6 +202,8 @@ HEADER_FILES += tmemcacheddriver.h
 HEADER_FILES += tsystemlogger.h
 HEADER_FILES += tstdoutsystemlogger.h
 HEADER_FILES += tstderrsystemlogger.h
+HEADER_FILES += turingserver.h
+HEADER_FILES += turingcoroutine.h
 
 HEADER_FILES += tsqldatabasepool.h
 HEADER_FILES += tkvsdatabasepool.h

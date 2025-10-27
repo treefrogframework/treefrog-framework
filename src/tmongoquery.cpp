@@ -39,25 +39,25 @@ TMongoQuery::TMongoQuery(Tf::KvsEngine engine, const QString &collection) :
 /*!
   Copy constructor.
 */
-TMongoQuery::TMongoQuery(const TMongoQuery &other) :
-    _database(other._database),
-    _collection(other._collection),
-    _queryLimit(other._queryLimit),
-    _queryOffset(other._queryOffset)
-{
-}
+// TMongoQuery::TMongoQuery(const TMongoQuery &other) :
+//     _database(other._database),
+//     _collection(other._collection),
+//     _queryLimit(other._queryLimit),
+//     _queryOffset(other._queryOffset)
+// {
+// }
 
 /*!
   Assignment operator.
 */
-TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
-{
-    _database = other._database;
-    _collection = other._collection;
-    _queryLimit = other._queryLimit;
-    _queryOffset = other._queryOffset;
-    return *this;
-}
+// TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
+// {
+//     _database = other._database;
+//     _collection = other._collection;
+//     _queryLimit = other._queryLimit;
+//     _queryOffset = other._queryOffset;
+//     return *this;
+// }
 
 /*!
   Finds documents by the criteria \a criteria in the collection and

@@ -18,8 +18,10 @@
 #include <TThreadApplicationServer>
 #include <TUrlRoute>
 #include <TWebApplication>
+#include "turingserver.h"
 #include <cstdlib>
 #include <cstdio>
+#include <memory>
 #include <glog/logging.h>
 
 
@@ -77,15 +79,15 @@ QMap<QString, QString> convertArgs(const QStringList &args)
     return map;
 }
 
-const QMap<int, QByteArray> methodDef = {
-    {TRoute::Match, QByteArray("match   ")},
-    {TRoute::Get, QByteArray("get     ")},
-    {TRoute::Head, QByteArray("head    ")},
-    {TRoute::Post, QByteArray("post    ")},
-    {TRoute::Options, QByteArray("options ")},
-    {TRoute::Put, QByteArray("put     ")},
-    {TRoute::Delete, QByteArray("delete  ")},
-    {TRoute::Trace, QByteArray("trace   ")},
+const QMap<TRoute::RouteDirective, QByteArray> methodDef = {
+    {TRoute::RouteDirective::Match, QByteArray("match   ")},
+    {TRoute::RouteDirective::Get, QByteArray("get     ")},
+    {TRoute::RouteDirective::Head, QByteArray("head    ")},
+    {TRoute::RouteDirective::Post, QByteArray("post    ")},
+    {TRoute::RouteDirective::Options, QByteArray("options ")},
+    {TRoute::RouteDirective::Put, QByteArray("put     ")},
+    {TRoute::RouteDirective::Delete, QByteArray("delete  ")},
+    {TRoute::RouteDirective::Trace, QByteArray("trace   ")},
 };
 
 
@@ -141,7 +143,7 @@ int showRoutes()
             } else {
                 action = QByteArrayLiteral("(not found)");
             }
-            std::printf("  %s%s  ->  %s\n", methodDef.value(route.method).data(), qUtf8Printable(path), qUtf8Printable(action));
+            std::printf("  %s%s  ->  %s\n", methodDef.value(static_cast<TRoute::RouteDirective>(route.method)).data(), qUtf8Printable(path), qUtf8Printable(action));
         }
         std::printf("\n");
     }
@@ -278,19 +280,27 @@ int main(int argc, char *argv[])
     }
 
     switch (webapp.multiProcessingModule()) {
-    case TWebApplication::Thread:
-        server = new TThreadApplicationServer(sock, &webapp);
+    case TWebApplication::MultiProcessingModule::Thread:
+        server = TThreadApplicationServer::instance(sock, &webapp);
 #ifdef Q_OS_LINUX
         TMultiplexingServer::instantiate(0); // For epoll eventloop
 #endif
         break;
 
-    case TWebApplication::Epoll:
+    case TWebApplication::MultiProcessingModule::Epoll:
 #ifdef Q_OS_LINUX
         // Sets a listening socket descriptor
         TMultiplexingServer::instantiate(sock);
         tSystemDebug("Set socket descriptor: {}", sock);
         server = TMultiplexingServer::instance();
+#else
+        tFatal("Unsupported MPM: epoll");
+#endif
+        break;
+
+    case TWebApplication::MultiProcessingModule::Uring:
+#ifdef Q_OS_LINUX
+        server = TUringServer::instance(sock);
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
@@ -310,22 +320,10 @@ int main(int argc, char *argv[])
     // Initialize cache
     webapp.initializeCache();
 
-    QObject::connect(&webapp, &QCoreApplication::aboutToQuit, [=]() { server->stop(); });
+    QObject::connect(&webapp, &QCoreApplication::aboutToQuit, [&]() { server->stop(); });
     ret = webapp.exec();
 
 finish:
-    switch (webapp.multiProcessingModule()) {
-    case TWebApplication::Thread:
-        delete server;
-        break;
-
-    case TWebApplication::Epoll:
-        break;
-
-    default:
-        break;
-    }
-
     // Release loggers
     Tf::releaseAppLoggers();
     Tf::releaseQueryLogger();

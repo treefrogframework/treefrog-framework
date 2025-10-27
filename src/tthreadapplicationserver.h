@@ -38,13 +38,13 @@ private:
 class T_CORE_EXPORT TThreadApplicationServer : public QThread, public TApplicationServerBase {
     Q_OBJECT
 public:
-    TThreadApplicationServer(int listeningSocket, QObject *parent = 0);
     ~TThreadApplicationServer() { }
 
     bool start(bool debugMode) override;
     void stop() override;
     void setAutoReloadingEnabled(bool enable) override;
     bool isAutoReloadingEnabled() override;
+    static TThreadApplicationServer *instance(int listeningSocket = 0,QObject *parent = nullptr);
 
 protected:
     void incomingConnection(qintptr socketDescriptor);
@@ -53,6 +53,7 @@ protected:
 
 private:
     static TStack<TActionThread *> *threadPoolPtr();
+    TThreadApplicationServer(int listeningSocket, QObject *parent = nullptr);
 
     int listenSocket {0};
     int maxThreads {0};

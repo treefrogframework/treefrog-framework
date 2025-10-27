@@ -9,9 +9,11 @@ class TKvsDatabaseData;
 class T_CORE_EXPORT TKvsDatabase {
 public:
     TKvsDatabase() { }
-    TKvsDatabase(const TKvsDatabase &other);
+    //TKvsDatabase(const TKvsDatabase &other);
+    TKvsDatabase(TKvsDatabase &&) = default;
     ~TKvsDatabase() { }
-    TKvsDatabase &operator=(const TKvsDatabase &other);
+    //TKvsDatabase &operator=(const TKvsDatabase &other);
+    TKvsDatabase &operator=(TKvsDatabase &&) = default;
 
     QString driverName() const;
     QString connectionName() const { return connectName; }
@@ -51,6 +53,7 @@ private:
 
     TKvsDatabase(const QString &connectionName, TKvsDriver *driver);
     TKvsDatabase(const TKvsDatabaseData &data);
+    T_DISABLE_COPY(TKvsDatabase)
 };
 
 

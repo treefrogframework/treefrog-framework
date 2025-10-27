@@ -6,21 +6,21 @@
 
 class TRoute {
 public:
-    enum RouteDirective {
+    enum class RouteDirective {
         Match = 0,
-        Get = Tf::Get,
-        Head = Tf::Head,
-        Post = Tf::Post,
-        Options = Tf::Options,
-        Put = Tf::Put,
-        Delete = Tf::Delete,
-        Trace = Tf::Trace,
-        Connect = Tf::Connect,
-        Patch = Tf::Patch,
+        Get = (int)Tf::HttpMethod::Get,
+        Head = (int)Tf::HttpMethod::Head,
+        Post = (int)Tf::HttpMethod::Post,
+        Options = (int)Tf::HttpMethod::Options,
+        Put = (int)Tf::HttpMethod::Put,
+        Delete = (int)Tf::HttpMethod::Delete,
+        Trace = (int)Tf::HttpMethod::Trace,
+        Connect = (int)Tf::HttpMethod::Connect,
+        Patch = (int)Tf::HttpMethod::Patch,
         Invalid = 0xff,
     };
 
-    int method {Invalid};
+    RouteDirective method {RouteDirective::Invalid};
     QStringList componentList;
     QList<int> keywordIndexes;
     QByteArray controller;

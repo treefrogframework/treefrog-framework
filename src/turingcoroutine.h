@@ -1,6 +1,7 @@
 #pragma once
+#include <TActionContext>
+#include <QFile>
 #include <coroutine>
-class TActionContext;
 
 
 struct Task {
@@ -14,8 +15,21 @@ struct Task {
 };
 
 
-class TURingCoroutine {
+class TUringCoroutine : public TActionContext {
 public:
-    static Task incomingConnection(int socketDescriptor);
-    static TActionContext *currentContext();
+    TUringCoroutine() : TActionContext() {}
+    virtual ~TUringCoroutine() {}
+
+    Task start(int socketDescriptor);
+    // static TActionRoutine *currentProcess();
+    // static bool isChildProcess();
+    //QByteArray response() const { return _response; }
+    //static TActionContext *currentContext();
+
+protected:
+    virtual int64_t writeResponse(THttpResponseHeader &, QIODevice *) override;
+
+private:
+    QByteArray _response;
+    QFile _file;
 };

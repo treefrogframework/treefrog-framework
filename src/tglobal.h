@@ -249,6 +249,16 @@ inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
     return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
 }
 
+// Scope-Exit Function Class
+template<typename Func>
+class ScopeExitFunction {
+public:
+    explicit ScopeExitFunction(Func&& func) : _func(std::move(func)) {}
+    ~ScopeExitFunction() noexcept { _func(); }
+private:
+    Func _func;
+};
+
 #ifdef TF_HAVE_STD_FORMAT  // std::format
 
 // Logging for developer

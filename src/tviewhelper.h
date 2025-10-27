@@ -33,11 +33,11 @@ public:
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString linkToIf(bool condition, const QString &text, const QUrl &url,
-        Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
+        Tf::HttpMethod method = Tf::HttpMethod::Get, const QString &jsCondition = QString(),
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString linkToUnless(bool condition, const QString &text, const QUrl &url,
-        Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
+        Tf::HttpMethod method = Tf::HttpMethod::Get, const QString &jsCondition = QString(),
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString linkToFunction(const QString &text, const QString &function,
@@ -52,7 +52,7 @@ public:
     QString anchor(const QString &text, const QUrl &url, Tf::HttpMethod method,
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString anchor(const QString &text, const QUrl &url, Tf::HttpMethod method = Tf::Get,
+    QString anchor(const QString &text, const QUrl &url, Tf::HttpMethod method = Tf::HttpMethod::Get,
         const QString &jsCondition = QString(),
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
@@ -64,17 +64,17 @@ public:
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchorIf(bool condition, const QString &text, const QUrl &url,
-        Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
+        Tf::HttpMethod method = Tf::HttpMethod::Get, const QString &jsCondition = QString(),
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchorUnless(bool condition, const QString &text, const QUrl &url,
-        Tf::HttpMethod method = Tf::Get, const QString &jsCondition = QString(),
+        Tf::HttpMethod method = Tf::HttpMethod::Get, const QString &jsCondition = QString(),
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
     QString anchorFunction(const QString &text, const QString &function,
         const THtmlAttribute &attributes = THtmlAttribute()) const;
 
-    QString formTag(const QUrl &url, Tf::HttpMethod method = Tf::Post, bool multipart = false,
+    QString formTag(const QUrl &url, Tf::HttpMethod method = Tf::HttpMethod::Post, bool multipart = false,
         const THtmlAttribute &attributes = THtmlAttribute());
 
     QString inputTag(const QString &type, const QString &name, const QVariant &value,
@@ -219,7 +219,7 @@ private:
 */
 inline QString TViewHelper::linkTo(const QString &text, const QUrl &url, const THtmlAttribute &attributes) const
 {
-    return linkTo(text, url, Tf::Get, QString(), attributes);
+    return linkTo(text, url, Tf::HttpMethod::Get, QString(), attributes);
 }
 
 /*!

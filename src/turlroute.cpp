@@ -15,16 +15,16 @@
 #include <TWebApplication>
 
 
-const QMap<QString, int> directiveHash = {
-    {"match", TRoute::Match},
-    {"get", TRoute::Get},
-    {"post", TRoute::Post},
-    {"put", TRoute::Put},
-    {"patch", TRoute::Patch},
-    {"delete", TRoute::Delete},
-    {"trace", TRoute::Trace},
-    {"connect", TRoute::Connect},
-    {"patch", TRoute::Patch},
+const QMap<QString, TRoute::RouteDirective> directiveHash = {
+    {"match", TRoute::RouteDirective::Match},
+    {"get", TRoute::RouteDirective::Get},
+    {"post", TRoute::RouteDirective::Post},
+    {"put", TRoute::RouteDirective::Put},
+    {"patch", TRoute::RouteDirective::Patch},
+    {"delete", TRoute::RouteDirective::Delete},
+    {"trace", TRoute::RouteDirective::Trace},
+    {"connect", TRoute::RouteDirective::Connect},
+    {"patch", TRoute::RouteDirective::Patch},
 };
 
 
@@ -89,8 +89,8 @@ bool TUrlRoute::addRouteFromString(const QString &line)
     TRoute rt;
 
     // Check method
-    rt.method = directiveHash.value(items[0].toLower(), TRoute::Invalid);
-    if (rt.method == TRoute::Invalid) {
+    rt.method = directiveHash.value(items[0].toLower(), TRoute::RouteDirective::Invalid);
+    if (rt.method == TRoute::RouteDirective::Invalid) {
         Tf::error("Invalid directive, '{}'", items[0]);
         return false;
     }
@@ -128,7 +128,7 @@ bool TUrlRoute::addRouteFromString(const QString &line)
 
     _routes << rt;
     tSystemDebug("route: method:{} path:{}  ctrl:{} action:{} params:{}",
-        rt.method, (QLatin1String("/") + rt.componentList.join("/")), (const char*)rt.controller.data(),
+        (int)rt.method, (QLatin1String("/") + rt.componentList.join("/")), (const char*)rt.controller.data(),
         (const char*)rt.action.data(), rt.hasVariableParams);
     return true;
 }
@@ -158,7 +158,7 @@ TRouting TUrlRoute::findRouting(Tf::HttpMethod method, const QStringList &compon
             }
         }
 
-        if (rt.method == TRoute::Match || rt.method == method) {
+        if (rt.method == TRoute::RouteDirective::Match || (int)rt.method == (int)method) {
             // Generates parameters for action
             QStringList params = components;
 

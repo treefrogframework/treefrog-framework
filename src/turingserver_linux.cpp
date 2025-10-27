@@ -36,33 +36,44 @@
 constexpr int SEND_BUF_SIZE = 8 * 1024;
 constexpr int RECV_BUF_SIZE = 16 * 1024;
 
-namespace {
+//namespace {
 
-TURingServer *uringServer = nullptr;
+// TUringServer *uringServer = nullptr;
 
-void cleanup()
+// void cleanup()
+// {
+//     delete uringServer;
+//     uringServer = nullptr;
+// }
+// }
+
+
+// void TUringServer::instantiate(int listeningSocket)
+// {
+//     if (!uringServer) {
+//         uringServer = new TUringServer(listeningSocket);
+//         qAddPostRoutine(::cleanup);
+//     }
+// }
+
+
+TUringServer *TUringServer::instance(int listeningSocket)
 {
-    delete uringServer;
-    uringServer = nullptr;
-}
-}
+    static std::unique_ptr<TUringServer> instance;
+    static std::once_flag once;
 
+    std::call_once(once, [&]() {
+        if (listeningSocket <= 0) {
+            throw StandardException("Invalid socket", __FILE__, __LINE__);
+        }
+        instance = std::make_unique<TUringServer>(listeningSocket);
+    });
+    return instance.get();
 
-void TURingServer::instantiate(int listeningSocket)
-{
-    if (!uringServer) {
-        uringServer = new TURingServer(listeningSocket);
-        qAddPostRoutine(::cleanup);
-    }
-}
-
-
-TURingServer *TURingServer::instance()
-{
-    if (Q_UNLIKELY(!uringServer)) {
-        tFatal("Call TURingServer::instantiate() function first");
-    }
-    return uringServer;
+    // if (Q_UNLIKELY(!uringServer)) {
+    //     tFatal("Call TUringServer::instantiate() function first");
+    // }
+    // return uringServer;
 }
 
 
@@ -91,7 +102,7 @@ static void setNoDeleyOption(int fd)
 }
 
 
-TURingServer::TURingServer(int listeningSocket, QObject *parent) :
+TUringServer::TUringServer(int listeningSocket, QObject *parent) :
     TDatabaseContextThread(parent),
     TApplicationServerBase(),
     _listenSocket(listeningSocket)
@@ -100,13 +111,13 @@ TURingServer::TURingServer(int listeningSocket, QObject *parent) :
 }
 
 
-TURingServer::~TURingServer()
+TUringServer::~TUringServer()
 {
     io_uring_queue_exit(&_ring);
 }
 
 
-bool TURingServer::start(bool debugMode)
+bool TUringServer::start(bool debugMode)
 {
     if (isRunning()) {
         return true;
@@ -133,7 +144,7 @@ bool TURingServer::start(bool debugMode)
 }
 
 /*
-int TURingServer::processEvents(int maxMilliSeconds)
+int TUringServer::processEvents(int maxMilliSeconds)
 {
     TEpoll::instance()->dispatchEvents();
 
@@ -217,17 +228,8 @@ int TURingServer::processEvents(int maxMilliSeconds)
 }
 */
 
-template<typename Func>
-class ScopeExitFunction {
-public:
-    explicit ScopeExitFunction(Func&& func) : _func(std::move(func)) {}
-    ~ScopeExitFunction() noexcept { _func(); }
-private:
-    Func _func;
-};
 
-
-void TURingServer::run()
+void TUringServer::run()
 {
     setNoDeleyOption(_listenSocket);
 
@@ -250,9 +252,10 @@ void TURingServer::run()
 
     // --- イベントループ ---
     while (!_stopped) {
+        tSystemDebug("-----------------------------------");
         io_uring_cqe* cqe = nullptr;
         int res = io_uring_wait_cqe_timeout(&_ring, &cqe, &ts);
-        ScopeExitFunction seen([&]{ if (cqe) io_uring_cqe_seen(&_ring, cqe); });
+        Tf::ScopeExitFunction seen([&]{ if (cqe) io_uring_cqe_seen(&_ring, cqe); });
 
         if (res < 0 || !cqe) {
             if (res == -EINTR || res == -EAGAIN) {
@@ -279,8 +282,9 @@ void TURingServer::run()
                 if (cqe->res >= 0) {
                     // コルーチンを起動
                     //handleClient(cqe->res);
-                    TURingCoroutine::incomingConnection(cqe->res);
-                    await->_cqeres = 0;  // clear
+                    auto routine = std::make_unique<TUringCoroutine>();
+                    routine->start(cqe->res);
+                    await->clear();  // clear
                 } else {
                     int err = -cqe->res;
                     switch (err) {
@@ -328,7 +332,7 @@ void TURingServer::run()
 }
 
 
-void TURingServer::stop()
+void TUringServer::stop()
 {
     _stopped = true;
     if (isRunning()) {
@@ -338,7 +342,7 @@ void TURingServer::stop()
 }
 
 
-void TURingServer::setAutoReloadingEnabled(bool enable)
+void TUringServer::setAutoReloadingEnabled(bool enable)
 {
     _autoReload = enable;
     // if (enable) {
@@ -349,33 +353,34 @@ void TURingServer::setAutoReloadingEnabled(bool enable)
 }
 
 
-bool TURingServer::isAutoReloadingEnabled()
+bool TUringServer::isAutoReloadingEnabled()
 {
     return _autoReload;
     //return reloadTimer.isActive();
 }
 
 
-TActionContext *TURingServer::currentContext() const
+TActionContext *TUringServer::currentContext() const
 {
-    return TURingCoroutine::currentContext();
+    return nullptr;
+//    return TURingCoroutine::currentContext();
 
-    // if (!_processingSocketStack.isEmpty()) {
-    //     auto *worker = _processingSocketStack.top();
-    //     return worker;
-    // }
-    // return nullptr;
+//     // if (!_processingSocketStack.isEmpty()) {
+//     //     auto *worker = _processingSocketStack.top();
+//     //     return worker;
+//     // }
+//     // return nullptr;
 }
 
 
-TActionController *TURingServer::currentController() const
+TActionController *TUringServer::currentController() const
 {
     auto *context = currentContext();
     return (context) ? context->currentController() : nullptr;
 }
 
 /*
-void TURingServer::timerEvent(QTimerEvent *event)
+void TUringServer::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() != reloadTimer.timerId()) {
         QThread::timerEvent(event);
@@ -389,7 +394,7 @@ void TURingServer::timerEvent(QTimerEvent *event)
 */
 
 // アクセプト
-int TURingServer::addAccept(int fd, TAwaitBase* await)
+int TUringServer::addAccept(int fd, TAwaitBase* await)
 {
     //std::print("addAccept  fd: {}\n", fd);
     io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
@@ -402,7 +407,7 @@ int TURingServer::addAccept(int fd, TAwaitBase* await)
 }
 
 // 受信
-int TURingServer::addRecv(int fd, void* buf, size_t len, int msecs, TAwaitBase* await)
+int TUringServer::addRecv(int fd, void* buf, size_t len, int msecs, TAwaitBase* await)
 {
     //std::print("addRecv  fd: {}\n", fd);
     io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
@@ -427,11 +432,11 @@ int TURingServer::addRecv(int fd, void* buf, size_t len, int msecs, TAwaitBase* 
     return io_uring_submit(&_ring);
 }
 
-int TURingServer::addSend(int fd, const void* buf, size_t len, TAwaitBase* await)
+int TUringServer::addSend(int fd, const void* buf, size_t len, TAwaitBase* await)
 {
     //std::print("addSend  fd: {}\n", fd);
     io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
-    io_uring_prep_send(sqe, fd, buf, len, 0);
+    io_uring_prep_send_zc(sqe, fd, buf, len, 0, 0);
     if (await) {
         await->clear();
         io_uring_sqe_set_data(sqe, await);
@@ -462,7 +467,7 @@ int TURingServer::addSend(int fd, const void* buf, size_t len, TAwaitBase* await
 // }
 
 // 状態変数待ち
-int TURingServer::addEvent(int fd, TAwaitBase* await)
+int TUringServer::addEvent(int fd, TAwaitBase* await)
 {
     io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
     io_uring_prep_poll_add(sqe, fd, POLL_IN);

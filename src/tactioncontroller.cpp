@@ -550,7 +550,7 @@ QByteArray TActionController::renderView(TActionView *view)
   Renders a static error page with the status code, which page is [statusCode].html
   in the \a public directory.
  */
-bool TActionController::renderErrorResponse(int statusCode)
+bool TActionController::renderErrorResponse(Tf::StatusCode statusCode)
 {
     bool ret = false;
 
@@ -559,7 +559,7 @@ bool TActionController::renderErrorResponse(int statusCode)
         return ret;
     }
 
-    QString file = Tf::app()->publicPath() + QString::number(statusCode) + QLatin1String(".html");
+    QString file = Tf::app()->publicPath() + QString::number((int)statusCode) + QLatin1String(".html");
     if (QFileInfo(file).exists()) {
         ret = sendFile(file, "text/html", "", false);
     } else {
@@ -589,7 +589,7 @@ QString TActionController::partialViewClassName(const QString &partial)
 /*!
   Redirects to the URL \a url.
  */
-void TActionController::redirect(const QUrl &url, int statusCode)
+void TActionController::redirect(const QUrl &url, Tf::StatusCode statusCode)
 {
     if ((int)_rendered > 0) {
         Tf::error("Unable to redirect. Has rendered already: {}", (className() + '#' + activeAction()));
@@ -874,7 +874,7 @@ void TActionController::reset()
     _ctrlName.clear();
     _actionName.clear();
     _args.clear();
-    _statCode = Tf::OK;  // 200 OK
+    _statCode = (int)Tf::StatusCode::OK;  // 200 OK
     _rendered = RenderState::NotRendered;
     _layoutEnable  = true;
     _layoutName.clear();

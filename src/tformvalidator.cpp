@@ -126,23 +126,25 @@ QString TFormValidator::dateTimeFormat() const
 void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, bool enable, const QString &errorMessage)
 {
     // arg check
-    switch ((int)rule) {
-    case Tf::MaxLength:
-    case Tf::MinLength:
-    case Tf::IntMax:
-    case Tf::IntMin:
-    case Tf::DoubleMax:
-    case Tf::DoubleMin:
+    switch (rule) {
+    case Tf::ValidationRule::MaxLength:
+    case Tf::ValidationRule::MinLength:
+    case Tf::ValidationRule::IntMax:
+    case Tf::ValidationRule::IntMin:
+    case Tf::ValidationRule::DoubleMax:
+    case Tf::ValidationRule::DoubleMin:
         Tf::warn("Validation: Bad rule spedified [key:{}  rule:{}]. Use another setRule method.", key, (int)rule);
         return;
 
-    case Tf::Pattern:
+    case Tf::ValidationRule::Pattern:
         Tf::warn("Validation: Bad rule spedified [key:{}  rule:{}]. Use setPatternRule method.", key, (int)rule);
         return;
+    default:
+        break;
     }
 
     removeRule(key, rule);
-    rules.prepend(RuleEntry(key, (int)rule, enable, (errorMessage.isEmpty() ? Tf::app()->validationErrorMessage(rule) : errorMessage)));
+    rules.prepend(RuleEntry(key, (int)rule, enable, (errorMessage.isEmpty() ? Tf::app()->validationErrorMessage((int)rule) : errorMessage)));
 }
 
 /*!
@@ -161,23 +163,25 @@ void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, int va
 void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, int64_t val, const QString &errorMessage)
 {
     // arg check
-    switch ((int)rule) {
-    case Tf::Required:
-    case Tf::EmailAddress:
-    case Tf::Url:
-    case Tf::Date:
-    case Tf::Time:
-    case Tf::DateTime:
+    switch (rule) {
+    case Tf::ValidationRule::Required:
+    case Tf::ValidationRule::EmailAddress:
+    case Tf::ValidationRule::Url:
+    case Tf::ValidationRule::Date:
+    case Tf::ValidationRule::Time:
+    case Tf::ValidationRule::DateTime:
         Tf::warn("Validation: Bad rule spedified [key:{}  rule:{}]. Use another setRule method.", key, (int)rule);
         return;
 
-    case Tf::Pattern:
+    case Tf::ValidationRule::Pattern:
         Tf::warn("Validation: Bad rule spedified [key:{}  rule:{}]. Use setPatternRule method.", key, (int)rule);
         return;
+    default:
+        break;
     }
 
     removeRule(key, rule);
-    rules.prepend(RuleEntry(key, (int)rule, val, (errorMessage.isEmpty() ? Tf::app()->validationErrorMessage(rule) : errorMessage)));
+    rules.prepend(RuleEntry(key, (int)rule, val, (errorMessage.isEmpty() ? Tf::app()->validationErrorMessage((int)rule) : errorMessage)));
 }
 
 /*!
@@ -196,27 +200,29 @@ void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, float 
 void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, double val, const QString &errorMessage)
 {
     // arg check
-    switch ((int)rule) {
-    case Tf::Required:
-    case Tf::MaxLength:
-    case Tf::MinLength:
-    case Tf::IntMax:
-    case Tf::IntMin:
-    case Tf::EmailAddress:
-    case Tf::Url:
-    case Tf::Date:
-    case Tf::Time:
-    case Tf::DateTime:
+    switch (rule) {
+    case Tf::ValidationRule::Required:
+    case Tf::ValidationRule::MaxLength:
+    case Tf::ValidationRule::MinLength:
+    case Tf::ValidationRule::IntMax:
+    case Tf::ValidationRule::IntMin:
+    case Tf::ValidationRule::EmailAddress:
+    case Tf::ValidationRule::Url:
+    case Tf::ValidationRule::Date:
+    case Tf::ValidationRule::Time:
+    case Tf::ValidationRule::DateTime:
         Tf::warn("Validation: Bad rule spedified [key:{}  rule:{}]. Use another setRule method.", key, (int)rule);
         return;
 
-    case Tf::Pattern:
+    case Tf::ValidationRule::Pattern:
         Tf::warn("Validation: Bad rule spedified [key:{}  rule:{}]. Use setPatternRule method.", key, (int)rule);
         return;
+    default:
+        break;
     }
 
     removeRule(key, rule);
-    rules.prepend(RuleEntry(key, (int)rule, val, (errorMessage.isEmpty() ? Tf::app()->validationErrorMessage(rule) : errorMessage)));
+    rules.prepend(RuleEntry(key, (int)rule, val, (errorMessage.isEmpty() ? Tf::app()->validationErrorMessage((int)rule) : errorMessage)));
 }
 
 /*!
@@ -243,8 +249,8 @@ void TFormValidator::setRule(const QString &key, Tf::ValidationRule rule, const 
  */
 void TFormValidator::setPatternRule(const QString &key, const QRegularExpression &rx, const QString &errorMessage)
 {
-    removeRule(key, Tf::Pattern);
-    rules.prepend(RuleEntry(key, Tf::Pattern, rx, (errorMessage.isEmpty() ? Tf::app()->validationErrorMessage(Tf::Pattern) : errorMessage)));
+    removeRule(key, Tf::ValidationRule::Pattern);
+    rules.prepend(RuleEntry(key, (int)Tf::ValidationRule::Pattern, rx, (errorMessage.isEmpty() ? Tf::app()->validationErrorMessage((int)Tf::ValidationRule::Pattern) : errorMessage)));
 }
 
 /*!
@@ -260,10 +266,10 @@ bool TFormValidator::validate(const QVariantMap &map)
     errors.clear();
 
     // Add default rules, Tf::Required.
-    QString msg = Tf::app()->validationErrorMessage(Tf::Required);
+    QString msg = Tf::app()->validationErrorMessage((int)Tf::ValidationRule::Required);
     for (auto &k : (const QStringList &)map.keys()) {
-        if (!containsRule(k, Tf::Required)) {
-            rules.append(RuleEntry(k, (int)Tf::Required, true, msg));
+        if (!containsRule(k, Tf::ValidationRule::Required)) {
+            rules.append(RuleEntry(k, (int)Tf::ValidationRule::Required, true, msg));
         }
     }
 
@@ -272,7 +278,7 @@ bool TFormValidator::validate(const QVariantMap &map)
 
         if (str.isEmpty()) {
             bool req = r.value.toBool();
-            if (r.rule == Tf::Required && req) {
+            if (r.rule == (int)Tf::ValidationRule::Required && req) {
                 tSystemDebug("validation error: required parameter is empty, key:{}", r.key);
                 errors << qMakePair(r.key, r.rule);
             }
@@ -280,10 +286,10 @@ bool TFormValidator::validate(const QVariantMap &map)
             bool ok1, ok2;
             tSystemDebug("validating key:{} value: {}", r.key, str);
             switch (r.rule) {
-            case Tf::Required:
+            case (int)Tf::ValidationRule::Required:
                 break;
 
-            case Tf::MaxLength: {
+            case (int)Tf::ValidationRule::MaxLength: {
                 int max = r.value.toInt(&ok2);
                 if (!ok2 || str.length() > max) {
                     errors << qMakePair(r.key, r.rule);
@@ -291,7 +297,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::MinLength: {
+            case (int)Tf::ValidationRule::MinLength: {
                 int min = r.value.toInt(&ok2);
                 if (!ok2 || str.length() < min) {
                     errors << qMakePair(r.key, r.rule);
@@ -299,7 +305,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::IntMax: {
+            case (int)Tf::ValidationRule::IntMax: {
                 int64_t n = str.toLongLong(&ok1);
                 int64_t max = r.value.toLongLong(&ok2);
                 if (!ok1 || !ok2 || n > max) {
@@ -308,7 +314,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::IntMin: {
+            case (int)Tf::ValidationRule::IntMin: {
                 int64_t n = str.toLongLong(&ok1);
                 int64_t min = r.value.toLongLong(&ok2);
                 if (!ok1 || !ok2 || n < min) {
@@ -317,7 +323,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::DoubleMax: {
+            case (int)Tf::ValidationRule::DoubleMax: {
                 double n = str.toDouble(&ok1);
                 double max = r.value.toDouble(&ok2);
                 if (!ok1 || !ok2 || n > max) {
@@ -326,7 +332,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::DoubleMin: {
+            case (int)Tf::ValidationRule::DoubleMin: {
                 double n = str.toDouble(&ok1);
                 double min = r.value.toDouble(&ok2);
                 if (!ok1 || !ok2 || n < min) {
@@ -335,7 +341,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::EmailAddress: {  // refer to RFC5321
+            case (int)Tf::ValidationRule::EmailAddress: {  // refer to RFC5321
                 if (r.value.toBool()) {
                     QRegularExpression re("^" ADDR_SPEC "$");
                     auto match = re.match(str);
@@ -346,7 +352,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::Url: {
+            case (int)Tf::ValidationRule::Url: {
                 if (r.value.toBool()) {
                     QUrl url(str, QUrl::StrictMode);
                     if (!url.isValid()) {
@@ -356,7 +362,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::Date: {
+            case (int)Tf::ValidationRule::Date: {
                 if (r.value.toBool()) {
                     QDate date = QLocale().toDate(str, dateFormat());
                     if (!date.isValid()) {
@@ -367,7 +373,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::Time: {
+            case (int)Tf::ValidationRule::Time: {
                 if (r.value.toBool()) {
                     QTime time = QLocale().toTime(str, timeFormat());
                     if (!time.isValid()) {
@@ -378,7 +384,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::DateTime: {
+            case (int)Tf::ValidationRule::DateTime: {
                 if (r.value.toBool()) {
                     QDateTime dt = QLocale().toDateTime(str, dateTimeFormat());
                     if (!dt.isValid()) {
@@ -389,7 +395,7 @@ bool TFormValidator::validate(const QVariantMap &map)
                 break;
             }
 
-            case Tf::Pattern: {
+            case (int)Tf::ValidationRule::Pattern: {
                 QRegularExpression rx = r.value.toRegularExpression();
                 auto match = rx.match(str);
                 if (!rx.isValid() || !(match.hasMatch() && !match.hasPartialMatch())) {
@@ -453,7 +459,7 @@ Tf::ValidationRule TFormValidator::errorRule(const QString &key) const
             return (Tf::ValidationRule)err.second;
         }
     }
-    return Tf::Required;
+    return Tf::ValidationRule::Required;
 }
 
 /*!
@@ -462,7 +468,7 @@ Tf::ValidationRule TFormValidator::errorRule(const QString &key) const
 QString TFormValidator::message(const QString &key, Tf::ValidationRule rule) const
 {
     for (auto &r : rules) {
-        if (r.key == key && r.rule == rule) {
+        if (r.key == key && r.rule == (int)rule) {
             return r.message;
         }
     }
@@ -508,7 +514,7 @@ QString TFormValidator::value(const QString &key, const QString &defaultValue) c
 bool TFormValidator::containsRule(const QString &key, Tf::ValidationRule rule) const
 {
     for (auto &r : rules) {
-        if (r.key == key && r.rule == rule) {
+        if (r.key == key && r.rule == (int)rule) {
             return true;
         }
     }
@@ -523,7 +529,7 @@ void TFormValidator::removeRule(const QString &key, Tf::ValidationRule rule)
 {
     for (QMutableListIterator<RuleEntry> i(rules); i.hasNext();) {
         const RuleEntry &r = i.next();
-        if (r.key == key && r.rule == rule) {
+        if (r.key == key && r.rule == (int)rule) {
             i.remove();
         }
     }
@@ -535,8 +541,8 @@ void TFormValidator::removeRule(const QString &key, Tf::ValidationRule rule)
 */
 void TFormValidator::setValidationError(const QString &key, const QString &errorMessage)
 {
-    errors << qMakePair(key, (int)Tf::Custom);
-    rules.append(RuleEntry(key, Tf::Custom, "dummy", errorMessage));
+    errors << qMakePair(key, (int)Tf::ValidationRule::Custom);
+    rules.append(RuleEntry(key, (int)Tf::ValidationRule::Custom, "dummy", errorMessage));
 }
 
 /*!

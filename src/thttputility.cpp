@@ -22,50 +22,50 @@ constexpr auto HTTP_DATE_TIME_FORMAT = "ddd, d MMM yyyy hh:mm:ss";
 
 const QMap<int, QByteArray> reasonPhrase = {
     // Informational 1xx
-    {Tf::Continue, "Continue"},
-    {Tf::SwitchingProtocols, "Switching Protocols"},
+    {(int)Tf::StatusCode::Continue, "Continue"},
+    {(int)Tf::StatusCode::SwitchingProtocols, "Switching Protocols"},
     // Successful 2xx
-    {Tf::OK, "OK"},
-    {Tf::Created, "Created"},
-    {Tf::Accepted, "Accepted"},
-    {Tf::NonAuthoritativeInformation, "Non-Authoritative Information"},
-    {Tf::NoContent, "No Content"},
-    {Tf::ResetContent, "Reset Content"},
-    {Tf::PartialContent, "Partial Content"},
+    {(int)Tf::StatusCode::OK, "OK"},
+    {(int)Tf::StatusCode::Created, "Created"},
+    {(int)Tf::StatusCode::Accepted, "Accepted"},
+    {(int)Tf::StatusCode::NonAuthoritativeInformation, "Non-Authoritative Information"},
+    {(int)Tf::StatusCode::NoContent, "No Content"},
+    {(int)Tf::StatusCode::ResetContent, "Reset Content"},
+    {(int)Tf::StatusCode::PartialContent, "Partial Content"},
     // Redirection 3xx
-    {Tf::MultipleChoices, "Multiple Choices"},
-    {Tf::MovedPermanently, "Moved Permanently"},
-    {Tf::Found, "Found"},
-    {Tf::SeeOther, "See Other"},
-    {Tf::NotModified, "Not Modified"},
-    {Tf::UseProxy, "Use Proxy"},
-    {Tf::TemporaryRedirect, "Temporary Redirect"},
+    {(int)Tf::StatusCode::MultipleChoices, "Multiple Choices"},
+    {(int)Tf::StatusCode::MovedPermanently, "Moved Permanently"},
+    {(int)Tf::StatusCode::Found, "Found"},
+    {(int)Tf::StatusCode::SeeOther, "See Other"},
+    {(int)Tf::StatusCode::NotModified, "Not Modified"},
+    {(int)Tf::StatusCode::UseProxy, "Use Proxy"},
+    {(int)Tf::StatusCode::TemporaryRedirect, "Temporary Redirect"},
     // Client Error 4xx
-    {Tf::BadRequest, "Bad Request"},
-    {Tf::Unauthorized, "Unauthorized"},
-    {Tf::PaymentRequired, "Payment Required"},
-    {Tf::Forbidden, "Forbidden"},
-    {Tf::NotFound, "Not Found"},
-    {Tf::MethodNotAllowed, "Method Not Allowed"},
-    {Tf::NotAcceptable, "Not Acceptable"},
-    {Tf::ProxyAuthenticationRequired, "Proxy Authentication Required"},
-    {Tf::RequestTimeout, "Request Timeout"},
-    {Tf::Conflict, "Conflict"},
-    {Tf::Gone, "Gone"},
-    {Tf::LengthRequired, "Length Required"},
-    {Tf::PreconditionFailed, "Precondition Failed"},
-    {Tf::RequestEntityTooLarge, "Request Entity Too Large"},
-    {Tf::RequestURITooLong, "Request-URI Too Long"},
-    {Tf::UnsupportedMediaType, "Unsupported Media Type"},
-    {Tf::RequestedRangeNotSatisfiable, "Requested Range Not Satisfiable"},
-    {Tf::ExpectationFailed, "Expectation Failed"},
+    {(int)Tf::StatusCode::BadRequest, "Bad Request"},
+    {(int)Tf::StatusCode::Unauthorized, "Unauthorized"},
+    {(int)Tf::StatusCode::PaymentRequired, "Payment Required"},
+    {(int)Tf::StatusCode::Forbidden, "Forbidden"},
+    {(int)Tf::StatusCode::NotFound, "Not Found"},
+    {(int)Tf::StatusCode::MethodNotAllowed, "Method Not Allowed"},
+    {(int)Tf::StatusCode::NotAcceptable, "Not Acceptable"},
+    {(int)Tf::StatusCode::ProxyAuthenticationRequired, "Proxy Authentication Required"},
+    {(int)Tf::StatusCode::RequestTimeout, "Request Timeout"},
+    {(int)Tf::StatusCode::Conflict, "Conflict"},
+    {(int)Tf::StatusCode::Gone, "Gone"},
+    {(int)Tf::StatusCode::LengthRequired, "Length Required"},
+    {(int)Tf::StatusCode::PreconditionFailed, "Precondition Failed"},
+    {(int)Tf::StatusCode::RequestEntityTooLarge, "Request Entity Too Large"},
+    {(int)Tf::StatusCode::RequestURITooLong, "Request-URI Too Long"},
+    {(int)Tf::StatusCode::UnsupportedMediaType, "Unsupported Media Type"},
+    {(int)Tf::StatusCode::RequestedRangeNotSatisfiable, "Requested Range Not Satisfiable"},
+    {(int)Tf::StatusCode::ExpectationFailed, "Expectation Failed"},
     // Server Error 5xx
-    {Tf::InternalServerError, "Internal Server Error"},
-    {Tf::NotImplemented, "Not Implemented"},
-    {Tf::BadGateway, "Bad Gateway"},
-    {Tf::ServiceUnavailable, "Service Unavailable"},
-    {Tf::GatewayTimeout, "Gateway Timeout"},
-    {Tf::HTTPVersionNotSupported, "HTTP Version Not Supported"},
+    {(int)Tf::StatusCode::InternalServerError, "Internal Server Error"},
+    {(int)Tf::StatusCode::NotImplemented, "Not Implemented"},
+    {(int)Tf::StatusCode::BadGateway, "Bad Gateway"},
+    {(int)Tf::StatusCode::ServiceUnavailable, "Service Unavailable"},
+    {(int)Tf::StatusCode::GatewayTimeout, "Gateway Timeout"},
+    {(int)Tf::StatusCode::HTTPVersionNotSupported, "HTTP Version Not Supported"},
 };
 
 
@@ -320,9 +320,9 @@ QString THttpUtility::fromMimeEncoded(const QByteArray &mime)
 /*!
   Returns a reason phrase of the HTTP status code \a statusCode.
 */
-QByteArray THttpUtility::getResponseReasonPhrase(int statusCode)
+QByteArray THttpUtility::getResponseReasonPhrase(Tf::StatusCode statusCode)
 {
-    return reasonPhrase.value(statusCode);
+    return reasonPhrase.value((int)statusCode);
 }
 
 /*!

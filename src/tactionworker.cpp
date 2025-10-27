@@ -68,9 +68,10 @@ void TActionWorker::start(TEpollHttpSocket *sock)
     _socket = sock;
     _httpRequest += _socket->readRequest();
     _clientAddr = _socket->peerAddress();
-    QList<THttpRequest> requests = THttpRequest::generate(_httpRequest, _clientAddr, this);
+    THttpRequest request = THttpRequest::generate(_httpRequest, _clientAddr, this);
 
     // Loop for HTTP-pipeline requests
+    /*
     for (THttpRequest &req : requests) {
         // Executes a action context
         TActionContext::execute(req);
@@ -79,6 +80,8 @@ void TActionWorker::start(TEpollHttpSocket *sock)
             break;
         }
     }
+    */
+   TActionContext::execute(request);
 
     TActionContext::release();
     _httpRequest.clear();

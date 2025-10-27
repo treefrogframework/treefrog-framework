@@ -36,7 +36,7 @@ windows {
   LIBS += -L"$$target.path"
 } else:unix {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
-  linux-*:LIBS += -lrt
+  linux-*:LIBS += -lrt -luring
 }
 
 isEmpty( target.path ) {

@@ -38,7 +38,7 @@ TSendBuffer::TSendBuffer(const QByteArray &header) :
 }
 
 
-TSendBuffer::TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method)
+TSendBuffer::TSendBuffer(Tf::StatusCode statusCode, const QHostAddress &address, const QByteArray &method)
 {
     _accesslogger.open();
     _accesslogger.setStatusCode(statusCode);

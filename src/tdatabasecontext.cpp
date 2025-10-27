@@ -22,7 +22,11 @@ namespace {
 //  - qulonglong type to prevent qThreadStorage_deleteData() function to work
 QThreadStorage<qulonglong> databaseContextPtrTls;
 QSqlDatabase invalidDb;
+
 }
+
+// std::map<int, TSqlTransaction> TDatabaseContext::sqlDatabases;
+// std::map<int, TKvsDatabase> TDatabaseContext::kvsDatabases;
 
 /*!
   \class TDatabaseContext
@@ -30,9 +34,10 @@ QSqlDatabase invalidDb;
   database access.
 */
 
-TDatabaseContext::TDatabaseContext() :
-    sqlDatabases(),
-    kvsDatabases()
+TDatabaseContext::TDatabaseContext()
+//:
+    // sqlDatabases(),
+    // kvsDatabases()
 {
 }
 
@@ -46,13 +51,20 @@ TDatabaseContext::~TDatabaseContext()
 
 QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
 {
+tSystemDebug("getSqlDatabase #0");
+    if (sqlDatabases.size() < (size_t)Tf::app()->sqlDatabaseSettingsCount()) {
+        sqlDatabases.resize(Tf::app()->sqlDatabaseSettingsCount());
+    }
+
     if (id < 0) {
         return invalidDb;  // invalid database
     }
+tSystemDebug("getSqlDatabase #1");
 
     if (id >= Tf::app()->sqlDatabaseSettingsCount()) {
         throw RuntimeException("error database id", __FILE__, __LINE__);
     }
+tSystemDebug("getSqlDatabase #2");
 
     TSqlTransaction &tx = sqlDatabases[id];
     QSqlDatabase &db = tx.database();
@@ -60,6 +72,7 @@ QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
     if (db.isValid() && tx.isActive()) {
         return db;
     }
+tSystemDebug("getSqlDatabase #3");
 
     int n = 0;
     do {
@@ -73,6 +86,7 @@ QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
         TSqlDatabasePool::instance()->pool(db, true);
     } while (++n < 2);  // try two times
 
+    tSystemDebug("getSqlDatabase #4");
     idleElapsed = (uint)std::time(nullptr);
     return db;
 }
@@ -87,6 +101,10 @@ void TDatabaseContext::releaseSqlDatabases()
 
 TKvsDatabase &TDatabaseContext::getKvsDatabase(Tf::KvsEngine engine)
 {
+    if (kvsDatabases.size() < (size_t)Tf::app()->sqlDatabaseSettingsCount()) {
+        kvsDatabases.resize(Tf::app()->sqlDatabaseSettingsCount());
+    }
+
     TKvsDatabase &db = kvsDatabases[(int)engine];
     if (!db.isValid()) {
         db = TKvsDatabasePool::instance()->database(engine);
@@ -99,8 +117,9 @@ TKvsDatabase &TDatabaseContext::getKvsDatabase(Tf::KvsEngine engine)
 
 void TDatabaseContext::releaseKvsDatabases()
 {
-    for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {
-        TKvsDatabasePool::instance()->pool(it.value());
+    for (auto it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {
+        // TKvsDatabasePool::instance()->pool(it->second);
+        TKvsDatabasePool::instance()->pool(*it);
     }
     kvsDatabases.clear();
 }
@@ -124,16 +143,19 @@ void TDatabaseContext::setTransactionEnabled(bool enable, int id)
         Tf::error("Invalid database ID: {}", id);
         return;
     }
+tSystemDebug("### setTransactionEnabled : id:{}", id);
     return sqlDatabases[id].setEnabled(enable);
 }
 
 
 void TDatabaseContext::commitTransactions()
 {
-    for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
-        TSqlTransaction &tx = it.value();
-        tx.commit();
-        TSqlDatabasePool::instance()->pool(tx.database());
+    for (auto it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
+        // TSqlTransaction &tx = it->second;
+        // tx.commit();
+        // TSqlDatabasePool::instance()->pool(tx.database());
+        it->commit();
+        TSqlDatabasePool::instance()->pool(it->database());
     }
 }
 
@@ -142,7 +164,7 @@ bool TDatabaseContext::commitTransaction(int id)
 {
     bool res = false;
 
-    if (id < 0 || id >= sqlDatabases.count()) {
+    if (id < 0 || id >= (int)sqlDatabases.size()) {
         Tf::error("Failed to commit transaction. Invalid database ID: {}", id);
         return res;
     }
@@ -156,10 +178,12 @@ bool TDatabaseContext::commitTransaction(int id)
 
 void TDatabaseContext::rollbackTransactions()
 {
-    for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
-        TSqlTransaction &tx = it.value();
-        tx.rollback();
-        TSqlDatabasePool::instance()->pool(tx.database(), true);
+    for (auto it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
+        // TSqlTransaction &tx = it->second;
+        // tx.rollback();
+        // TSqlDatabasePool::instance()->pool(tx.database(), true);
+        it->rollback();
+        TSqlDatabasePool::instance()->pool(it->database(), true);
     }
 }
 
@@ -168,7 +192,7 @@ bool TDatabaseContext::rollbackTransaction(int id)
 {
     bool res = false;
 
-    if (id < 0 || id >= sqlDatabases.count()) {
+    if (id < 0 || id >= (int)sqlDatabases.size()) {
         Tf::error("Failed to rollback transaction. Invalid database ID: {}", id);
         return res;
     }

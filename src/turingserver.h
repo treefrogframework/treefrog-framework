@@ -37,10 +37,11 @@ public:
 };
 
 
-class T_CORE_EXPORT TURingServer : public TDatabaseContextThread, public TApplicationServerBase {
+class T_CORE_EXPORT TUringServer : public TDatabaseContextThread, public TApplicationServerBase {
     Q_OBJECT
 public:
-    ~TURingServer();
+    TUringServer(int listeningSocket, QObject *parent = nullptr);  // Constructor
+    ~TUringServer();
 
     bool isListening() const { return _listenSocket > 0; }
     bool start(bool debugMode) override;
@@ -51,8 +52,8 @@ public:
     TActionContext *currentContext() const;
     TActionController *currentController() const;
 
-    static void instantiate(int listeningSocket);
-    static TURingServer *instance();
+    //static void instantiate(int listeningSocket);
+    static TUringServer *instance(int listeningSocket = 0);
 
     //
     int addAccept(int fd, TAwaitBase* await = nullptr);
@@ -62,11 +63,6 @@ public:
 
 protected:
     void run() override;
-    //void timerEvent(QTimerEvent *event) override;
-
-
-// signals:
-//     bool incomingRequest(TEpollSocket *socket);
 
 private:
     io_uring _ring{};
@@ -76,12 +72,9 @@ private:
     bool _autoReload {false};
     //mutable QStack<TActionWorker *> _processingSocketStack;
     //mutable QSet<TEpollSocket *> _garbageSockets;
-
-    TURingServer(int listeningSocket, QObject *parent = 0);  // Constructor
-
     friend class TEpollSocket;
-    T_DISABLE_COPY(TURingServer)
-    T_DISABLE_MOVE(TURingServer)
+    T_DISABLE_COPY(TUringServer)
+    T_DISABLE_MOVE(TUringServer)
 };
 
 

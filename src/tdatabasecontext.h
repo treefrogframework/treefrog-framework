@@ -1,5 +1,6 @@
 #pragma once
-#include <QMap>
+//#include <QMap>
+#include <vector>
 #include <TSqlTransaction>
 #include <TGlobal>
 
@@ -12,6 +13,8 @@ class T_CORE_EXPORT TDatabaseContext {
 public:
     TDatabaseContext();
     virtual ~TDatabaseContext();
+    TDatabaseContext(TDatabaseContext &&) = default;
+    TDatabaseContext &operator=(TDatabaseContext &&) = default;
 
     QSqlDatabase &getSqlDatabase(int id = 0);
     TKvsDatabase &getKvsDatabase(Tf::KvsEngine engine);
@@ -31,14 +34,18 @@ protected:
     void releaseKvsDatabases();
     void releaseSqlDatabases();
 
-    QMap<int, TSqlTransaction> sqlDatabases;
-    QMap<int, TKvsDatabase> kvsDatabases;
+    // QMap<int, TSqlTransaction> sqlDatabases;
+    // QMap<int, TKvsDatabase> kvsDatabases;
+    //std::map<int, TSqlTransaction> sqlDatabases;
+    //std::map<int, TKvsDatabase> kvsDatabases;
+    std::vector<TSqlTransaction> sqlDatabases;
+    std::vector<TKvsDatabase> kvsDatabases;
 
 private:
     uint idleElapsed {0};
     TCache *cachep {nullptr};
 
     T_DISABLE_COPY(TDatabaseContext)
-    T_DISABLE_MOVE(TDatabaseContext)
+    //T_DISABLE_MOVE(TDatabaseContext)
 };
 

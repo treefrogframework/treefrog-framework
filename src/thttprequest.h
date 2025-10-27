@@ -10,12 +10,14 @@
 #include <TGlobal>
 #include <THttpRequestHeader>
 #include <TMultipartFormData>
+#include <memory>
 
 class TActionContext;
 class QIODevice;
 
 
-class T_CORE_EXPORT THttpRequestData : public QSharedData {
+//class T_CORE_EXPORT THttpRequestData : public QSharedData {
+class T_CORE_EXPORT THttpRequestData {
 public:
     THttpRequestData() { }
     THttpRequestData(const THttpRequestData &other);
@@ -34,11 +36,11 @@ public:
 class T_CORE_EXPORT THttpRequest {
 public:
     THttpRequest();
-    THttpRequest(const THttpRequest &other);
+    //THttpRequest(const THttpRequest &other);
     THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress, TActionContext *context);
     THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context);
     virtual ~THttpRequest();
-    THttpRequest &operator=(const THttpRequest &other);
+    //THttpRequest &operator=(const THttpRequest &other);
     THttpRequest(THttpRequest&&) = default;
     THttpRequest &operator=(THttpRequest &&) = default;
 
@@ -50,6 +52,7 @@ public:
     QString parameter(const QString &name) const;
     QVariantMap allParameters() const;
 
+    bool isEmpty() const { return d->header.isEmpty(); }
     bool hasQuery() const { return !d->queryItems.isEmpty(); }
     bool hasQueryItem(const QString &name) const;
     QString queryItemValue(const QString &name) const;
@@ -77,7 +80,7 @@ public:
     bool hasJson() const { return !d->jsonData.isNull(); }
     const QJsonDocument &jsonData() const { return d->jsonData; }
 
-    static QList<THttpRequest> generate(QByteArray &byteArray, const QHostAddress &address, TActionContext *context);
+    static THttpRequest generate(QByteArray &byteArray, const QHostAddress &address, TActionContext *context);
     static QList<QPair<QString, QString>> fromQuery(const QString &query);
 
 protected:
@@ -93,8 +96,10 @@ protected:
 private:
     void parseBody(const QByteArray &body, const THttpRequestHeader &header, TActionContext *context);
 
-    QSharedDataPointer<THttpRequestData> d;
-    QIODevice *bodyDevice {nullptr};
+    //QSharedDataPointer<THttpRequestData> d;
+    //QIODevice *bodyDevice {nullptr};
+    std::unique_ptr<THttpRequestData> d;
+    std::unique_ptr<QIODevice> bodyDevice;
 
     friend class TMultipartFormData;
 };

@@ -30,7 +30,7 @@ public:
     static QByteArray toMimeEncoded(const QString &input, const QByteArray &encoding = "UTF-8");
     static QByteArray toMimeEncoded(const QString &input, QStringConverter::Encoding encoding);
     static QString fromMimeEncoded(const QByteArray &mime);
-    static QByteArray getResponseReasonPhrase(int statusCode);
+    static QByteArray getResponseReasonPhrase(Tf::StatusCode statusCode);
     static QString trimmedQuotes(const QString &string);
     static QByteArray timeZone();
     static QByteArray toHttpDateTimeString(const QDateTime &dateTime);

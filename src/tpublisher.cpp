@@ -177,15 +177,23 @@ QObject *TPublisher::castToObject(TAbstractWebSocket *socket)
     QObject *obj = nullptr;
 
     switch (Tf::app()->multiProcessingModule()) {
-    case TWebApplication::Thread:
+    case TWebApplication::MultiProcessingModule::Thread:
         obj = dynamic_cast<TWebSocket *>(socket);
         break;
 
-    case TWebApplication::Epoll:
+    case TWebApplication::MultiProcessingModule::Epoll:
 #ifdef Q_OS_LINUX
         obj = dynamic_cast<TEpollWebSocket *>(socket);
 #else
         tFatal("Unsupported MPM: epoll");
+#endif
+        break;
+
+    case TWebApplication::MultiProcessingModule::Uring:
+#ifdef Q_OS_LINUX
+        tFatal("TODO TODO TODO");
+#else
+        tFatal("Unsupported MPM: uring");
 #endif
         break;
 

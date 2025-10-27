@@ -43,7 +43,7 @@ QString TViewHelper::linkTo(const QString &text, const QUrl &url, Tf::HttpMethod
     QString string("<a href=\"");
     string.append(url.toString(QUrl::FullyEncoded)).append("\"");
 
-    if (method == Tf::Post) {
+    if (method == Tf::HttpMethod::Post) {
         string.append(" onclick=\"");
         if (!jsCondition.isEmpty()) {
             string.append("if (").append(jsCondition).append(") { ");
@@ -177,7 +177,7 @@ QString TViewHelper::formTag(const QUrl &url, Tf::HttpMethod method, bool multip
     }
 
     string += " method=";
-    string += (method == Tf::Post) ? "\"post\"" : "\"get\"";
+    string += (method == Tf::HttpMethod::Post) ? "\"post\"" : "\"get\"";
 
     string.append(attributes.toString()).append(">").append(inputAuthenticityTag());
     endTags << endTag("form");

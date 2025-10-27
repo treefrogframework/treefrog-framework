@@ -271,9 +271,9 @@ THttpResponseHeader::THttpResponseHeader(const QByteArray &str) :
   Sets the status code to \a code, the reason phrase to \a text and
   the protocol-version to \a majorVer and \a minorVer.
 */
-void THttpResponseHeader::setStatusLine(int code, const QByteArray &text, int majorVer, int minorVer)
+void THttpResponseHeader::setStatusLine(Tf::StatusCode code, const QByteArray &text, int majorVer, int minorVer)
 {
-    _statusCode = code;
+    _statusCode = (int)code;
     _reasonPhrase = text;
     THttpHeader::_majorVersion = majorVer;
     THttpHeader::_minorVersion = minorVer;

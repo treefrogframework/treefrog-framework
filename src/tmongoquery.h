@@ -10,8 +10,10 @@ class TMongoDriver;
 class T_CORE_EXPORT TMongoQuery {
 public:
     TMongoQuery(const QString &collection);
-    TMongoQuery(const TMongoQuery &other);
+    //TMongoQuery(const TMongoQuery &other);
+    TMongoQuery(TMongoQuery &&) = default;
     virtual ~TMongoQuery() { }
+    TMongoQuery &operator=(TMongoQuery &&) = default;
 
     int limit() const;
     void setLimit(int limit);
@@ -33,7 +35,7 @@ public:
     int count(const QVariantMap &criteria = QVariantMap());
     QString lastErrorString() const;
 
-    TMongoQuery &operator=(const TMongoQuery &other);
+    //TMongoQuery &operator=(const TMongoQuery &other);
 
 private:
     TMongoDriver *driver();
@@ -42,12 +44,13 @@ private:
 private:
     TMongoQuery(Tf::KvsEngine engine, const QString &collection);
 
-    TKvsDatabase _database;
+    TKvsDatabase &_database;
     QString _collection;
     int _queryLimit {0};
     int _queryOffset {0};
 
     friend class TCacheMongoStore;
+    T_DISABLE_COPY(TMongoQuery)
 };
 
 

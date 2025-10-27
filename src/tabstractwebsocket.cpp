@@ -365,7 +365,7 @@ parse_end:
 void TAbstractWebSocket::sendHandshakeResponse()
 {
     THttpResponseHeader response;
-    response.setStatusLine(Tf::SwitchingProtocols, THttpUtility::getResponseReasonPhrase(Tf::SwitchingProtocols));
+    response.setStatusLine(Tf::StatusCode::SwitchingProtocols, THttpUtility::getResponseReasonPhrase(Tf::StatusCode::SwitchingProtocols));
     response.setRawHeader("Upgrade", "websocket");
     response.setRawHeader("Connection", "Upgrade");
 
@@ -382,18 +382,26 @@ TAbstractWebSocket *TAbstractWebSocket::searchWebSocket(int sid)
     TAbstractWebSocket *sock = nullptr;
 
     switch (Tf::app()->multiProcessingModule()) {
-    case TWebApplication::Thread:
+    case TWebApplication::MultiProcessingModule::Thread:
         sock = TWebSocket::searchSocket(sid);
         break;
 
-    case TWebApplication::Epoll: {
+    case TWebApplication::MultiProcessingModule::Epoll:
 #ifdef Q_OS_LINUX
         sock = TEpollWebSocket::searchSocket(sid);
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
         break;
-    }
+
+    case TWebApplication::MultiProcessingModule::Uring:
+#ifdef Q_OS_LINUX
+        tFatal("Todo implementation");
+        // TODO TODO
+#else
+        tFatal("Unsupported MPM: uring");
+#endif
+        break;
 
     default:
         break;

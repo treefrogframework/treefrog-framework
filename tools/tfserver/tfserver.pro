@@ -50,7 +50,7 @@ windows {
   # for linux
   linux-* {
     # -lunwind
-    LIBS += -lrt $$system("pkg-config --libs libunwind 2>/dev/null")
+    LIBS += -lrt -luring $$system("pkg-config --libs libunwind 2>/dev/null")
   }
 }
 

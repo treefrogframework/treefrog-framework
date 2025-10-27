@@ -34,6 +34,7 @@ public:
     QByteArray cookie(const QString &name) const;
     QList<TCookie> cookies() const;
     virtual QByteArray toByteArray() const;
+    inline bool isEmpty() const { return THttpHeader::isEmpty() && _reqUri.isEmpty(); }
 
 private:
     QByteArray _reqMethod;
@@ -47,8 +48,8 @@ public:
     THttpResponseHeader(const THttpResponseHeader &other);
     THttpResponseHeader(const QByteArray &str);
 
-    int statusCode() const { return _statusCode; }
-    void setStatusLine(int code, const QByteArray &text = QByteArray(), int majorVer = 1, int minorVer = 1);
+    Tf::StatusCode statusCode() const { return static_cast<Tf::StatusCode>(_statusCode); }
+    void setStatusLine(Tf::StatusCode code, const QByteArray &text = QByteArray(), int majorVer = 1, int minorVer = 1);
     virtual QByteArray toByteArray() const;
     THttpResponseHeader &operator=(const THttpResponseHeader &other);
     void clear();

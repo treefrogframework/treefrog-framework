@@ -23,10 +23,11 @@ class T_CORE_EXPORT TWebApplication
 {
     Q_OBJECT
 public:
-    enum MultiProcessingModule {
+    enum class MultiProcessingModule {
         Invalid = 0,
-        Thread = 1,
-        Epoll = 2,
+        Thread,
+        Epoll,
+        Uring,
     };
 
     TWebApplication(int &argc, char **argv);
@@ -109,7 +110,7 @@ private:
     QBasicTimer _timer;
     QMap<QString, QVariantMap> _configMap;
     int _cacheSqlDbIndex {-1};
-    MultiProcessingModule _mpmTemp {Invalid};
+    MultiProcessingModule _mpmTemp {MultiProcessingModule::Invalid};
 
     static void resetSignalNumber();
 

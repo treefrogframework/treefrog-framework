@@ -117,11 +117,11 @@ TKvsDatabaseData TKvsDatabase::settings(const QString &connectionName)
 }
 
 
-TKvsDatabase::TKvsDatabase(const TKvsDatabase &other) :
-    connectName(other.connectName),
-    drv(other.drv)
-{
-}
+// TKvsDatabase::TKvsDatabase(const TKvsDatabase &other) :
+//     connectName(other.connectName),
+//     drv(other.drv)
+// {
+// }
 
 
 TKvsDatabase::TKvsDatabase(const QString &connectionName, TKvsDriver *driver) :
@@ -138,12 +138,12 @@ TKvsDatabase::TKvsDatabase(const TKvsDatabaseData &data) :
 }
 
 
-TKvsDatabase &TKvsDatabase::operator=(const TKvsDatabase &other)
-{
-    connectName = other.connectName;
-    drv = other.drv;
-    return *this;
-}
+// TKvsDatabase &TKvsDatabase::operator=(const TKvsDatabase &other)
+// {
+//     connectName = other.connectName;
+//     drv = other.drv;
+//     return *this;
+// }
 
 
 bool TKvsDatabase::isValid() const

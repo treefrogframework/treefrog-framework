@@ -403,8 +403,8 @@ linux-* {
   SOURCES += turingcoroutine_linux.cpp
   HEADERS += tactionworker.h
   SOURCES += tactionworker.cpp
-  HEADERS += tactionroutine.h
-  SOURCES += tactionroutine.cpp
+#  HEADERS += tactionroutine.h
+#  SOURCES += tactionroutine.cpp
   HEADERS += tepoll.h
   SOURCES += tepoll.cpp
   HEADERS += tepollsocket.h

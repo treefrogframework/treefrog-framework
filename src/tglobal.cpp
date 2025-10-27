@@ -121,19 +121,33 @@ TCache *Tf::cache() noexcept
 
 TAbstractController *Tf::currentController()
 {
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Thread) {
+    switch (Tf::app()->multiProcessingModule()) {
+    case TWebApplication::MultiProcessingModule::Thread: {
         TActionThread *context = dynamic_cast<TActionThread *>(QThread::currentThread());
         if (Q_LIKELY(context)) {
             return context->currentController();
         }
-    }
+        break; }
 
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Epoll) {
+    case TWebApplication::MultiProcessingModule::Epoll:
 #ifdef Q_OS_LINUX
         return TMultiplexingServer::instance()->currentController();
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
+        break;
+
+    case TWebApplication::MultiProcessingModule::Uring:
+#ifdef Q_OS_LINUX
+        tFatal("Error TODO TODO");
+        // TODO TODO TODO TODO TODO TODO TODO
+#else
+        tFatal("Unsupported MPM: uring");
+#endif
+        break;
+
+    default:
+        break;
     }
 
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
@@ -144,7 +158,7 @@ TDatabaseContext *Tf::currentDatabaseContext()
 {
     TDatabaseContext *context;
 
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Epoll) {
+    if (Tf::app()->multiProcessingModule() == TWebApplication::MultiProcessingModule::Epoll) {
 #ifdef Q_OS_LINUX
         context = TMultiplexingServer::instance()->currentWorker();
         if (context) {
