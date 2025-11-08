@@ -3,9 +3,13 @@
 #include <QFile>
 #include <coroutine>
 
+class TUringCoroutine;
+struct Task;
 
+/*
 struct Task {
     struct promise_type {
+        TUringCoroutine *self {nullptr};
         Task get_return_object() { return {}; }
         std::suspend_never initial_suspend() noexcept { return {}; }
         std::suspend_never final_suspend() noexcept { return {}; }
@@ -13,23 +17,22 @@ struct Task {
         void unhandled_exception() { std::terminate(); }
     };
 };
-
+*/
 
 class TUringCoroutine : public TActionContext {
 public:
-    TUringCoroutine() : TActionContext() {}
-    virtual ~TUringCoroutine() {}
+    TUringCoroutine(int socketDescriptor) :
+        TActionContext(), _sd(socketDescriptor) {}
+    virtual ~TUringCoroutine();
 
-    Task start(int socketDescriptor);
-    // static TActionRoutine *currentProcess();
-    // static bool isChildProcess();
-    //QByteArray response() const { return _response; }
-    //static TActionContext *currentContext();
+    Task start();
+    //static TUringCoroutine *currentRoutine();
 
 protected:
     virtual int64_t writeResponse(THttpResponseHeader &, QIODevice *) override;
 
 private:
+    int _sd {0};
     QByteArray _response;
-    QFile _file;
+    QString _fileName;
 };

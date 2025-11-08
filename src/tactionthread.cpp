@@ -132,9 +132,6 @@ void TActionThread::run()
                 goto socket_cleanup;
             }
 
-            // for (auto &req : requests) {
-            //     TActionContext::execute(req);
-            // }
             TActionContext::execute(request);
 
             if (keepAliveTimeout() == 0) {

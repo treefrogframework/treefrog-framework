@@ -237,6 +237,7 @@ inline const TAbstractController *constCurrentController() { return currentContr
 T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
 T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id) noexcept;
 T_CORE_EXPORT QMap<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
+//T_CORE_EXPORT std::map<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
 
 // LZ4 lossless compression algorithm
 T_CORE_EXPORT QByteArray lz4Compress(const char *data, int nbytes, int compressionLevel = 1) noexcept;

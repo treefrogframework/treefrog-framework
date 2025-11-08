@@ -94,7 +94,7 @@ void TSqlDatabasePool::init()
     lastCachedTime = new TAtomic<uint>[Tf::app()->sqlDatabaseSettingsCount()];
     availableNames = new QStack<QString>[Tf::app()->sqlDatabaseSettingsCount()];
     bool aval = false;
-    tSystemDebug("SQL database available");
+    tSystemDebug("SQL database available. maxConnects:{}", maxConnects);
 
     // Adds databases previously
     for (int j = 0; j < Tf::app()->sqlDatabaseSettingsCount(); ++j) {

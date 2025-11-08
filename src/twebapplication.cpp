@@ -432,6 +432,10 @@ int TWebApplication::maxNumberOfThreadsPerAppServer() const
             maxNum = 128;
             break;
 
+        case MultiProcessingModule::Uring:
+            maxNum = 128;  // TODO TODO TODO
+            break;
+
         default:
             break;
         }

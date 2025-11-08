@@ -3,6 +3,8 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <TGlobal>
+#include <TSystemGlobal>
+#include <memory>
 
 
 class T_CORE_EXPORT TAccessLog {
@@ -23,15 +25,10 @@ public:
 class T_CORE_EXPORT TAccessLogger {
 public:
     TAccessLogger();
-    TAccessLogger(const TAccessLogger &other) = delete;
-    TAccessLogger(TAccessLogger &&other);
-    ~TAccessLogger();
-    TAccessLogger &operator=(const TAccessLogger &other) = delete;
-    TAccessLogger &operator=(TAccessLogger &&other);
+    TAccessLogger(TAccessLogger &&other) = default;
+    TAccessLogger &operator=(TAccessLogger &&other) = default;
 
-    void open();
     void write();
-    void close();
 
     void setTimestamp(const QDateTime &timestamp)
     {
@@ -73,7 +70,7 @@ public:
     void setResponseBytes(int bytes)
     {
         if (_accessLog) {
-            _accessLog->responseBytes = bytes;
+           _accessLog->responseBytes = bytes;
         }
     }
 
@@ -83,6 +80,8 @@ public:
     }
 
 private:
-    TAccessLog *_accessLog {nullptr};
+    std::unique_ptr<TAccessLog> _accessLog;
     QElapsedTimer _timer;
+
+    T_DISABLE_COPY(TAccessLogger)
 };

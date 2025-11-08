@@ -44,7 +44,6 @@ int64_t TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *bod
     if (!TActionContext::stopped.load()) {
         _socket->sendData(header.toByteArray(), body, autoRemove, std::move(accessLogger));
     }
-    accessLogger.close();
     return 0;
 }
 

@@ -19,42 +19,12 @@
 #include <TApplicationServerBase>
 #include <TThreadApplicationServer>
 #include <TWebApplication>
-//#include <sys/eventfd.h>
-//#include <sys/socket.h>
-//#include <netinet/in.h>
 #include <netinet/tcp.h>
-//#include <arpa/inet.h>
-//#include <unistd.h>
-//#include <thread>
-//#include <coroutine>
-//#include <iostream>
-//#include <string>
-//#include <functional>
-//#include <cstring>
-//#include <print>
+
 
 constexpr int SEND_BUF_SIZE = 8 * 1024;
 constexpr int RECV_BUF_SIZE = 16 * 1024;
-
-//namespace {
-
-// TUringServer *uringServer = nullptr;
-
-// void cleanup()
-// {
-//     delete uringServer;
-//     uringServer = nullptr;
-// }
-// }
-
-
-// void TUringServer::instantiate(int listeningSocket)
-// {
-//     if (!uringServer) {
-//         uringServer = new TUringServer(listeningSocket);
-//         qAddPostRoutine(::cleanup);
-//     }
-// }
+constexpr int SPLICE_LEN = 1024 * 1024;
 
 
 TUringServer *TUringServer::instance(int listeningSocket)
@@ -69,11 +39,6 @@ TUringServer *TUringServer::instance(int listeningSocket)
         instance = std::make_unique<TUringServer>(listeningSocket);
     });
     return instance.get();
-
-    // if (Q_UNLIKELY(!uringServer)) {
-    //     tFatal("Call TUringServer::instantiate() function first");
-    // }
-    // return uringServer;
 }
 
 
@@ -143,116 +108,32 @@ bool TUringServer::start(bool debugMode)
     return true;
 }
 
-/*
-int TUringServer::processEvents(int maxMilliSeconds)
-{
-    TEpoll::instance()->dispatchEvents();
 
-    // Poll Sending/Receiving/Incoming
-    maxMilliSeconds = std::max(maxMilliSeconds, 0);
-    int res = TEpoll::instance()->wait(maxMilliSeconds);
-    if (res < 0) {
-        return res;
-    }
-
-    TEpollSocket *sock;
-    while ((sock = TEpoll::instance()->next())) {
-
-        int cltfd = sock->socketDescriptor();
-        if (cltfd == listenSocket && cltfd > 0) {
-            if (_processingSocketStack.count() > 64) {  // Not accept in deep context
-                continue;
-            }
-
-            TEpollSocket *acceptedSock = TEpollHttpSocket::accept(listenSocket);
-            if (Q_LIKELY(acceptedSock)) {
-                if (!acceptedSock->watch()) {
-                    acceptedSock->dispose();
-                }
-            }
-            continue;
-
-        } else {
-            if (TEpoll::instance()->canSend()) {
-                if (sock->state() == Tf::SocketState::Connecting) {
-                    sock->_state = Tf::SocketState::Connected;
-                    continue;
-                }
-
-                // Send data
-                int len = TEpoll::instance()->send(sock);
-                if (Q_UNLIKELY(len < 0)) {
-                    TEpoll::instance()->deletePoll(sock);
-                    sock->dispose();
-                    continue;
-                }
-            }
-
-            if (TEpoll::instance()->canReceive()) {
-                try {
-                    // Receive data
-                    int len = TEpoll::instance()->recv(sock);
-                    if (Q_UNLIKELY(len < 0)) {
-                        TEpoll::instance()->deletePoll(sock);
-                        sock->dispose();
-                        continue;
-                    }
-                } catch (ClientErrorException &e) {
-                    Tf::warn("Caught ClientErrorException: status code:{}", e.statusCode());
-                    tSystemWarn("Caught ClientErrorException: status code:{}", e.statusCode());
-                    TEpoll::instance()->deletePoll(sock);
-                    sock->dispose();
-                    continue;
-                }
-
-                if (sock->canReadRequest()) {
-                    _processingSocketStack.push(sock);
-                    sock->process();
-                    _processingSocketStack.pop();
-                }
-            }
-        }
-    }
-
-    // Garbage
-    if (!_garbageSockets.isEmpty()) {
-        auto set = _garbageSockets;
-        for (auto ptr : set) {
-            if (!ptr->isProcessing()) {
-                delete ptr;  // Remove it from garbageSockets-set in the destructor
-            }
-        }
-    }
-
-    return res;
-}
-*/
-
+std::mutex mtx;  // グローバルミューテックス
 
 void TUringServer::run()
 {
     setNoDeleyOption(_listenSocket);
 
-    // if (newerLibraryExists()) {
-        //     tSystemInfo("Detect new library of application. Reloading the libraries.");
-        //     Tf::app()->exit(127);
-        // }
-
-
-    //std::cout << "# Event Loop\n";
-    //_stop = false;
-
     TAwaitBase accepter;
     instance()->addAccept(_listenSocket, &accepter);
 
-    struct __kernel_timespec ts {
+    __kernel_timespec ts = {
         .tv_sec = 2,   // 2秒
         .tv_nsec = 0
     };
 
     // --- イベントループ ---
     while (!_stopped) {
-        tSystemDebug("-----------------------------------");
+        if (_garbage.size() > 0) {
+            // Garbage collection
+            std::lock_guard<std::mutex> lock(mtx);
+            for (auto it = _garbage.begin(); it != _garbage.end(); ++it) {
+                delete *it;
+            }
+            _garbage.clear();
+        }
+
         io_uring_cqe* cqe = nullptr;
         int res = io_uring_wait_cqe_timeout(&_ring, &cqe, &ts);
         Tf::ScopeExitFunction seen([&]{ if (cqe) io_uring_cqe_seen(&_ring, cqe); });
@@ -278,12 +159,12 @@ void TUringServer::run()
         if (user_data) {
             auto* await = static_cast<TAwaitBase*>(user_data);
             if (await == &accepter) {
-                // マルチショット accept 結果
+                // Accepts
                 if (cqe->res >= 0) {
-                    // コルーチンを起動
-                    //handleClient(cqe->res);
-                    auto routine = std::make_unique<TUringCoroutine>();
-                    routine->start(cqe->res);
+                    // Starts coroutine
+                    auto *coro = new TUringCoroutine(cqe->res);
+                    Task task = coro->start();
+                    task.handle.promise().self = coro;
                     await->clear();  // clear
                 } else {
                     int err = -cqe->res;
@@ -296,8 +177,7 @@ void TUringServer::run()
                     case EINVAL:
                     case EBADF:
                     case ENOTSOCK:
-                        // listen_fd が閉じられた → 終了処理
-                        tSystemError("Listen socket invalid, terminating.  error: {}\n", strerror(err));
+                        tSystemError("Listen socket invalid, terminating.  error: {}", strerror(err));
                         stop();
                         break;
                     default:
@@ -308,22 +188,22 @@ void TUringServer::run()
                 }
 
                 if (!(cqe->flags & IORING_CQE_F_MORE)) {
-                    //std::print(std::cerr, "flags & IORING_CQE_F_MORE\n");
                     if (addAccept(_listenSocket, &accepter) < 0) {
                         tSystemError("addAccept error: {}", strerror(errno));
                     }
                 }
             } else {
-                if (!await->_cqeres) {
-                    await->_cqeres = cqe->res;
-                }
-                // recv/send
-                //std::print("cqe->res:{}  cqe->flags: {}\n", await->_cqeres, cqe->flags);
-                //std::print("#[Loop] resume  res:{}\n", await->_cqeres);
-                if (--await->_sqecounter == 0) {
-                    if (await->_handle && !await->_handle.done()) {
-                        //std::print("[Loop] resume  res:{}\n", await->_cqeres);
+                //tSystemDebug("cqe->res:{}  cqe->flags: {}", await->_cqeres, cqe->flags);
+                if (cqe->flags != IORING_CQE_F_MORE) {
+                    if (!await->_cqeres) {
+                        await->_cqeres = cqe->res;
+                        await->_cqeflags = cqe->flags;
+                    }
+
+                    if (--await->_sqecounter == 0 && await->_handle && !await->_handle.done()) {
+                        _currentCoroutine = await->_handle.promise().self;
                         await->_handle.resume();
+                        _currentCoroutine = nullptr;
                     }
                 }
             }
@@ -362,14 +242,9 @@ bool TUringServer::isAutoReloadingEnabled()
 
 TActionContext *TUringServer::currentContext() const
 {
-    return nullptr;
-//    return TURingCoroutine::currentContext();
-
-//     // if (!_processingSocketStack.isEmpty()) {
-//     //     auto *worker = _processingSocketStack.top();
-//     //     return worker;
-//     // }
-//     // return nullptr;
+//     return _currentRoutine;
+//     //return TUringCoroutine::currentRoutine();
+    return _currentCoroutine;
 }
 
 
@@ -393,12 +268,16 @@ void TUringServer::timerEvent(QTimerEvent *event)
 }
 */
 
-// アクセプト
+// Accept
 int TUringServer::addAccept(int fd, TAwaitBase* await)
 {
-    //std::print("addAccept  fd: {}\n", fd);
     io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
-    io_uring_prep_multishot_accept(sqe, fd, nullptr, nullptr, (SOCK_CLOEXEC | SOCK_NONBLOCK)); // マルチショット
+    if (!sqe) {
+        tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+        return -1;
+    }
+
+    io_uring_prep_accept(sqe, fd, nullptr, nullptr, (SOCK_CLOEXEC | SOCK_NONBLOCK));
     if (await) {
         await->clear();
         io_uring_sqe_set_data(sqe, await);
@@ -409,8 +288,12 @@ int TUringServer::addAccept(int fd, TAwaitBase* await)
 // 受信
 int TUringServer::addRecv(int fd, void* buf, size_t len, int msecs, TAwaitBase* await)
 {
-    //std::print("addRecv  fd: {}\n", fd);
     io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
+    if (!sqe) {
+        tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+        return -1;
+    }
+
     io_uring_prep_recv(sqe, fd, buf, len, 0);
     if (await) {
         await->clear();
@@ -420,9 +303,11 @@ int TUringServer::addRecv(int fd, void* buf, size_t len, int msecs, TAwaitBase* 
     if (msecs > 0) {
         sqe->flags |= IOSQE_IO_LINK;
         io_uring_sqe* sqe2 = io_uring_get_sqe(&_ring);
-        __kernel_timespec ts;
-        ts.tv_sec  = msecs / 1000;
-        ts.tv_nsec = (msecs % 1000) * 1'000'000;
+        if (!sqe2) {
+            tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+            return -1;
+        }
+        __kernel_timespec ts = { .tv_sec  = msecs / 1000, .tv_nsec = (msecs % 1000) * 1'000'000 };
         io_uring_prep_link_timeout(sqe2, &ts, 0);
         if (await) {
             await->_sqecounter++;
@@ -432,10 +317,34 @@ int TUringServer::addRecv(int fd, void* buf, size_t len, int msecs, TAwaitBase* 
     return io_uring_submit(&_ring);
 }
 
+//
+// Prepare a send request
+//
 int TUringServer::addSend(int fd, const void* buf, size_t len, TAwaitBase* await)
 {
-    //std::print("addSend  fd: {}\n", fd);
     io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
+    if (!sqe) {
+        tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+        return -1;
+    }
+    io_uring_prep_send(sqe, fd, buf, len, 0);
+    if (await) {
+        await->clear();
+        io_uring_sqe_set_data(sqe, await);
+    }
+    return io_uring_submit(&_ring);
+}
+
+//
+// Prepare a zerocopy send request
+//
+int TUringServer::addSendZc(int fd, const void* buf, size_t len, TAwaitBase* await)
+{
+    io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
+    if (!sqe) {
+        tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+        return -1;
+    }
     io_uring_prep_send_zc(sqe, fd, buf, len, 0, 0);
     if (await) {
         await->clear();
@@ -444,27 +353,55 @@ int TUringServer::addSend(int fd, const void* buf, size_t len, TAwaitBase* await
     return io_uring_submit(&_ring);
 }
 
-// int addPoll(int fd, int mask, int msecs, TAwaitBase* await)
-// {
-//     io_uring_sqe* sqe1 = io_uring_get_sqe(&_ring);
-//     io_uring_prep_poll_add(sqe1, fd, mask);
-//     io_uring_sqe_set_data(sqe1, await);
+/*
+int TUringServer::addSendFile(int sd, int fd, int offset, size_t slice_len, TAwaitBase* await)
+{
+    int pipefd[2];
+    if (pipe2(pipefd, O_NONBLOCK | O_CLOEXEC) < 0) {
+        tSystemError("pipe2 error [{}:{}]", __FILE__, __LINE__);
+        return -1;
+    }
 
-//     if (msecs > 0) {
-//         sqe1->flags |= IOSQE_IO_LINK;
-//         io_uring_sqe* sqe2 = io_uring_get_sqe(&_ring);
-//         __kernel_timespec ts;
-//         ts.tv_sec  = msecs / 1000;
-//         ts.tv_nsec = (msecs % 1000) * 1'000'000;
-//         io_uring_prep_link_timeout(sqe2, &ts, 0);
-//         io_uring_sqe_set_data(sqe2, await);
-//         if (await) {
-//             await->_sqecounter = 2;
-//         }
+    // 1. splice: file -> pipe
+    io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
+    io_uring_prep_splice(sqe, fd, offset, pipefd[1], -1, slice_len, 0);
+    if (await) {
+        await->clear();
+        io_uring_sqe_set_data(sqe, await);
+    }
+
+    sqe->flags |= IOSQE_IO_LINK;
+    // 2. splice: pipe -> sd
+    io_uring_sqe *sqe2 = io_uring_get_sqe(&_ring);
+    io_uring_prep_splice(sqe, pipefd[0], -1, sd, -1, slice_len, 0);
+    if (await) {
+        await->_sqecounter++;
+        io_uring_sqe_set_data(sqe2, await);
+    }
+    return io_uring_submit(&_ring);
+}
+*/
+
+
+// int TUringServer::addSendFile(int sd, int fd, int offset, size_t slice_len, TAwaitBase* await)
+// {
+//     size_t file_size = lseek(fd, 0, SEEK_END);
+//     if (file_size < 0) {
+//         tSystemError("lseek error: {}\n", strerror(err));
+//         return -1;
+//     }
+//     lseek(fd, 0, SEEK_SET);
+
+//     void *mapped = mmap(nullptr, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
+//     if (mapped == MAP_FAILED) {
+//         tSystemError("mmap error: {}\n", strerror(err));
+//         return -1;
 //     }
 
-//     return io_uring_submit(&_ring);
+//     return addSend(sd, const void* bu, size_t slice_len, await);
 // }
+
+
 
 // 状態変数待ち
 int TUringServer::addEvent(int fd, TAwaitBase* await)
@@ -476,4 +413,12 @@ int TUringServer::addEvent(int fd, TAwaitBase* await)
         io_uring_sqe_set_data(sqe, await);
     }
     return io_uring_submit(&_ring);
+}
+
+
+
+void TUringServer::registerForGC(TUringCoroutine *coroutine)
+{
+    std::lock_guard<std::mutex> lock(mtx);  // 排他
+    _garbage.push_back(coroutine);
 }

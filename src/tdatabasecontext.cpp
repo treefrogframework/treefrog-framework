@@ -39,6 +39,13 @@ TDatabaseContext::TDatabaseContext()
     // sqlDatabases(),
     // kvsDatabases()
 {
+    if (sqlDatabases.size() < (size_t)Tf::app()->sqlDatabaseSettingsCount()) {
+        sqlDatabases.resize(Tf::app()->sqlDatabaseSettingsCount());
+    }
+
+    if (kvsDatabases.size() < (size_t)Tf::app()->sqlDatabaseSettingsCount()) {
+        kvsDatabases.resize(Tf::app()->sqlDatabaseSettingsCount());
+    }
 }
 
 
@@ -51,20 +58,17 @@ TDatabaseContext::~TDatabaseContext()
 
 QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
 {
-tSystemDebug("getSqlDatabase #0");
-    if (sqlDatabases.size() < (size_t)Tf::app()->sqlDatabaseSettingsCount()) {
-        sqlDatabases.resize(Tf::app()->sqlDatabaseSettingsCount());
-    }
+    // if (sqlDatabases.size() < (size_t)Tf::app()->sqlDatabaseSettingsCount()) {
+    //     sqlDatabases.resize(Tf::app()->sqlDatabaseSettingsCount());
+    // }
 
     if (id < 0) {
         return invalidDb;  // invalid database
     }
-tSystemDebug("getSqlDatabase #1");
 
     if (id >= Tf::app()->sqlDatabaseSettingsCount()) {
         throw RuntimeException("error database id", __FILE__, __LINE__);
     }
-tSystemDebug("getSqlDatabase #2");
 
     TSqlTransaction &tx = sqlDatabases[id];
     QSqlDatabase &db = tx.database();
@@ -72,7 +76,6 @@ tSystemDebug("getSqlDatabase #2");
     if (db.isValid() && tx.isActive()) {
         return db;
     }
-tSystemDebug("getSqlDatabase #3");
 
     int n = 0;
     do {
@@ -86,7 +89,6 @@ tSystemDebug("getSqlDatabase #3");
         TSqlDatabasePool::instance()->pool(db, true);
     } while (++n < 2);  // try two times
 
-    tSystemDebug("getSqlDatabase #4");
     idleElapsed = (uint)std::time(nullptr);
     return db;
 }
@@ -101,10 +103,6 @@ void TDatabaseContext::releaseSqlDatabases()
 
 TKvsDatabase &TDatabaseContext::getKvsDatabase(Tf::KvsEngine engine)
 {
-    if (kvsDatabases.size() < (size_t)Tf::app()->sqlDatabaseSettingsCount()) {
-        kvsDatabases.resize(Tf::app()->sqlDatabaseSettingsCount());
-    }
-
     TKvsDatabase &db = kvsDatabases[(int)engine];
     if (!db.isValid()) {
         db = TKvsDatabasePool::instance()->database(engine);

@@ -21,6 +21,7 @@
 #ifdef Q_OS_LINUX
 #include <TMultiplexingServer>
 #include <TActionWorker>
+#include "turingserver.h"
 #endif
 #ifdef Q_OS_WIN
 #define NOMINMAX
@@ -139,8 +140,7 @@ TAbstractController *Tf::currentController()
 
     case TWebApplication::MultiProcessingModule::Uring:
 #ifdef Q_OS_LINUX
-        tFatal("Error TODO TODO");
-        // TODO TODO TODO TODO TODO TODO TODO
+        return TUringServer::instance()->currentController();
 #else
         tFatal("Unsupported MPM: uring");
 #endif
@@ -161,6 +161,22 @@ TDatabaseContext *Tf::currentDatabaseContext()
     if (Tf::app()->multiProcessingModule() == TWebApplication::MultiProcessingModule::Epoll) {
 #ifdef Q_OS_LINUX
         context = TMultiplexingServer::instance()->currentWorker();
+        if (context) {
+            return context;
+        }
+
+        context = Tf::app()->mainDatabaseContext();
+        if (context) {
+            return context;
+        }
+#else
+        tFatal("Unsupported MPM: epoll");
+#endif
+    }
+
+    if (Tf::app()->multiProcessingModule() == TWebApplication::MultiProcessingModule::Uring) {
+#ifdef Q_OS_LINUX
+        context = TUringServer::instance()->currentContext();
         if (context) {
             return context;
         }
@@ -195,6 +211,7 @@ QSqlDatabase &Tf::currentSqlDatabase(int id) noexcept
 
 
 QMap<QByteArray, std::function<QObject *()>> *Tf::objectFactories() noexcept
+//std::map<QByteArray, std::function<QObject *()>> *Tf::objectFactories() noexcept
 {
     static QMap<QByteArray, std::function<QObject *()>> objectFactoryMap;
     return &objectFactoryMap;

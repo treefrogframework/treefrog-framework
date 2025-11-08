@@ -1,6 +1,5 @@
 #include "turingcoroutine.h"
 #include "turingserver.h"
-//#include "tactionroutine.h"
 #include "TSystemGlobal"
 #include "TAppSettings"
 #include "THttpRequest"
@@ -9,8 +8,13 @@
 #include <memory>
 #include <cstddef>
 #include <sys/eventfd.h>
+#include <sys/mman.h>
+
 
 constexpr uint READ_THRESHOLD_LENGTH = 4 * 1024 * 1024;  // bytes
+//constexpr uint SEND_CHUNK_LENGTH = 16 * 1024;  // bytes
+
+static TUringCoroutine *gCurrentRoutine;
 
 
 class AsyncRecv : public TAwaitBase {
@@ -18,9 +22,8 @@ public:
     AsyncRecv(int fd, void* buffer, size_t length, int msecs) :
         _fd(fd), _buf(buffer), _len(length), _msecs(msecs) { }
 
-    void await_suspend(std::coroutine_handle<> handle)
+    void await_suspend(std::coroutine_handle<Task::promise_type> handle)
     {
-        //std::print("== AsyncRecv \n");
         _handle = handle;
         if (TUringServer::instance()->addRecv(_fd, _buf, _len, _msecs, this) < 0) {
             tSystemError("addRecv error: {}", strerror(errno));
@@ -42,32 +45,63 @@ public:
     AsyncSend(int fd, const void *buf, size_t len) :
         _fd(fd), _buf(buf), _len(len) { }
 
+    void await_suspend(std::coroutine_handle<Task::promise_type> handle)
+    {
+        _handle = handle;
+        int res = TUringServer::instance()->addSendZc(_fd, _buf, _len, this);
+        // res = TUringServer::instance()->addSend(_fd, _buf, _len, this);
+
+        if (res < 0) {
+            tSystemError("addSend error: {}", strerror(errno));
+        }
+    }
+
+    inline int await_resume()
+    {
+        tSystemDebug("await_resume : _len:{} _cqeflags:{} _cqeres:{}", _len, _cqeflags, _cqeres);
+        return (_cqeflags == IORING_CQE_F_NOTIF) ? _len : _cqeres;
+    }
+
+private:
+    int _fd {0};
+    const void* _buf {nullptr};
+    size_t _len {0};
+    //bool _zero_copy {true};
+};
+
+/*
+class AsyncSendFile : public TAwaitBase {
+public:
+    AsyncSendFile(int sd, int fd, int offset, size_t sliceLen) :
+        _sd(sd), _fd(fd), _offset(offset), _sliceLen(sliceLen) { }
+
     void await_suspend(std::coroutine_handle<> handle)
     {
         //std::print("== AsyncSend \n");
         _handle = handle;
-        if (TUringServer::instance()->addSend(_fd, _buf, _len, this) < 0) {
-            tSystemError("addSend error: {}", strerror(errno));
+        if (TUringServer::instance()->addSendFile(_sd, _fd, _offset, _sliceLen, this) < 0) {
+            tSystemError("AsyncSendFile error: {}", strerror(errno));
         }
     }
 
     inline int await_resume() { return _cqeres; }
 
 private:
+    int _sd {0};
     int _fd {0};
-    const void* _buf {nullptr};
-    size_t _len {0};
+    int _offset {0};
+    size_t _sliceLen {0};
 };
-
+*/
 
 template <typename R>
 class AsyncFunction : public TAwaitBase {
 public:
-    explicit AsyncFunction(std::function<R()> f) :
-        TAwaitBase(), _func(std::move(f)) {}
+    explicit AsyncFunction(std::function<R()> f, TUringCoroutine *parent) :
+        TAwaitBase(parent), _func(std::move(f)) {}
     ~AsyncFunction() { if (_fd > 0) ::close(_fd); }
 
-    void await_suspend(std::coroutine_handle<> handle)
+    void await_suspend(std::coroutine_handle<Task::promise_type> handle)
     {
         _handle = handle;
         _fd = eventfd(0, (EFD_NONBLOCK | EFD_CLOEXEC));
@@ -106,51 +140,76 @@ private:
 };
 
 
-//QStack<TActionContext *> _processingContext;
-// QSet<TActionContext*> _activeContexts;
+class CurrentRoutineScope {
+public:
+    CurrentRoutineScope(TUringCoroutine *&slot, TUringCoroutine *now) :
+        _slot(slot), _prev(slot)
+    {
+        _slot = now;
+    }
+    ~CurrentRoutineScope() { _slot = _prev; }
+private:
+    TUringCoroutine *&_slot;
+    TUringCoroutine *_prev;
+};
 
-// TActionContext *TUringCoroutine::currentContext()
+
+TUringCoroutine::~TUringCoroutine()
+{
+    tSystemDebug("~TUringCoroutine: sd:{}", _sd);
+    if (_sd > 0) {
+        ::close(_sd);
+    }
+}
+
+
+// TUringCoroutine *TUringCoroutine::currentRoutine()
 // {
-//     return _activeContexts.
+//     // tSystemDebug("currentRoutine: {}", (uint64_t)gCurrentRoutine);
+//     // return gCurrentRoutine;
+//     return nullptr;
 // }
 
 
-Task TUringCoroutine::start(int sd)
+Task TUringCoroutine::start()
 {
     static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
     static int keepAlivetimeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
 
-    //_activeContexts.insert(this);
-    //ScopeExitFunction remove([&]{ _activeContexts.remove(this); });
+    CurrentRoutineScope scope(gCurrentRoutine, this);
+    ScopeExitFunction closing([this]{
+        TUringServer::instance()->registerForGC(this);
+    });
 
-    //std::print("accept {}\n", sd);
-    ScopeExitFunction closing([sd]{ if (sd > 0) ::close(sd); });
-    int res;
-    int lengthToRead = -1;
+    int timeout = 5000;
+    while (true) {
+        //int res;
+        int64_t lengthToRead = INT64_MAX;
+        int64_t readLength = 0;
+        constexpr int64_t bufsize = 8 * 1024;
 
-    // ソケット受信
-    QByteArray readBuffer;
-    readBuffer.reserve(1024);
-    QByteArray headerBuffer;
-    TTemporaryFile fileBuffer;
-tSystemDebug("###1");
-    while (lengthToRead) {
-        int len = co_await AsyncRecv(sd, readBuffer.data(), 1024, 5000);
-tSystemDebug("###2");
-        if (len <= 0) {
-            if (len < 0) {
-tSystemDebug("###3");
-                tSystemError("Recv error fd:{} error:{}\n", sd, strerror(-len));
-            } else {
-                tSystemError("Recv peer closed fd:{}\n", sd);
+        // ソケット受信
+        QByteArray readBuffer;
+        QByteArray headerBuffer;
+        TTemporaryFile fileBuffer;
+
+        while (lengthToRead > 0) {
+            int64_t buflen = std::min(bufsize, lengthToRead);
+            readBuffer.reserve(readLength + buflen);
+            int len = co_await AsyncRecv(_sd, readBuffer.data() + readLength, buflen, timeout);
+            if (len <= 0) {
+                if (len < 0) {
+                    tSystemError("Recv error fd:{} error:{}", _sd, strerror(-len));
+                } else {
+                    tSystemWarn("Recv peer closed fd:{}", _sd);
+                }
+                co_return;
             }
-            co_return;
-        }
 
-tSystemDebug("###4");
-        readBuffer.resize(readBuffer.size() + len);
-        if (lengthToRead < 0) {
-tSystemDebug("###5");
+            readLength += len;
+            readBuffer.resize(readLength);
+            tSystemDebug("readBuffer size:{}", readBuffer.size());
+
             int idx = readBuffer.indexOf(Tf::CRLFCRLF);
             if (idx > 0) {
                 THttpRequestHeader header(readBuffer);
@@ -160,12 +219,10 @@ tSystemDebug("###5");
                 }
 
                 lengthToRead = std::max(idx + 4 + header.contentLength() - (int64_t)readBuffer.length(), (int64_t)0);
-tSystemDebug("###6 lengthToRead:{}", lengthToRead);
 
                 if (header.contentLength() > READ_THRESHOLD_LENGTH || (header.contentLength() > 0 && header.contentType().trimmed().startsWith("multipart/form-data"))) {
                     headerBuffer = readBuffer.mid(0, idx + 4);
                     // Writes to file buffer
-tSystemDebug("###7");
                     if (!fileBuffer.open()) {
                         throw RuntimeException(QLatin1String("temporary file open error: ") + fileBuffer.fileTemplate(), __FILE__, __LINE__);
                     }
@@ -176,82 +233,70 @@ tSystemDebug("###7");
                             throw RuntimeException(QLatin1String("write error: ") + fileBuffer.fileName(), __FILE__, __LINE__);
                         }
                     }
-tSystemDebug("###8");
                     readBuffer.resize(0);
-                } else {
-tSystemDebug("###9  lengthToRead:{}", lengthToRead);
-                    if (lengthToRead > 0) {
-                        readBuffer.reserve((idx + 4 + header.contentLength()) * 1.1);
-                    }
-                }
-            } else {
-tSystemDebug("###10");
-                if (readBuffer.size() > readBuffer.capacity() * 0.8) {
-tSystemDebug("###11");
-                    readBuffer.reserve(readBuffer.capacity() * 2);
                 }
             }
-        } else if (lengthToRead > 0) {
-tSystemDebug("###12");
-            lengthToRead = std::max(lengthToRead - len, 0);
-        } else {
-tSystemDebug("###13");
-            // do nothing
-            break;
         }
-    }
-tSystemDebug("###14  readBuffer: {}", readBuffer);
 
-    //std::string s(buf, buf + res);
-    //std::print("[RECV] recv len:{} {}\n", res, s);
-    //std::print("[Main] ({}) Received ({} bytes): {}\n", tmp, len, s);
+        auto request = THttpRequest::generate(readBuffer, QHostAddress("localhost"), this);
+        execute(request);
 
+        int res = co_await AsyncSend(_sd, _response.data(), _response.length());
+        if (res <= 0) {
+            tSystemError("Send error fd={} res={}\n", _sd, res);
+            co_return;
+        }
 
-    //auto context = std::make_unique<TActionRoutine>();
-    //QList<THttpRequest> THttpRequest::generate(QByteArray &byteArray, const QHostAddress &address, TActionContext *context);
-    auto request = THttpRequest::generate(readBuffer, QHostAddress("localhost"), this);
-
-tSystemDebug("###15 : {}", request.header().toByteArray());
-tSystemDebug("###15.1 : {}", request.header().cookie("TFSESSION"));
-    //THttpRequest request;
-    execute(request);
-tSystemDebug("###16");
-
-    res = co_await AsyncSend(sd, _response.data(), _response.length());
-    if (res <= 0) {
-        tSystemError("Send error fd={} res={}\n", sd, res);
-        co_return;
-    }
-
-    // file
-    if (_file.exists())  {
-        if (!_file.isOpen()) {
-            if (!_file.open(QIODevice::ReadOnly)) {
-                Tf::warn("open failed");
+        // file
+        if (!_fileName.isEmpty()) {
+            //int64_t fileSize = QFileInfo(_fileName).size();
+            int fd = ::open(qUtf8Printable(_fileName), O_RDONLY | O_CLOEXEC);
+            if (fd < 0) {
+                tSystemDebug("File open error: {}", _fileName);
+                Tf::warn("File open error: {}", _fileName);
                 co_return;
             }
+
+            ScopeExitFunction fd_closing([fd]{ ::close(fd); });
+
+            const int64_t file_size = lseek(fd, 0, SEEK_END);
+            if (file_size < 0) {
+                tSystemDebug("lseek error: {}", strerror(errno));
+                co_return;
+            }
+            lseek(fd, 0, SEEK_SET);
+
+            void *mapped = mmap(nullptr, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
+            if (mapped == MAP_FAILED) {
+                tSystemError("mmap error: {}\n", strerror(errno));
+                co_return;
+            }
+
+            const int64_t slice_len = 16 * 1024;
+            int64_t sent_len = 0;
+            while (sent_len < file_size) {
+                int64_t send_len = std::min(file_size - sent_len, slice_len);
+                res = co_await AsyncSend(_sd, mapped + sent_len, send_len);
+                if (res <= 0) {
+                    if (res == -EAGAIN || res == -ENOMEM) {
+                        continue;
+                    }
+                    tSystemError("Send error fd={} res={}", _sd, res);
+                    break;
+                }
+                sent_len += res;
+                //tSystemDebug("### AsyncSend  res:{}  sent_len:{}", res, sent_len);
+            }
+
+            munmap(mapped, file_size);
+            _fileName.resize(0);
         }
 
-        // AsyncSend sender2(sd, _file.data().data(), _file.length());
-        // res = co_await sender2;
-        // if (res <= 0) {
-        //     tSystemError("Send error fd={} res={}\n", sd, res);
-        //     co_return;
-        // }
+        if (keepAlivetimeout > 0) {
+            timeout = keepAlivetimeout;
+        }
     }
-
-    //std::print("send ({}) len:{}\n", tmp, res);
-    //std::print("[SEND] fd={} res={}\n", sd, res);
 }
-
-
-// TActionContext *TUringCoroutine::currentContext()
-// {
-//     if (!_processingContext.isEmpty()) {
-//         return _processingContext.top();
-//     }
-//     return nullptr;
-// }
 
 
 int64_t TUringCoroutine::writeResponse(THttpResponseHeader &header, QIODevice *body)
@@ -259,20 +304,16 @@ int64_t TUringCoroutine::writeResponse(THttpResponseHeader &header, QIODevice *b
     if (keepAliveTimeout() > 0) {
         header.setRawHeader(QByteArrayLiteral("Connection"), QByteArrayLiteral("Keep-Alive"));
     }
-
     // Writes HTTP header
     _response = header.toByteArray();
 
     if (body) {
-        if (body->inherits("QBuffer")) {
-            _response += body->readAll();
-        } else if (body->inherits("QFile")) {
-            //_file = *dynamic_cast<QFile*>(body);
-
-            // TODO TODO TODO TODO TODO TODO TODO TODO
+        if (auto *buf = dynamic_cast<QBuffer*>(body); buf) {
+            _response += buf->buffer();
+        } else if (auto *file = dynamic_cast<QFile*>(body); file) {
+            _fileName = file->fileName();
         } else {
             tSystemError("Invalid body [{}:{}]", __FILE__, __LINE__);
-            _response += body->readAll();
         }
     }
     return 0;

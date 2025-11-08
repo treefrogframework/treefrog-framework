@@ -114,39 +114,9 @@ QByteArray TAccessLog::toByteArray(const QByteArray &layout, const QByteArray &d
 }
 
 
-TAccessLogger::TAccessLogger()
+TAccessLogger::TAccessLogger() :
+    _accessLog(std::make_unique<TAccessLog>())
 {
-}
-
-
-TAccessLogger::TAccessLogger(TAccessLogger &&other)
-{
-    _accessLog = std::move(other._accessLog);
-    _timer = std::move(other._timer);
-    other._accessLog = nullptr;
-}
-
-
-TAccessLogger::~TAccessLogger()
-{
-    close();
-}
-
-
-TAccessLogger &TAccessLogger::operator=(TAccessLogger &&other)
-{
-    _accessLog = std::move(other._accessLog);
-    _timer = std::move(other._timer);
-    other._accessLog = nullptr;
-    return *this;
-}
-
-
-void TAccessLogger::open()
-{
-    if (!_accessLog) {
-        _accessLog = new TAccessLog();
-    }
 }
 
 
@@ -156,11 +126,4 @@ void TAccessLogger::write()
         _accessLog->duration = _timer.elapsed();
         Tf::writeAccessLog(*_accessLog);
     }
-}
-
-
-void TAccessLogger::close()
-{
-    delete _accessLog;
-    _accessLog = nullptr;
 }

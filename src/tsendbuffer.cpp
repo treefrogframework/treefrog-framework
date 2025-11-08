@@ -40,7 +40,6 @@ TSendBuffer::TSendBuffer(const QByteArray &header) :
 
 TSendBuffer::TSendBuffer(Tf::StatusCode statusCode, const QHostAddress &address, const QByteArray &method)
 {
-    _accesslogger.open();
     _accesslogger.setStatusCode(statusCode);
     _accesslogger.setTimestamp(QDateTime::currentDateTime());
     _accesslogger.setRemoteHost(address.toString().toLatin1());
@@ -71,7 +70,6 @@ void TSendBuffer::release()
         delete _bodyFile;
         _bodyFile = nullptr;
     }
-    _accesslogger.close();
 }
 
 
