@@ -22,8 +22,8 @@
 #include <netinet/tcp.h>
 
 
-constexpr int SEND_BUF_SIZE = 8 * 1024;
-constexpr int RECV_BUF_SIZE = 16 * 1024;
+constexpr int SEND_BUF_SIZE = 128 * 1024;
+constexpr int RECV_BUF_SIZE = 128 * 1024;
 constexpr int SPLICE_LEN = 1024 * 1024;
 
 
@@ -42,7 +42,19 @@ TUringServer *TUringServer::instance(int listeningSocket)
 }
 
 
-static void setNoDeleyOption(int fd)
+static void setDefferAcceptOption(int fd)
+{
+    int res, flag;
+
+    flag = 2;  // secs
+    res = setsockopt(fd, IPPROTO_TCP, TCP_DEFER_ACCEPT, (char *)&flag, sizeof(flag));
+    if (res < 0) {
+        tSystemWarn("setsockopt error [TCP_DEFER_ACCEPT] fd:{}", fd);
+    }
+}
+
+
+static void setBufferOption(int fd)
 {
     int res, flag, bufsize;
 
@@ -65,7 +77,6 @@ static void setNoDeleyOption(int fd)
         tSystemWarn("setsockopt error [SO_RCVBUF] fd:{}", fd);
     }
 }
-
 
 TUringServer::TUringServer(int listeningSocket, QObject *parent) :
     TDatabaseContextThread(parent),
@@ -113,7 +124,7 @@ std::mutex mtx;  // グローバルミューテックス
 
 void TUringServer::run()
 {
-    setNoDeleyOption(_listenSocket);
+    setDefferAcceptOption(_listenSocket);
 
     TAwaitBase accepter;
     instance()->addAccept(_listenSocket, &accepter);
@@ -162,7 +173,9 @@ void TUringServer::run()
                 // Accepts
                 if (cqe->res >= 0) {
                     // Starts coroutine
-                    auto *coro = new TUringCoroutine(cqe->res);
+                    int fd = cqe->res;
+                    setBufferOption(fd);
+                    auto *coro = new TUringCoroutine(fd);
                     Task task = coro->start();
                     task.handle.promise().self = coro;
                     await->clear();  // clear
@@ -193,9 +206,9 @@ void TUringServer::run()
                     }
                 }
             } else {
-                //tSystemDebug("cqe->res:{}  cqe->flags: {}", await->_cqeres, cqe->flags);
+                tSystemDebug("cqe->res:{}  cqe->flags: {}", await->_cqeres, cqe->flags);
                 if (cqe->flags != IORING_CQE_F_MORE) {
-                    if (!await->_cqeres) {
+                    if (!await->_cqeres && !await->_cqeflags) {
                         await->_cqeres = cqe->res;
                         await->_cqeflags = cqe->flags;
                     }

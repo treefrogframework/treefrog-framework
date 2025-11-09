@@ -30,7 +30,11 @@ public:
         }
     }
 
-    inline int await_resume() { return _cqeres; }
+    inline int await_resume()
+    {
+        //tSystemDebug("await_resume : _len:{} _cqeflags:{} _cqeres:{}", _len, _cqeflags, _cqeres);
+        return _cqeres;
+    }
 
 private:
     int _fd {0};
@@ -182,7 +186,7 @@ Task TUringCoroutine::start()
     });
 
     int timeout = 5000;
-    while (true) {
+    while (timeout > 0) {
         //int res;
         int64_t lengthToRead = INT64_MAX;
         int64_t readLength = 0;
@@ -196,13 +200,15 @@ Task TUringCoroutine::start()
         while (lengthToRead > 0) {
             int64_t buflen = std::min(bufsize, lengthToRead);
             readBuffer.reserve(readLength + buflen);
+
             int len = co_await AsyncRecv(_sd, readBuffer.data() + readLength, buflen, timeout);
-            if (len <= 0) {
-                if (len < 0) {
-                    tSystemError("Recv error fd:{} error:{}", _sd, strerror(-len));
-                } else {
-                    tSystemWarn("Recv peer closed fd:{}", _sd);
-                }
+            if (len < 0) {
+                // timeout or error
+                tSystemError("Recv error fd:{} error:{}", _sd, strerror(-len));
+                co_return;
+            }
+            if (!len) {
+                tSystemWarn("Recv peer closed fd:{}", _sd);
                 co_return;
             }
 
@@ -276,7 +282,7 @@ Task TUringCoroutine::start()
             int64_t sent_len = 0;
             while (sent_len < file_size) {
                 int64_t send_len = std::min(file_size - sent_len, slice_len);
-                res = co_await AsyncSend(_sd, mapped + sent_len, send_len);
+                res = co_await AsyncSend(_sd, (char*)mapped + sent_len, send_len);
                 if (res <= 0) {
                     if (res == -EAGAIN || res == -ENOMEM) {
                         continue;
@@ -293,7 +299,9 @@ Task TUringCoroutine::start()
         }
 
         if (keepAlivetimeout > 0) {
-            timeout = keepAlivetimeout;
+            timeout = keepAlivetimeout * 1000;  // msecs
+        } else {
+            break;
         }
     }
 }
