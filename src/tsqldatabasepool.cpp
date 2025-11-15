@@ -24,13 +24,13 @@ constexpr auto CONN_NAME_FORMAT = "rdb%02d_%d";
 
 TSqlDatabasePool *TSqlDatabasePool::instance()
 {
-    static TSqlDatabasePool *databasePool = []() {
-        auto *pool = new TSqlDatabasePool;
+    static std::unique_ptr<TSqlDatabasePool> databasePool = []() {
+        std::unique_ptr<TSqlDatabasePool> pool { new TSqlDatabasePool };
         pool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
         pool->init();
         return pool;
     }();
-    return databasePool;
+    return databasePool.get();
 }
 
 

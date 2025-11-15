@@ -108,12 +108,12 @@ void Pub::publish(const QByteArray &binary, const QObject *sender)
 
 TPublisher *TPublisher::instance()
 {
-    static TPublisher *globalInstance = []() {
-        auto *pub = new TPublisher();
-        connect(TSystemBus::instance(), SIGNAL(readyReceive()), pub, SLOT(receiveSystemBus()));
+    static std::unique_ptr<TPublisher> globalInstance = []() {
+        std::unique_ptr<TPublisher> pub {new TPublisher};
+        connect(TSystemBus::instance(), SIGNAL(readyReceive()), pub.get(), SLOT(receiveSystemBus()));
         return pub;
     }();
-    return globalInstance;
+    return globalInstance.get();
 }
 
 

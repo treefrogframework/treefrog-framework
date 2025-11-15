@@ -3,16 +3,14 @@
 #include <TGlobal>
 
 class TKvsDriver;
-class TKvsDatabaseData;
+class TKvsDatabaseSettings;
 
 
 class T_CORE_EXPORT TKvsDatabase {
 public:
     TKvsDatabase() { }
-    //TKvsDatabase(const TKvsDatabase &other);
-    TKvsDatabase(TKvsDatabase &&) = default;
     ~TKvsDatabase() { }
-    //TKvsDatabase &operator=(const TKvsDatabase &other);
+    TKvsDatabase(TKvsDatabase &&) = default;
     TKvsDatabase &operator=(TKvsDatabase &&) = default;
 
     QString driverName() const;
@@ -45,19 +43,19 @@ public:
     static TKvsDatabase database(const QString &connectionName = defaultConnection);
     static TKvsDatabase addDatabase(const QString &driver, const QString &connectionName = defaultConnection);
     static void removeDatabase(const QString &connectionName = defaultConnection);
-    static TKvsDatabaseData settings(const QString &connectionName = defaultConnection);
+    static TKvsDatabaseSettings settings(const QString &connectionName = defaultConnection);
 
 private:
     QString connectName;
     TKvsDriver *drv {nullptr};
 
     TKvsDatabase(const QString &connectionName, TKvsDriver *driver);
-    TKvsDatabase(const TKvsDatabaseData &data);
+    TKvsDatabase(const TKvsDatabaseSettings &data);
     T_DISABLE_COPY(TKvsDatabase)
 };
 
 
-class T_CORE_EXPORT TKvsDatabaseData {
+class T_CORE_EXPORT TKvsDatabaseSettings {
 public:
     QString connectionName;
     QString databaseName;
@@ -69,5 +67,5 @@ public:
     QStringList postOpenStatements;
     TKvsDriver *driver {nullptr};  // pointer to a singleton object
 
-    TKvsDatabaseData() { }
+    TKvsDatabaseSettings() { }
 };

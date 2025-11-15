@@ -23,32 +23,19 @@ class TActionController;
 class TUringCoroutine;
 
 
-struct Task {
-    struct promise_type {
+class Task {
+public:
+    class promise_type {
+    public:
         TUringCoroutine *self {nullptr};
         Task get_return_object()
         {
             return Task{ std::coroutine_handle<promise_type>::from_promise(*this) };
         }
-        //Task get_return_object() { return {}; }
         std::suspend_never initial_suspend() noexcept { return {}; }
         std::suspend_never final_suspend() noexcept { return {}; }
         void return_void() noexcept {}
         void unhandled_exception() { std::terminate(); }
-
-        // static inline int alloc_count = 0;
-        // static inline int free_count = 0;
-        // void* operator new(std::size_t n)
-        // {
-        //     ++alloc_count;
-        //     tSystemDebug("[alloc] count: {}", alloc_count);
-        //     return ::operator new(n);
-        // }
-        // void operator delete(void* p, std::size_t n) {
-        //     ++free_count;
-        //     tSystemDebug("[free] count: {}", free_count);
-        //     ::operator delete(p);
-        // }
     };
 
     explicit Task(std::coroutine_handle<promise_type> h) : handle(h) {}
@@ -88,21 +75,19 @@ public:
     TActionContext *currentContext() const;
     TActionController *currentController() const;
     void registerForGC(TUringCoroutine *);
-
     static TUringServer *instance(int listeningSocket = 0);
 
-    int addAccept(int sd, TAwaitBase* await = nullptr);
-    int addRecv(int sd, void* buf, size_t len, int msecs = 0, TAwaitBase* await = nullptr);
-    int addSend(int sd, const void* buf, size_t len, TAwaitBase* await = nullptr);
-    int addSendZc(int sd, const void* buf, size_t len, TAwaitBase* await = nullptr);
-    //int addSendFile(int sd, int fd, int offset, size_t slice_len, TAwaitBase* await = nullptr);
-    int addEvent(int sd, TAwaitBase* await = nullptr);
+    int addAccept(int sd, TAwaitBase *await = nullptr) const;
+    int addRecv(int sd, void *buf, size_t len, int msecs = 0, TAwaitBase *await = nullptr) const;
+    int addSend(int sd, const void* buf, size_t len, TAwaitBase *await = nullptr) const;
+    int addSendZc(int sd, const void* buf, size_t len, TAwaitBase *await = nullptr) const;
+    int addEvent(int sd, TAwaitBase *await = nullptr) const;
 
 protected:
     void run() override;
 
 private:
-    io_uring _ring{};
+    mutable io_uring _ring {};
     bool _stopped {false};
     int _listenSocket {0};
     bool _autoReload {false};

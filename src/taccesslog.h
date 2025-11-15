@@ -3,7 +3,6 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <TGlobal>
-#include <TSystemGlobal>
 #include <memory>
 
 
@@ -70,7 +69,7 @@ public:
     void setResponseBytes(int bytes)
     {
         if (_accessLog) {
-           _accessLog->responseBytes = bytes;
+            _accessLog->responseBytes = bytes;
         }
     }
 

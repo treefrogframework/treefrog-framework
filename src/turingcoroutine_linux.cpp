@@ -10,11 +10,7 @@
 #include <sys/eventfd.h>
 #include <sys/mman.h>
 
-
 constexpr uint READ_THRESHOLD_LENGTH = 4 * 1024 * 1024;  // bytes
-//constexpr uint SEND_CHUNK_LENGTH = 16 * 1024;  // bytes
-
-static TUringCoroutine *gCurrentRoutine;
 
 
 class AsyncRecv : public TAwaitBase {
@@ -70,33 +66,8 @@ private:
     int _fd {0};
     const void* _buf {nullptr};
     size_t _len {0};
-    //bool _zero_copy {true};
 };
 
-/*
-class AsyncSendFile : public TAwaitBase {
-public:
-    AsyncSendFile(int sd, int fd, int offset, size_t sliceLen) :
-        _sd(sd), _fd(fd), _offset(offset), _sliceLen(sliceLen) { }
-
-    void await_suspend(std::coroutine_handle<> handle)
-    {
-        //std::print("== AsyncSend \n");
-        _handle = handle;
-        if (TUringServer::instance()->addSendFile(_sd, _fd, _offset, _sliceLen, this) < 0) {
-            tSystemError("AsyncSendFile error: {}", strerror(errno));
-        }
-    }
-
-    inline int await_resume() { return _cqeres; }
-
-private:
-    int _sd {0};
-    int _fd {0};
-    int _offset {0};
-    size_t _sliceLen {0};
-};
-*/
 
 template <typename R>
 class AsyncFunction : public TAwaitBase {
@@ -167,20 +138,12 @@ TUringCoroutine::~TUringCoroutine()
 }
 
 
-// TUringCoroutine *TUringCoroutine::currentRoutine()
-// {
-//     // tSystemDebug("currentRoutine: {}", (uint64_t)gCurrentRoutine);
-//     // return gCurrentRoutine;
-//     return nullptr;
-// }
-
-
 Task TUringCoroutine::start()
 {
     static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
     static int keepAlivetimeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
+    constexpr int64_t bufsize = 8 * 1024;
 
-    CurrentRoutineScope scope(gCurrentRoutine, this);
     ScopeExitFunction closing([this]{
         TUringServer::instance()->registerForGC(this);
     });
@@ -190,7 +153,6 @@ Task TUringCoroutine::start()
         //int res;
         int64_t lengthToRead = INT64_MAX;
         int64_t readLength = 0;
-        constexpr int64_t bufsize = 8 * 1024;
 
         // ソケット受信
         QByteArray readBuffer;

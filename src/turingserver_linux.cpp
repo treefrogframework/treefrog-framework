@@ -15,12 +15,10 @@
 #include <turingserver.h>
 #include <QElapsedTimer>
 #include <TActionWorker>
-//#include <TAppSettings>
 #include <TApplicationServerBase>
 #include <TThreadApplicationServer>
 #include <TWebApplication>
 #include <netinet/tcp.h>
-
 
 constexpr int SEND_BUF_SIZE = 128 * 1024;
 constexpr int RECV_BUF_SIZE = 128 * 1024;
@@ -120,8 +118,6 @@ bool TUringServer::start(bool debugMode)
 }
 
 
-std::mutex mtx;  // グローバルミューテックス
-
 void TUringServer::run()
 {
     setDefferAcceptOption(_listenSocket);
@@ -138,14 +134,13 @@ void TUringServer::run()
     while (!_stopped) {
         if (_garbage.size() > 0) {
             // Garbage collection
-            std::lock_guard<std::mutex> lock(mtx);
             for (auto it = _garbage.begin(); it != _garbage.end(); ++it) {
                 delete *it;
             }
             _garbage.clear();
         }
 
-        io_uring_cqe* cqe = nullptr;
+        io_uring_cqe *cqe = nullptr;
         int res = io_uring_wait_cqe_timeout(&_ring, &cqe, &ts);
         Tf::ScopeExitFunction seen([&]{ if (cqe) io_uring_cqe_seen(&_ring, cqe); });
 
@@ -166,9 +161,9 @@ void TUringServer::run()
             break;
         }
 
-        void* user_data = io_uring_cqe_get_data(cqe);
+        void *user_data = io_uring_cqe_get_data(cqe);
         if (user_data) {
-            auto* await = static_cast<TAwaitBase*>(user_data);
+            auto *await = static_cast<TAwaitBase*>(user_data);
             if (await == &accepter) {
                 // Accepts
                 if (cqe->res >= 0) {
@@ -238,25 +233,17 @@ void TUringServer::stop()
 void TUringServer::setAutoReloadingEnabled(bool enable)
 {
     _autoReload = enable;
-    // if (enable) {
-    //     reloadTimer.start(500, this);
-    // } else {
-    //     reloadTimer.stop();
-    // }
 }
 
 
 bool TUringServer::isAutoReloadingEnabled()
 {
     return _autoReload;
-    //return reloadTimer.isActive();
 }
 
 
 TActionContext *TUringServer::currentContext() const
 {
-//     return _currentRoutine;
-//     //return TUringCoroutine::currentRoutine();
     return _currentCoroutine;
 }
 
@@ -281,10 +268,12 @@ void TUringServer::timerEvent(QTimerEvent *event)
 }
 */
 
-// Accept
-int TUringServer::addAccept(int fd, TAwaitBase* await)
+//
+// Prepare a accept request
+//
+int TUringServer::addAccept(int fd, TAwaitBase* await) const
 {
-    io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
+    io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
     if (!sqe) {
         tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
         return -1;
@@ -298,10 +287,12 @@ int TUringServer::addAccept(int fd, TAwaitBase* await)
     return io_uring_submit(&_ring);
 }
 
-// 受信
-int TUringServer::addRecv(int fd, void* buf, size_t len, int msecs, TAwaitBase* await)
+//
+// Prepare a recv request
+//
+int TUringServer::addRecv(int fd, void* buf, size_t len, int msecs, TAwaitBase* await) const
 {
-    io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
+    io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
     if (!sqe) {
         tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
         return -1;
@@ -315,7 +306,7 @@ int TUringServer::addRecv(int fd, void* buf, size_t len, int msecs, TAwaitBase* 
 
     if (msecs > 0) {
         sqe->flags |= IOSQE_IO_LINK;
-        io_uring_sqe* sqe2 = io_uring_get_sqe(&_ring);
+        io_uring_sqe *sqe2 = io_uring_get_sqe(&_ring);
         if (!sqe2) {
             tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
             return -1;
@@ -333,9 +324,9 @@ int TUringServer::addRecv(int fd, void* buf, size_t len, int msecs, TAwaitBase* 
 //
 // Prepare a send request
 //
-int TUringServer::addSend(int fd, const void* buf, size_t len, TAwaitBase* await)
+int TUringServer::addSend(int fd, const void* buf, size_t len, TAwaitBase* await) const
 {
-    io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
+    io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
     if (!sqe) {
         tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
         return -1;
@@ -351,9 +342,9 @@ int TUringServer::addSend(int fd, const void* buf, size_t len, TAwaitBase* await
 //
 // Prepare a zerocopy send request
 //
-int TUringServer::addSendZc(int fd, const void* buf, size_t len, TAwaitBase* await)
+int TUringServer::addSendZc(int fd, const void* buf, size_t len, TAwaitBase* await) const
 {
-    io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
+    io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
     if (!sqe) {
         tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
         return -1;
@@ -416,10 +407,12 @@ int TUringServer::addSendFile(int sd, int fd, int offset, size_t slice_len, TAwa
 
 
 
-// 状態変数待ち
-int TUringServer::addEvent(int fd, TAwaitBase* await)
+//
+// Prepare a event request
+//
+int TUringServer::addEvent(int fd, TAwaitBase* await) const
 {
-    io_uring_sqe* sqe = io_uring_get_sqe(&_ring);
+    io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
     io_uring_prep_poll_add(sqe, fd, POLL_IN);
     if (await) {
         await->clear();
@@ -432,6 +425,5 @@ int TUringServer::addEvent(int fd, TAwaitBase* await)
 
 void TUringServer::registerForGC(TUringCoroutine *coroutine)
 {
-    std::lock_guard<std::mutex> lock(mtx);  // 排他
     _garbage.push_back(coroutine);
 }

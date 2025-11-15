@@ -17,6 +17,7 @@
 #include <QMutexLocker>
 #include <TWebApplication>
 #include <ctime>
+#include <memory>
 
 /*!
   \class TKvsDatabasePool
@@ -53,13 +54,13 @@ static KvsEngineHash *kvsEngineHash()
 
 TKvsDatabasePool *TKvsDatabasePool::instance()
 {
-    static TKvsDatabasePool *databasePool = []() {
-        auto *pool = new TKvsDatabasePool;
+    static std::unique_ptr<TKvsDatabasePool> databasePool = []() {
+        std::unique_ptr<TKvsDatabasePool> pool { new TKvsDatabasePool };
         pool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
         pool->init();
         return pool;
     }();
-    return databasePool;
+    return databasePool.get();
 }
 
 
@@ -279,11 +280,11 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
 }
 
 
-TKvsDatabaseData TKvsDatabasePool::getDatabaseSettings(Tf::KvsEngine engine) const
+TKvsDatabaseSettings TKvsDatabasePool::getDatabaseSettings(Tf::KvsEngine engine) const
 {
     QMutexLocker locker(&_mutex);
 
-    TKvsDatabaseData settrings;
+    TKvsDatabaseSettings settrings;
     auto &stack = availableNames[(int)engine];
 
     QString name;

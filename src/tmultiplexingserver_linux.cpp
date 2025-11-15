@@ -22,27 +22,20 @@
 #include <TThreadApplicationServer>
 #include <TWebApplication>
 #include <netinet/tcp.h>
+#include <memory>
 
 constexpr int SEND_BUF_SIZE = 16 * 1024;
 constexpr int RECV_BUF_SIZE = 128 * 1024;
 
 namespace {
-TMultiplexingServer *multiplexingServer = nullptr;
-
-
-void cleanup()
-{
-    delete multiplexingServer;
-    multiplexingServer = nullptr;
-}
+std::unique_ptr<TMultiplexingServer> multiplexingServer;
 }
 
 
 void TMultiplexingServer::instantiate(int listeningSocket)
 {
     if (!multiplexingServer) {
-        multiplexingServer = new TMultiplexingServer(listeningSocket);
-        qAddPostRoutine(::cleanup);
+        multiplexingServer.reset(new TMultiplexingServer(listeningSocket));
     }
 }
 
@@ -52,7 +45,7 @@ TMultiplexingServer *TMultiplexingServer::instance()
     if (Q_UNLIKELY(!multiplexingServer)) {
         tFatal("Call TMultiplexingServer::instantiate() function first");
     }
-    return multiplexingServer;
+    return multiplexingServer.get();
 }
 
 

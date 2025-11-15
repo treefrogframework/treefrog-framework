@@ -26,7 +26,7 @@ const char *const TKvsDatabase::defaultConnection = "tf_default_connection";
 
 
 // Map of connection name and database data
-class TKvsDatabaseDict : public QMap<QString, TKvsDatabaseData> {
+class TKvsDatabaseDict : public QMap<QString, TKvsDatabaseSettings> {
 public:
     mutable QReadWriteLock lock;
 };
@@ -34,8 +34,8 @@ public:
 
 static TKvsDatabaseDict *databaseDict()
 {
-    static TKvsDatabaseDict *dict = new TKvsDatabaseDict;
-    return dict;
+    static std::unique_ptr<TKvsDatabaseDict> dict { new TKvsDatabaseDict };
+    return dict.get();
 }
 
 
@@ -73,7 +73,7 @@ TKvsDatabase TKvsDatabase::database(const QString &connectionName)
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
 
-    const TKvsDatabaseData &d = (*dict)[connectionName];
+    const TKvsDatabaseSettings &d = (*dict)[connectionName];
     return TKvsDatabase(d.connectionName, d.driver);
 }
 
@@ -89,7 +89,7 @@ TKvsDatabase TKvsDatabase::addDatabase(const QString &driver, const QString &con
         delete data.driver;
     }
 
-    TKvsDatabaseData data;
+    TKvsDatabaseSettings data;
     data.connectionName = connectionName;
     data.driver = createDriver(driver);  // creates a driver
     dict->insert(connectionName, data);
@@ -109,19 +109,12 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
 }
 
 
-TKvsDatabaseData TKvsDatabase::settings(const QString &connectionName)
+TKvsDatabaseSettings TKvsDatabase::settings(const QString &connectionName)
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
     return (*dict)[connectionName];
 }
-
-
-// TKvsDatabase::TKvsDatabase(const TKvsDatabase &other) :
-//     connectName(other.connectName),
-//     drv(other.drv)
-// {
-// }
 
 
 TKvsDatabase::TKvsDatabase(const QString &connectionName, TKvsDriver *driver) :
@@ -131,19 +124,11 @@ TKvsDatabase::TKvsDatabase(const QString &connectionName, TKvsDriver *driver) :
 }
 
 
-TKvsDatabase::TKvsDatabase(const TKvsDatabaseData &data) :
+TKvsDatabase::TKvsDatabase(const TKvsDatabaseSettings &data) :
     connectName(data.connectionName),
     drv(data.driver)
 {
 }
-
-
-// TKvsDatabase &TKvsDatabase::operator=(const TKvsDatabase &other)
-// {
-//     connectName = other.connectName;
-//     drv = other.drv;
-//     return *this;
-// }
 
 
 bool TKvsDatabase::isValid() const
@@ -156,7 +141,7 @@ bool TKvsDatabase::open()
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
-    const TKvsDatabaseData &data = (*dict)[connectName];
+    const TKvsDatabaseSettings &data = (*dict)[connectName];
     return (driver()) ? driver()->open(data.databaseName, data.userName, data.password, data.hostName, data.port, data.connectOptions) : false;
 }
 

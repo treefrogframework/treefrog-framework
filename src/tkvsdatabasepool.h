@@ -15,12 +15,47 @@ template <class T> class TStack;
 class T_CORE_EXPORT TKvsDatabasePool : public QObject {
     Q_OBJECT
 public:
+    using TKvsDBConn = std::unique_ptr<TKvsDatabase>;
+
     ~TKvsDatabasePool();
     TKvsDatabase database(Tf::KvsEngine engine);
     void pool(TKvsDatabase &database);
-    TKvsDatabaseData getDatabaseSettings(Tf::KvsEngine engine) const;
+    TKvsDatabaseSettings getDatabaseSettings(Tf::KvsEngine engine) const;
 
     static TKvsDatabasePool *instance();
+
+    // TKvsDatabase handle
+    class Handle {
+    public:
+        Handle(TKvsDatabase *ptr) : _ptr(ptr) {}
+        Handle(const Handle &) = delete;
+        Handle &operator=(const Handle &) = delete;
+        Handle(Handle &&other) noexcept
+        {
+            _ptr  = other._ptr;
+            other._ptr = nullptr;
+        }
+
+        Handle &operator=(Handle &&other) noexcept
+        {
+            _ptr  = other._ptr;
+            other._ptr = nullptr;
+            return *this;
+        }
+
+        ~Handle()
+        {
+            if (_ptr) {
+                TKvsDatabasePool::instance()->pool(*_ptr);
+            }
+        }
+
+        TKvsDatabase *operator->() { return _ptr; }
+        TKvsDatabase &operator*()  { return *_ptr; }
+
+    private:
+        TKvsDatabase *_ptr {nullptr};
+    };
 
 protected:
     void init();

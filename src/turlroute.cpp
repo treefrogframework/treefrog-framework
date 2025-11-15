@@ -30,12 +30,12 @@ const QMap<QString, TRoute::RouteDirective> directiveHash = {
 
 const TUrlRoute &TUrlRoute::instance()
 {
-    static TUrlRoute *urlRoute = []() {
-        auto *route = new TUrlRoute();
-        route->parseConfigFile();
+    static TUrlRoute urlRoute = []() {
+        TUrlRoute route;
+        route.parseConfigFile();
         return route;
     }();
-    return *urlRoute;
+    return urlRoute;
 }
 
 
