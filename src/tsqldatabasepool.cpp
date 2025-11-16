@@ -8,6 +8,7 @@
 #include "tsqldatabasepool.h"
 #include "tsqldatabase.h"
 #include "tsqldriverextensionfactory.h"
+#include "tsqldriverextension.h"
 #include "tsystemglobal.h"
 #include "tstack.h"
 #include <QDir>
@@ -470,7 +471,7 @@ bool TSqlDatabasePool::openDatabase(TSqlDatabase &database)
         }
 
         extension = TSqlDriverExtensionFactory::create(database.sqlDatabase().driverName(), database.sqlDatabase().driver());
-        database.setDriverExtension(extension);
+        database.setDriverExtension(std::unique_ptr<TSqlDriverExtension>{extension});
     }
 
     return ret;
@@ -489,7 +490,7 @@ void TSqlDatabasePool::closeDatabase(TSqlDatabase &database)
     if (extension) {
         TSqlDriverExtensionFactory::destroy(database.sqlDatabase().driverName(), extension);
     }
-    database.setDriverExtension(nullptr);
+    database.setDriverExtension(std::unique_ptr<TSqlDriverExtension>{nullptr});
 
     tSystemDebug("Closed database connection, name: {}", name);
 }

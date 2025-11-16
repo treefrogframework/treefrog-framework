@@ -19,8 +19,7 @@ public:
     using SqlDbPtr = std::unique_ptr<TSqlDatabase>;
 
     template <class T>
-    class MoveStack : public std::deque<T>
-    {
+    class MoveStack : public std::deque<T> {
     public:
         MoveStack() = default;
         MoveStack(const MoveStack &) = delete;
@@ -60,7 +59,6 @@ private:
     TAtomic<uint> *lastCachedTime {nullptr};
     int maxConnects {0};
     QBasicTimer timer;
-
     std::vector<MoveStack<SqlDbPtr>> availableDatabases;
     std::vector<MoveStack<SqlDbPtr>> cachedDatabases;
 

@@ -21,15 +21,42 @@ public:
 Q_GLOBAL_STATIC(TDatabaseDict, dbDict)
 
 
+TSqlDatabase::~TSqlDatabase()
+{}
+
+
+TSqlDatabase::TSqlDatabase(const QSqlDatabase &database) :
+    _sqlDatabase(database)
+{}
+
+
+TSqlDatabase::TSqlDatabase(TSqlDatabase &&other)
+{
+    *this = std::move(other);
+}
+
+
+TSqlDatabase &TSqlDatabase::operator=(TSqlDatabase &&other)
+{
+    if (this != &other) {
+        _sqlDatabase = other._sqlDatabase;
+        _postOpenStatements = other._postOpenStatements;
+        _enableUpsert = other._enableUpsert;
+        _driverExtension = std::move(other._driverExtension);
+    }
+    return *this;
+}
+
+
 TSqlDatabase::DbmsType TSqlDatabase::dbmsType() const
 {
     return (_sqlDatabase.driver()) ? (TSqlDatabase::DbmsType)_sqlDatabase.driver()->dbmsType() : UnknownDbms;
 }
 
 
-void TSqlDatabase::setDriverExtension(TSqlDriverExtension *extension)
+void TSqlDatabase::setDriverExtension(std::unique_ptr<TSqlDriverExtension> extension)
 {
-    _driverExtension = extension;
+    _driverExtension = std::move(extension);
 }
 
 

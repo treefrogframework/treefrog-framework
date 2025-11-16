@@ -43,8 +43,8 @@ public:
     };
 
 
+    ~TSqlDatabase();
     TSqlDatabase(TSqlDatabase &&other);
-    ~TSqlDatabase() { }
     TSqlDatabase &operator=(TSqlDatabase &&other);
 
     DbmsType dbmsType() const;
@@ -58,7 +58,7 @@ public:
     void setUpsertEnabled(bool enable) { _enableUpsert = enable; }
     bool isUpsertSupported() const;
     bool isPreparedStatementSupported() const;
-    const TSqlDriverExtension *driverExtension() const { return _driverExtension; }
+    const TSqlDriverExtension *driverExtension() const { return _driverExtension.get(); }
 
     static const char *const defaultConnection;
     static std::unique_ptr<TSqlDatabase> database(const QString &connectionName = QLatin1String(defaultConnection));
@@ -68,55 +68,15 @@ public:
 
 private:
     explicit TSqlDatabase(const QSqlDatabase &database = QSqlDatabase());
-    TSqlDriverExtension *driverExtension() { return _driverExtension; }
-    void setDriverExtension(TSqlDriverExtension *extension);
+    TSqlDriverExtension *driverExtension() { return _driverExtension.get(); }
+    void setDriverExtension(std::unique_ptr<TSqlDriverExtension> extension);
 
     QSqlDatabase _sqlDatabase;
     QStringList _postOpenStatements;
     bool _enableUpsert {false};
-    TSqlDriverExtension *_driverExtension {nullptr};
+    std::unique_ptr<TSqlDriverExtension> _driverExtension;
 
     friend class TSqlDatabasePool;
     friend class TSqlObject;
     T_DISABLE_COPY(TSqlDatabase)
 };
-
-
-inline TSqlDatabase::TSqlDatabase(const QSqlDatabase &database) :
-    _sqlDatabase(database)
-{
-}
-
-// inline TSqlDatabase::TSqlDatabase(const TSqlDatabase &other) :
-//     _sqlDatabase(other._sqlDatabase),
-//     _postOpenStatements(other._postOpenStatements),
-//     _enableUpsert(other._enableUpsert),
-//     _driverExtension(other._driverExtension)
-// {
-// }
-
-inline TSqlDatabase::TSqlDatabase(TSqlDatabase &&other)
-{
-    *this = std::move(other);
-}
-
-// inline TSqlDatabase &TSqlDatabase::operator=(const TSqlDatabase &other)
-// {
-//     _sqlDatabase = other._sqlDatabase;
-//     _postOpenStatements = other._postOpenStatements;
-//     _enableUpsert = other._enableUpsert;
-//     _driverExtension = other._driverExtension;
-//     return *this;
-// }
-
-inline TSqlDatabase &TSqlDatabase::operator=(TSqlDatabase &&other)
-{
-    if (this != &other) {
-        _sqlDatabase = other._sqlDatabase;
-        _postOpenStatements = other._postOpenStatements;
-        _enableUpsert = other._enableUpsert;
-        _driverExtension = other._driverExtension;
-        other._driverExtension = nullptr;
-    }
-    return *this;
-}
