@@ -204,7 +204,7 @@ TDatabaseContext *Tf::currentDatabaseContext()
 }
 
 
-QSqlDatabase &Tf::currentSqlDatabase(int id) noexcept
+TSqlDatabase &Tf::currentSqlDatabase(int id) noexcept
 {
     return currentDatabaseContext()->getSqlDatabase(id);
 }

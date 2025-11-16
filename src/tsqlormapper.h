@@ -166,7 +166,7 @@ private:
 */
 template <class T>
 inline TSqlORMapper<T>::TSqlORMapper() :
-    TAbstractSqlORMapper(Tf::currentSqlDatabase(T().databaseId()))
+    TAbstractSqlORMapper(Tf::currentSqlDatabase(T().databaseId()).sqlDatabase())
 {
     setTable(T().tableName());
 }

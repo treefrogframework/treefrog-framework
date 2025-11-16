@@ -36,7 +36,8 @@ public:
     static QString formatValue(const QVariant &val, const QSqlDatabase &database) { return formatValue(val, database.driver()); }
 
 private:
-    QString _connectionName;
+    //QString _connectionName;
+    int _databaseId {0};
     QVariantList _boundValues;  // For prepared query
 };
 

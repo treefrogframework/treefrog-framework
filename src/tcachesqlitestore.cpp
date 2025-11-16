@@ -25,7 +25,7 @@ static int sqliteMinorVersion;
 
 inline QSqlError lastError()
 {
-    return Tf::currentSqlDatabase(Tf::app()->databaseIdForCache()).lastError();
+    return Tf::currentSqlDatabase(Tf::app()->databaseIdForCache()).sqlDatabase().lastError();
 }
 
 
@@ -64,10 +64,10 @@ bool TCacheSQLiteStore::createTable(const QString &table)
 {
     int id = Tf::app()->databaseIdForCache();
     auto db = TSqlDatabasePool::instance()->database(id);
-    bool ret = queryNonTrx(db, QStringLiteral("CREATE TABLE IF NOT EXISTS %1 (%2 TEXT PRIMARY KEY, %3 INTEGER, %4 BLOB)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
-    queryNonTrx(db, QStringLiteral("VACUUM"));
+    bool ret = queryNonTrx(db->sqlDatabase(), QStringLiteral("CREATE TABLE IF NOT EXISTS %1 (%2 TEXT PRIMARY KEY, %3 INTEGER, %4 BLOB)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
+    queryNonTrx(db->sqlDatabase(), QStringLiteral("VACUUM"));
 
-    TSqlDatabasePool::instance()->pool(db);
+    //TSqlDatabasePool::instance()->pool(db);
     return ret;
 }
 

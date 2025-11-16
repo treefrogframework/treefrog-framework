@@ -6,14 +6,15 @@
  */
 
 #include "tsqldatabase.h"
+#include "tsqldatabasepool.h"
 #include "tsqldriverextension.h"
 #include "tsystemglobal.h"
 #include <QFileInfo>
-#include <QMap>
+#include <QSet>
 #include <QReadWriteLock>
 
 
-class TDatabaseDict : public QMap<QString, TSqlDatabase> {
+class TDatabaseDict : public QSet<QString> {
 public:
     mutable QReadWriteLock lock;
 };
@@ -32,32 +33,34 @@ void TSqlDatabase::setDriverExtension(TSqlDriverExtension *extension)
 }
 
 
-TSqlDatabase &TSqlDatabase::database(const QString &connectionName)
+std::unique_ptr<TSqlDatabase> TSqlDatabase::database(const QString &connectionName)
 {
-    static TSqlDatabase defaultDatabase;
     auto *dict = dbDict();
     QReadLocker locker(&dict->lock);
 
     if (dict->contains(connectionName)) {
-        return (*dict)[connectionName];
+        return std::unique_ptr<TSqlDatabase>{new TSqlDatabase{QSqlDatabase::database(connectionName)}};
     } else {
-        return defaultDatabase;
+        return std::unique_ptr<TSqlDatabase>{new TSqlDatabase{TSqlDatabase{}}};
     }
 }
 
 
-TSqlDatabase &TSqlDatabase::addDatabase(const QString &driver, const QString &connectionName)
+bool TSqlDatabase::addDatabase(const QString &driver, const QString &connectionName)
 {
-    TSqlDatabase db(QSqlDatabase::addDatabase(driver, connectionName));
     auto *dict = dbDict();
     QWriteLocker locker(&dict->lock);
 
-    if (dict->contains(connectionName)) {
-        dict->take(connectionName);
+    if (!dict->contains(connectionName)) {
+        auto db = QSqlDatabase::addDatabase(driver, connectionName);
+        if (db.isValid()) {
+            dict->insert(connectionName);
+        } else {
+            tSystemError("TSqlDatabase::addDatabase error.  driver:{}  name:{}", driver, connectionName);
+            return false;
+        }
     }
-
-    dict->insert(connectionName, db);
-    return (*dict)[connectionName];
+    return true;
 }
 
 
@@ -65,8 +68,9 @@ void TSqlDatabase::removeDatabase(const QString &connectionName)
 {
     auto *dict = dbDict();
     QWriteLocker locker(&dict->lock);
-    dict->take(connectionName);
-    QSqlDatabase::removeDatabase(connectionName);
+    if (dict->remove(connectionName)) {
+        QSqlDatabase::removeDatabase(connectionName);
+    }
 }
 
 
@@ -87,4 +91,13 @@ bool TSqlDatabase::isUpsertSupported() const
 bool TSqlDatabase::isPreparedStatementSupported() const
 {
     return _driverExtension && _driverExtension->isPreparedStatementSupported();
+}
+
+
+TSqlDatabase::Handle::~Handle()
+{
+    tSystemDebug("Handle::~Handle");
+    if (_conn) {
+        TSqlDatabasePool::instance()->pool(std::move(_conn));
+    }
 }

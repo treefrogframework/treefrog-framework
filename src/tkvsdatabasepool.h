@@ -27,34 +27,25 @@ public:
     // TKvsDatabase handle
     class Handle {
     public:
-        Handle(TKvsDatabase *ptr) : _ptr(ptr) {}
+        Handle() = default;
+        Handle(TKvsDBConn conn) : _conn(std::move(conn)) {}
         Handle(const Handle &) = delete;
         Handle &operator=(const Handle &) = delete;
-        Handle(Handle &&other) noexcept
-        {
-            _ptr  = other._ptr;
-            other._ptr = nullptr;
-        }
-
-        Handle &operator=(Handle &&other) noexcept
-        {
-            _ptr  = other._ptr;
-            other._ptr = nullptr;
-            return *this;
-        }
+        Handle(Handle &&other) noexcept = default;
+        Handle &operator=(Handle &&other) noexcept = default;
 
         ~Handle()
         {
-            if (_ptr) {
-                TKvsDatabasePool::instance()->pool(*_ptr);
+            if (_conn) {
+                TKvsDatabasePool::instance()->pool(*(_conn.get()));
             }
         }
 
-        TKvsDatabase *operator->() { return _ptr; }
-        TKvsDatabase &operator*()  { return *_ptr; }
+        TKvsDatabase *operator->() { return _conn.get(); }
+        TKvsDatabase &operator*()  { return *(_conn.get()); }
 
     private:
-        TKvsDatabase *_ptr {nullptr};
+        TKvsDBConn _conn;
     };
 
 protected:

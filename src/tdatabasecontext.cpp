@@ -39,12 +39,13 @@ TDatabaseContext::TDatabaseContext()
     // sqlDatabases(),
     // kvsDatabases()
 {
-    if (sqlDatabases.size() < (size_t)Tf::app()->sqlDatabaseSettingsCount()) {
-        sqlDatabases.resize(Tf::app()->sqlDatabaseSettingsCount());
+    const int count = Tf::app()->sqlDatabaseSettingsCount();
+    if (sqlDatabases.size() < (size_t)count) {
+        sqlDatabases.resize(count);
     }
 
-    if (kvsDatabases.size() < (size_t)Tf::app()->sqlDatabaseSettingsCount()) {
-        kvsDatabases.resize(Tf::app()->sqlDatabaseSettingsCount());
+    if (kvsDatabases.size() < (size_t)count) {
+        kvsDatabases.resize(count);
     }
 }
 
@@ -56,14 +57,10 @@ TDatabaseContext::~TDatabaseContext()
 }
 
 
-QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
+TSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
 {
-    // if (sqlDatabases.size() < (size_t)Tf::app()->sqlDatabaseSettingsCount()) {
-    //     sqlDatabases.resize(Tf::app()->sqlDatabaseSettingsCount());
-    // }
-
     if (id < 0) {
-        return invalidDb;  // invalid database
+        throw RuntimeException("error database id", __FILE__, __LINE__);throw RuntimeException("error database id", __FILE__, __LINE__);
     }
 
     if (id >= Tf::app()->sqlDatabaseSettingsCount()) {
@@ -71,26 +68,25 @@ QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
     }
 
     TSqlTransaction &tx = sqlDatabases[id];
-    QSqlDatabase &db = tx.database();
+    TSqlDatabase::Handle &handle = tx.database();
 
-    if (db.isValid() && tx.isActive()) {
-        return db;
+    if (handle && handle->isValid() && tx.isActive()) {
+        return *handle;
     }
 
     int n = 0;
     do {
-        if (!db.isValid()) {
-            db = TSqlDatabasePool::instance()->database(id);
+        if (!handle || !handle->isValid()) {
+            handle = std::move(TSqlDatabasePool::instance()->database(id));
         }
 
         if (tx.begin()) {
             break;
         }
-        TSqlDatabasePool::instance()->pool(db, true);
     } while (++n < 2);  // try two times
 
     idleElapsed = (uint)std::time(nullptr);
-    return db;
+    return *handle;
 }
 
 
@@ -153,7 +149,7 @@ void TDatabaseContext::commitTransactions()
         // tx.commit();
         // TSqlDatabasePool::instance()->pool(tx.database());
         it->commit();
-        TSqlDatabasePool::instance()->pool(it->database());
+        //TSqlDatabasePool::instance()->pool(it->database());  もともとはpoolで戻していたが必要か？
     }
 }
 
@@ -169,7 +165,7 @@ bool TDatabaseContext::commitTransaction(int id)
 
     TSqlTransaction &tx = sqlDatabases[id];
     res = tx.commit();
-    TSqlDatabasePool::instance()->pool(sqlDatabases[id].database());
+    //TSqlDatabasePool::instance()->pool(sqlDatabases[id].database());
     return res;
 }
 
@@ -181,7 +177,7 @@ void TDatabaseContext::rollbackTransactions()
         // tx.rollback();
         // TSqlDatabasePool::instance()->pool(tx.database(), true);
         it->rollback();
-        TSqlDatabasePool::instance()->pool(it->database(), true);
+        //TSqlDatabasePool::instance()->pool(it->database(), true);
     }
 }
 
@@ -195,7 +191,7 @@ bool TDatabaseContext::rollbackTransaction(int id)
         return res;
     }
     res = sqlDatabases[id].rollback();
-    TSqlDatabasePool::instance()->pool(sqlDatabases[id].database(), true);
+    //TSqlDatabasePool::instance()->pool(sqlDatabases[id].database(), true);
     return res;
 }
 

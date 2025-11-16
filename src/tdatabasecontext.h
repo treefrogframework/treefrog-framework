@@ -1,8 +1,10 @@
 #pragma once
 //#include <QMap>
-#include <vector>
+#include <TSqlDatabase>
 #include <TSqlTransaction>
 #include <TGlobal>
+#include "tsqldatabasepool.h"
+#include <vector>
 
 class QSqlDatabase;
 class TKvsDatabase;
@@ -16,7 +18,7 @@ public:
     TDatabaseContext(TDatabaseContext &&) = default;
     TDatabaseContext &operator=(TDatabaseContext &&) = default;
 
-    QSqlDatabase &getSqlDatabase(int id = 0);
+    TSqlDatabase &getSqlDatabase(int id = 0);
     TKvsDatabase &getKvsDatabase(Tf::KvsEngine engine);
 
     void setTransactionEnabled(bool enable, int id = 0);
@@ -34,10 +36,6 @@ protected:
     void releaseKvsDatabases();
     void releaseSqlDatabases();
 
-    // QMap<int, TSqlTransaction> sqlDatabases;
-    // QMap<int, TKvsDatabase> kvsDatabases;
-    //std::map<int, TSqlTransaction> sqlDatabases;
-    //std::map<int, TKvsDatabase> kvsDatabases;
     std::vector<TSqlTransaction> sqlDatabases;
     std::vector<TKvsDatabase> kvsDatabases;
 
@@ -46,6 +44,5 @@ private:
     TCache *cachep {nullptr};
 
     T_DISABLE_COPY(TDatabaseContext)
-    //T_DISABLE_MOVE(TDatabaseContext)
 };
 

@@ -7,6 +7,7 @@
 #include <QVariantMap>
 #include <QSqlDatabase>
 #include <TGlobal>
+#include <TSqlDatabase>
 #include <TModelObject>
 
 
@@ -37,10 +38,12 @@ public:
 protected:
     void syncToSqlRecord();
     void syncToObject();
-    QSqlDatabase &getDatabase();
+    //QSqlDatabase &getDatabase();
+    TSqlDatabase &getDatabase();
 
     QSqlError sqlError;
 
 private:
-    QSqlDatabase _database;
+    //QSqlDatabase _database;
+    //TSqlDatabase _database;  これに変えたい
 };

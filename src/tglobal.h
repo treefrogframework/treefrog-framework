@@ -216,7 +216,7 @@ class TAbstractActionContext;
 class TAppSettings;
 class TDatabaseContext;
 class TCache;
-class QSqlDatabase;
+class TSqlDatabase;
 
 namespace Tf {
 T_CORE_EXPORT TWebApplication *app() noexcept;
@@ -235,7 +235,7 @@ T_CORE_EXPORT TCache *cache() noexcept;
 T_CORE_EXPORT TAbstractController *currentController();
 inline const TAbstractController *constCurrentController() { return currentController(); }
 T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
-T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id) noexcept;
+T_CORE_EXPORT TSqlDatabase &currentSqlDatabase(int id) noexcept;
 T_CORE_EXPORT QMap<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
 //T_CORE_EXPORT std::map<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
 
