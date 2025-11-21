@@ -54,7 +54,7 @@ bool TSqlTransaction::begin()
     _active = _database->sqlDatabase().transaction();
     _connectionName = _database->sqlDatabase().connectionName();
     int id = TSqlDatabasePool::getDatabaseId(_database->sqlDatabase());
-    if (Q_LIKELY(_active)) {
+    if (_active) {
         Tf::traceQueryLog(time.elapsed(), "[BEGIN] [databaseId:{}] {}", id, _connectionName);
     } else {
         Tf::traceQueryLog(time.elapsed(), "[BEGIN Failed] [databaseId:{}] {}", id, _connectionName);

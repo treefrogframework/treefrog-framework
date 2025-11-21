@@ -541,12 +541,5 @@ void TSqlObject::syncToSqlRecord()
 
 TSqlDatabase &TSqlObject::getDatabase()
 {
-#if 0
-    if (!_database.isValid()) {
-        _database = Tf::currentSqlDatabase(databaseId());
-    }
-    return _database;
-#else
     return Tf::currentSqlDatabase(databaseId());
-#endif
 }

@@ -166,7 +166,11 @@ Task TUringCoroutine::start()
             int len = co_await AsyncRecv(_sd, readBuffer.data() + readLength, buflen, timeout);
             if (len < 0) {
                 // timeout or error
-                tSystemError("Recv error fd:{} error:{}", _sd, strerror(-len));
+                if (len == -ETIME) {
+                    tSystemDebug("Recv timer expired fd:{}", _sd);
+                } else {
+                    tSystemError("Recv error fd:{} error:{}", _sd, strerror(-len));
+                }
                 co_return;
             }
             if (!len) {

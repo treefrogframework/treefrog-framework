@@ -1,8 +1,10 @@
 #pragma once
+#include <TGlobal>
+#include <TSystemGlobal>
 #include <QSqlDatabase>
 #include <QSqlDriver>
 #include <QStringList>
-#include <TGlobal>
+
 
 class TSqlDriverExtension;
 
@@ -27,19 +29,19 @@ public:
     class Handle {
     public:
         Handle() = default;
-        Handle(SqlDbPtr conn) : _conn(std::move(conn)) {}
+        Handle(SqlDbPtr ptr) : _dbptr(std::move(ptr)) {}
         Handle(const Handle &) = delete;
         Handle &operator=(const Handle &) = delete;
         Handle(Handle &&other) noexcept = default;
-        Handle &operator=(Handle &&other) noexcept = default;
+        Handle &operator=(Handle &&other) noexcept;
         ~Handle();
 
-        TSqlDatabase *operator->() { return _conn.get(); }
-        TSqlDatabase &operator*() { return *(_conn.get()); }
-        explicit operator bool() const noexcept { return (bool)_conn; }
+        TSqlDatabase *operator->() { return _dbptr.get(); }
+        TSqlDatabase &operator*() { return *(_dbptr.get()); }
+        explicit operator bool() const noexcept { return static_cast<bool>(_dbptr); }
 
     private:
-        SqlDbPtr _conn;
+        SqlDbPtr _dbptr;
     };
 
 

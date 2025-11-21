@@ -65,11 +65,12 @@ std::unique_ptr<TSqlDatabase> TSqlDatabase::database(const QString &connectionNa
     auto *dict = dbDict();
     QReadLocker locker(&dict->lock);
 
-    if (dict->contains(connectionName)) {
-        return std::unique_ptr<TSqlDatabase>{new TSqlDatabase{QSqlDatabase::database(connectionName)}};
-    } else {
+    if (!dict->contains(connectionName)) {
+        tSystemWarn("No such SQL database: {}", connectionName);
         return std::unique_ptr<TSqlDatabase>{new TSqlDatabase{TSqlDatabase{}}};
     }
+
+    return std::unique_ptr<TSqlDatabase>{new TSqlDatabase{QSqlDatabase::database(connectionName)}};
 }
 
 
@@ -123,8 +124,19 @@ bool TSqlDatabase::isPreparedStatementSupported() const
 
 TSqlDatabase::Handle::~Handle()
 {
-    tSystemDebug("Handle::~Handle");
-    if (_conn) {
-        TSqlDatabasePool::instance()->pool(std::move(_conn));
+    if (_dbptr) {
+        TSqlDatabasePool::instance()->pool(std::move(_dbptr));
     }
+}
+
+
+TSqlDatabase::Handle &TSqlDatabase::Handle::operator=(TSqlDatabase::Handle &&other) noexcept
+{
+    if (this != &other) {
+        if (_dbptr) {
+            TSqlDatabasePool::instance()->pool(std::move(_dbptr));
+        }
+        _dbptr = std::move(other._dbptr);
+    }
+    return *this;
 }

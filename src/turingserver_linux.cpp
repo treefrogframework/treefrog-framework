@@ -422,7 +422,6 @@ int TUringServer::addEvent(int fd, TAwaitBase* await) const
 }
 
 
-
 void TUringServer::registerForGC(TUringCoroutine *coroutine)
 {
     _garbage.push_back(coroutine);

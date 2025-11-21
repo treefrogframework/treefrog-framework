@@ -211,7 +211,6 @@ TSqlDatabase &Tf::currentSqlDatabase(int id) noexcept
 
 
 QMap<QByteArray, std::function<QObject *()>> *Tf::objectFactories() noexcept
-//std::map<QByteArray, std::function<QObject *()>> *Tf::objectFactories() noexcept
 {
     static QMap<QByteArray, std::function<QObject *()>> objectFactoryMap;
     return &objectFactoryMap;

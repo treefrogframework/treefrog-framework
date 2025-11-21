@@ -26,7 +26,6 @@ public:
     virtual ~TUringCoroutine();
 
     Task start();
-    //static TUringCoroutine *currentRoutine();
 
 protected:
     virtual int64_t writeResponse(THttpResponseHeader &, QIODevice *) override;

@@ -144,12 +144,16 @@ void TSqlDatabasePool::init()
     }
 #endif
 
+    if (lastCachedTime) {
+        return;
+    }
+
     const int dbcount = Tf::app()->sqlDatabaseSettingsCount();
-    bool aval = false;
     cachedDatabases.resize(dbcount);
     availableDatabases.resize(dbcount);
     lastCachedTime = new TAtomic<uint>[dbcount];
     tSystemDebug("SQL database available. maxConnects:{}", maxConnects);
+    bool aval = false;
 
     // Adds databases previously
     for (int j = 0; j < dbcount; ++j) {
@@ -246,44 +250,45 @@ TSqlDatabase::Handle TSqlDatabasePool::database(int databaseId)
         auto &cache = cachedDatabases[databaseId];
         auto &stack = availableDatabases[databaseId];
 
-        for (;;) {
+        while (true) {
             QString name;
             if (!cache.empty()) {
-                SqlDbPtr tdbptr {std::move(cache.top())};
-                cache.pop();
-                if (tdbptr->sqlDatabase().isOpen()) {
-                    tSystemDebug("Gets cached database: {}", tdbptr->connectionName());
-                    return TSqlDatabase::Handle(std::move(tdbptr));
+                SqlDbPtr sqlptr {cache.pop()};
+                if (sqlptr->sqlDatabase().isOpen()) {
+                    tSystemDebug("Gets cached database: {}", sqlptr->connectionName());
+                    return TSqlDatabase::Handle(std::move(sqlptr));
                 } else {
-                    tSystemError("Pooled database is not open: {}  [{}:{}]", tdbptr->connectionName(), __FILE__, __LINE__);
-                    stack.push(std::move(tdbptr));
+                    tSystemError("Pooled database is not open: {}  [{}:{}]", sqlptr->connectionName(), __FILE__, __LINE__);
+                    stack.push(std::move(sqlptr));
                     continue;
                 }
             }
 
             if (!stack.empty()) {
-                SqlDbPtr tdbptr {std::move(stack.top())};
-                stack.pop();
-                if (!openDatabase(*tdbptr)) {
+                SqlDbPtr sqlptr {stack.pop()};
+                if (!openDatabase(*sqlptr)) {
                     Tf::error("Database open error. Invalid database settings, or maximum number of SQL connection exceeded.");
-                    tSystemError("SQL database open error: {}", tdbptr->sqlDatabase().connectionName());
-                    stack.push(std::move(tdbptr));
+                    tSystemError("SQL database open error: {}", sqlptr->sqlDatabase().connectionName());
+                    stack.push(std::move(sqlptr));
                     return TSqlDatabase::Handle();
                 }
 
                 tSystemDebug("SQL database opened successfully (env:{})", Tf::app()->databaseEnvironment());
-                tSystemDebug("Gets database: {}", tdbptr->sqlDatabase().connectionName());
+                tSystemDebug("Gets database: {}", sqlptr->sqlDatabase().connectionName());
 
                 // Executes setup-queries
-                if (!tdbptr->postOpenStatements().isEmpty()) {
-                    TSqlQuery query(tdbptr->sqlDatabase());
-                    for (QString st : tdbptr->postOpenStatements()) {
+                if (!sqlptr->postOpenStatements().isEmpty()) {
+                    TSqlQuery query(sqlptr->sqlDatabase());
+                    for (QString st : sqlptr->postOpenStatements()) {
                         st = st.trimmed();
                         query.exec(st);
                     }
                 }
-                return TSqlDatabase::Handle(std::move(tdbptr));
+                return TSqlDatabase::Handle(std::move(sqlptr));
             }
+
+            tSystemError("Empty available databases  [{}:{}]", __FILE__, __LINE__);
+            break;
         }
     }
     throw RuntimeException("No pooled connection", __FILE__, __LINE__);

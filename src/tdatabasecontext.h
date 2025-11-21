@@ -1,13 +1,12 @@
 #pragma once
-//#include <QMap>
 #include <TSqlDatabase>
 #include <TSqlTransaction>
+#include <TKvsDatabase>
 #include <TGlobal>
 #include "tsqldatabasepool.h"
 #include <vector>
 
 class QSqlDatabase;
-class TKvsDatabase;
 class TCache;
 
 
@@ -36,8 +35,8 @@ protected:
     void releaseKvsDatabases();
     void releaseSqlDatabases();
 
-    std::vector<TSqlTransaction> sqlDatabases;
-    std::vector<TKvsDatabase> kvsDatabases;
+    std::vector<TSqlTransaction> sqlTransactions;
+    std::vector<TKvsDatabase::Handle> kvsDatabases;
 
 private:
     uint idleElapsed {0};

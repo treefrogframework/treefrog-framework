@@ -38,7 +38,6 @@ public:
 protected:
     void syncToSqlRecord();
     void syncToObject();
-    //QSqlDatabase &getDatabase();
     TSqlDatabase &getDatabase();
 
     QSqlError sqlError;

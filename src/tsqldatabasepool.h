@@ -10,7 +10,7 @@
 #include <QString>
 #include <memory>
 #include <vector>
-#include <stack>
+#include <deque>
 
 
 class T_CORE_EXPORT TSqlDatabasePool : public QObject {
