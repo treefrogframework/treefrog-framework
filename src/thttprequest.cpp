@@ -43,7 +43,6 @@ static bool httpMethodOverride()
 */
 
 THttpRequestData::THttpRequestData(const THttpRequestData &other) :
-    //QSharedData(other),
     header(other.header),
     bodyArray(other.bodyArray),
     queryItems(other.queryItems),
@@ -65,24 +64,13 @@ THttpRequestData::THttpRequestData(const THttpRequestData &other) :
 */
 THttpRequest::THttpRequest() :
     d(std::make_unique<THttpRequestData>())
-    //d(new THttpRequestData)
 {
 }
-
-/*!
-  \fn THttpRequest::THttpRequest(const THttpRequest &other)
-  Copy constructor.
-*/
-// THttpRequest::THttpRequest(const THttpRequest &other) :
-//     d(other.d)
-// {
-// }
 
 /*!
   Constructor with the header \a header and the body \a body.
 */
 THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress, TActionContext *context) :
-    //d(new THttpRequestData)
     d(std::make_unique<THttpRequestData>())
 {
     d->header = header;
@@ -96,7 +84,7 @@ THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &b
   reading the file \a filePath.
 */
 THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context) :
-    d(new THttpRequestData)
+    d(new THttpRequestData{})
 {
     d->header = THttpRequestHeader(header);
     d->clientAddress = clientAddress;

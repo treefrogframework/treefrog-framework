@@ -185,16 +185,9 @@ void TActionThread::emitError(int socketError)
 
 THttpRequest TActionThread::readRequest(THttpSocket *socket)
 {
-    //THttpRequest req;
-
     for (;;) {
         if (socket->waitForReadyReadRequest(500)) {
             return socket->read();
-            // if (!req.isEmpty()) {
-            //     return req;
-            // } else {
-            //     break;
-            // }
         }
 
         if (Q_UNLIKELY(socket->state() != QAbstractSocket::ConnectedState)) {

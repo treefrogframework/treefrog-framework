@@ -26,7 +26,7 @@ constexpr auto CONN_NAME_FORMAT = "rdb%02d_%d";
 TSqlDatabasePool *TSqlDatabasePool::instance()
 {
     static std::unique_ptr<TSqlDatabasePool> databasePool = []() {
-        std::unique_ptr<TSqlDatabasePool> pool { new TSqlDatabasePool };
+        std::unique_ptr<TSqlDatabasePool> pool{new TSqlDatabasePool};
         pool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
         pool->init();
         return pool;
@@ -43,31 +43,6 @@ TSqlDatabasePool::TSqlDatabasePool() :
 
 TSqlDatabasePool::~TSqlDatabasePool()
 {
-#if 0
-    QMutexLocker locker(&_mutex);
-    timer.stop();
-
-    for (int j = 0; j < Tf::app()->sqlDatabaseSettingsCount(); ++j) {
-        auto &cache = cachedDatabase[j];
-        QString name;
-        while (!cache.isEmpty()) {
-            name = cache.pop();
-            auto &db = TSqlDatabase::database(name);
-            closeDatabase(db);
-            TSqlDatabase::removeDatabase(name);
-        }
-
-        auto &stack = availableNames[j];
-        while (!stack.isEmpty()) {
-            name = stack.pop();
-            TSqlDatabase::removeDatabase(name);
-        }
-    }
-
-    delete[] cachedDatabase;
-    delete[] lastCachedTime;
-    delete[] availableNames;
-#else
     QMutexLocker locker(&_mutex);
     timer.stop();
 
@@ -89,7 +64,6 @@ TSqlDatabasePool::~TSqlDatabasePool()
     }
 
     delete[] lastCachedTime;
-#endif
 }
 
 

@@ -36,11 +36,9 @@ public:
 class T_CORE_EXPORT THttpRequest {
 public:
     THttpRequest();
-    //THttpRequest(const THttpRequest &other);
     THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress, TActionContext *context);
     THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context);
     virtual ~THttpRequest();
-    //THttpRequest &operator=(const THttpRequest &other);
     THttpRequest(THttpRequest&&) = default;
     THttpRequest &operator=(THttpRequest &&) = default;
 
@@ -96,13 +94,11 @@ protected:
 private:
     void parseBody(const QByteArray &body, const THttpRequestHeader &header, TActionContext *context);
 
-    //QSharedDataPointer<THttpRequestData> d;
-    //QIODevice *bodyDevice {nullptr};
     std::unique_ptr<THttpRequestData> d;
     std::unique_ptr<QIODevice> bodyDevice;
 
     friend class TMultipartFormData;
+    T_DISABLE_COPY(THttpRequest)
 };
 
 Q_DECLARE_METATYPE(THttpRequest)
-
