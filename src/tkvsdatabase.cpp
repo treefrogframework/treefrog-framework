@@ -35,7 +35,7 @@ public:
 
 static TKvsDatabaseDict *databaseDict()
 {
-    static std::unique_ptr<TKvsDatabaseDict> dict { new TKvsDatabaseDict };
+    static std::unique_ptr<TKvsDatabaseDict> dict{new TKvsDatabaseDict{}};
     return dict.get();
 }
 
@@ -318,8 +318,8 @@ TKvsDatabase &TKvsDatabase::operator=(TKvsDatabase &&other)
         _connectName = other._connectName;
         _driver = other._driver;
         other._driver = nullptr;
-        return *this;
     }
+    return *this;
 }
 
 

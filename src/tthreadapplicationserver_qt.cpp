@@ -85,7 +85,9 @@ void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
 {
     tSystemDebug("incomingConnection  sd:{}  thread count:{}  max:{}", (qint64)socketDescriptor, TActionThread::threadCount(), maxThreads);
     TActionThread *thread;
-    while (!threadPoolPtr()->pop(thread)) {
+    bool ok;
+
+    while (!((thread = threadPoolPtr().pop(&ok) && ok)) {
         std::this_thread::yield();
         //qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
         Tf::msleep(1);

@@ -98,7 +98,7 @@ void TDatabaseContext::releaseSqlDatabases()
 }
 
 
-TKvsDatabase &TDatabaseContext::getKvsDatabase(Tf::KvsEngine engine)
+TKvsDatabase::Handle &TDatabaseContext::getKvsDatabase(Tf::KvsEngine engine)
 {
     auto &handle = kvsDatabases[(int)engine];
     if (!handle || !handle->isValid()) {
@@ -106,7 +106,7 @@ TKvsDatabase &TDatabaseContext::getKvsDatabase(Tf::KvsEngine engine)
     }
 
     idleElapsed = (uint)std::time(nullptr);
-    return *handle;
+    return handle;
 }
 
 

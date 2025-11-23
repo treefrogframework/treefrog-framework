@@ -7,7 +7,7 @@ class T_CORE_EXPORT THazardObject {
 public:
     THazardObject();
     THazardObject(const THazardObject &);
-    THazardObject(THazardObject &&) { }
+    THazardObject(THazardObject &&) = default;
     virtual ~THazardObject() { }
 
     void deleteLater();
@@ -21,4 +21,3 @@ private:
     friend class THazardPtrManager;
     friend class THazardRemoverThread;
 };
-

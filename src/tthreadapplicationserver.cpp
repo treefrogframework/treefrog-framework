@@ -17,10 +17,10 @@
   an web application server for thread.
 */
 
-TStack<TActionThread *> *TThreadApplicationServer::threadPoolPtr()
+TStack<TActionThread *> &TThreadApplicationServer::threadPoolPtr()
 {
     static TStack<TActionThread *> threadPool;
-    return &threadPool;
+    return threadPool;
 }
 
 

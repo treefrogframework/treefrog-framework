@@ -17,8 +17,11 @@ private:
     struct Node : public THazardObject {
         T value;
         TAtomicPtr<Node> next;
-        Node(const T &v) :
-            value(v) { }
+
+        explicit Node(const T &v) : value{v} { }
+        Node(Node &&) = delete;
+        Node &operator=(const Node &) = delete;
+        Node &operator=(Node &&) = delete;
     };
 
     TAtomicPtr<Node> queHead {nullptr};
@@ -128,4 +131,3 @@ inline bool TQueue<T>::head(T &val)
     Tf::hazardPtrForQueue().clear();
     return (bool)next;
 }
-

@@ -18,7 +18,7 @@ public:
     TDatabaseContext &operator=(TDatabaseContext &&) = default;
 
     TSqlDatabase &getSqlDatabase(int id = 0);
-    TKvsDatabase &getKvsDatabase(Tf::KvsEngine engine);
+    TKvsDatabase::Handle &getKvsDatabase(Tf::KvsEngine engine);
 
     void setTransactionEnabled(bool enable, int id = 0);
     void release();

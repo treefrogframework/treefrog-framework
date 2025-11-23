@@ -100,6 +100,7 @@ HEADER_CLASSES += ../include/TMemcached
 HEADER_CLASSES += ../include/TMemcachedDriver
 HEADER_CLASSES += ../include/TStdoutSystemLogger
 HEADER_CLASSES += ../include/TStdErrSystemLogger
+HEADER_CLASSES += ../include/TStack
 
 HEADER_FILES  = tabstractactioncontext.h
 HEADER_FILES += tabstractmodel.h
@@ -204,6 +205,7 @@ HEADER_FILES += tmemcacheddriver.h
 HEADER_FILES += tsystemlogger.h
 HEADER_FILES += tstdoutsystemlogger.h
 HEADER_FILES += tstderrsystemlogger.h
+HEADER_FILES += tstack.h
 HEADER_FILES += turingserver.h
 HEADER_FILES += turingcoroutine.h
 

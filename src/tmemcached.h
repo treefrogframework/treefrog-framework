@@ -38,7 +38,7 @@ private:
     TMemcachedDriver *driver();
     const TMemcachedDriver *driver() const;
 
-    TKvsDatabase &_database;
+    TKvsDatabase::Handle &_database;
 
     friend class TCacheMemcachedStore;
     T_DISABLE_COPY(TMemcached)

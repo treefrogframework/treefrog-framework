@@ -1,6 +1,6 @@
 #include "tcachesharedmemorystore.h"
 #include "tsharedmemorykvs.h"
-#include "tkvsdatabasepool.h"
+#include "TWebApplication"
 
 
 TCacheSharedMemoryStore::TCacheSharedMemoryStore()
@@ -13,8 +13,10 @@ TCacheSharedMemoryStore::~TCacheSharedMemoryStore()
 
 void TCacheSharedMemoryStore::init()
 {
-    auto settings = TKvsDatabasePool::instance()->getDatabaseSettings(Tf::KvsEngine::CacheKvs);
-    TSharedMemoryKvs::initialize(settings.databaseName, settings.connectOptions);
+    const QVariantMap &settings = Tf::app()->kvsSettings(Tf::KvsEngine::CacheKvs);
+    auto databaseName = settings.value("DatabaseName").toString().trimmed();
+    auto connectOptions = settings.value("ConnectOptions").toString().trimmed();
+    TSharedMemoryKvs::initialize(databaseName, connectOptions);
 }
 
 

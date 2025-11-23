@@ -44,7 +44,7 @@ private:
 private:
     TMongoQuery(Tf::KvsEngine engine, const QString &collection);
 
-    TKvsDatabase &_database;
+    TKvsDatabase::Handle &_database;
     QString _collection;
     int _queryLimit {0};
     int _queryOffset {0};

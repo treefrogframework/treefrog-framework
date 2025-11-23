@@ -52,7 +52,7 @@ protected:
     void run() override;
 
 private:
-    static TStack<TActionThread *> *threadPoolPtr();
+    static TStack<TActionThread *> &threadPoolPtr();
     TThreadApplicationServer(int listeningSocket, QObject *parent = nullptr);
 
     int listenSocket {0};

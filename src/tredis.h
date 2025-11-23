@@ -70,7 +70,7 @@ private:
     static QByteArrayList toByteArrayList(const QStringList &values);
     static QStringList toStringList(const QByteArrayList &values);
 
-    TKvsDatabase &_database;
+    TKvsDatabase::Handle &_database;
 
     friend class TCacheRedisStore;
     T_DISABLE_COPY(TRedis)

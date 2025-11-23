@@ -8,7 +8,11 @@ class TAtomic : public std::atomic<T> {
 public:
     TAtomic() = default;
     ~TAtomic() = default;
-    TAtomic(T item) :
+    TAtomic(const TAtomic &) = delete;
+    TAtomic &operator=(const TAtomic &) = delete;
+    TAtomic(TAtomic &&) = delete;
+    TAtomic &operator=(TAtomic &&) = delete;
+    explicit TAtomic(T item) :
         std::atomic<T>(item) { }
 
     operator T() const { return load(); }
@@ -37,7 +41,4 @@ public:
     {
         return std::atomic<T>::compare_exchange_strong(expected, newValue, std::memory_order_acq_rel);
     }
-
-    T_DISABLE_COPY(TAtomic)
-    T_DISABLE_MOVE(TAtomic)
 };
