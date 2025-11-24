@@ -42,16 +42,16 @@ static bool httpMethodOverride()
   \brief The THttpRequestData class is for shared THttpRequest data objects.
 */
 
-THttpRequestData::THttpRequestData(const THttpRequestData &other) :
-    header(other.header),
-    bodyArray(other.bodyArray),
-    queryItems(other.queryItems),
-    formItems(other.formItems),
-    multipartFormData(other.multipartFormData),
-    jsonData(other.jsonData),
-    clientAddress(other.clientAddress)
-{
-}
+// THttpRequestData::THttpRequestData(const THttpRequestData &other) :
+//     header(other.header),
+//     bodyArray(other.bodyArray),
+//     queryItems(other.queryItems),
+//     formItems(other.formItems),
+//     multipartFormData(other.multipartFormData),
+//     jsonData(other.jsonData),
+//     clientAddress(other.clientAddress)
+// {
+// }
 
 /*!
   \class THttpRequest
@@ -64,8 +64,7 @@ THttpRequestData::THttpRequestData(const THttpRequestData &other) :
 */
 THttpRequest::THttpRequest() :
     d(std::make_unique<THttpRequestData>())
-{
-}
+{}
 
 /*!
   Constructor with the header \a header and the body \a body.
@@ -75,8 +74,10 @@ THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &b
 {
     d->header = header;
     d->clientAddress = clientAddress;
-    d->bodyArray = body;
-    parseBody(d->bodyArray, d->header, context);
+    if (!body.isEmpty()) {
+        bodyArray() = body;
+    }
+    parseBody(body, d->header, context);
 }
 
 /*!
@@ -84,50 +85,22 @@ THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &b
   reading the file \a filePath.
 */
 THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context) :
-    d(new THttpRequestData{})
+    d(std::make_unique<THttpRequestData>())
 {
-    d->header = THttpRequestHeader(header);
+    d->header = std::move(THttpRequestHeader{header});
     d->clientAddress = clientAddress;
 
     if (d->header.contentType().trimmed().toLower().startsWith(QByteArrayLiteral("multipart/form-data"))) {
-        d->multipartFormData = TMultipartFormData(filePath, boundary(), context);
-        d->formItems = d->multipartFormData.postParameters;
+        multipartFormData() = TMultipartFormData(filePath, boundary(), context);
+        formItemList() = multipartFormData().postParameters;
     } else {
         QFile file(filePath);
         if (file.open(QIODevice::ReadOnly)) {
-            d->bodyArray = file.readAll();
-            parseBody(d->bodyArray, d->header, context);
+            bodyArray() = file.readAll();
+            parseBody(bodyArray(), d->header, context);
         }
     }
 }
-
-/*!
-  Destructor.
-*/
-THttpRequest::~THttpRequest()
-{
-    // if (bodyDevice) {
-    //     bodyDevice->close();
-    //     delete bodyDevice;
-    // }
-}
-
-/*!
-  Assignment operator.
-*/
-/*
-THttpRequest &THttpRequest::operator=(const THttpRequest &other)
-{
-    if (bodyDevice) {
-        bodyDevice->close();
-        delete bodyDevice;
-        bodyDevice = nullptr;
-    }
-
-    d = other.d;
-    return *this;
-}
-*/
 
 /*!
   Returns the method of an HTTP request, which can be overridden by
@@ -225,7 +198,7 @@ bool THttpRequest::hasItem(const QString &name, const QList<QPair<QString, QStri
  */
 bool THttpRequest::hasQueryItem(const QString &name) const
 {
-    return hasItem(name, d->queryItems);
+    return hasItem(name, queryItemList());
 }
 
 /*!
@@ -255,7 +228,7 @@ QString THttpRequest::itemValue(const QString &name, const QString &defaultValue
  */
 QString THttpRequest::queryItemValue(const QString &name, const QString &defaultValue) const
 {
-    return itemValue(name, defaultValue, d->queryItems);
+    return itemValue(name, defaultValue, queryItemList());
 }
 
 
@@ -277,7 +250,7 @@ QStringList THttpRequest::allItemValues(const QString &name, const QList<QPair<Q
  */
 QStringList THttpRequest::allQueryItemValues(const QString &name) const
 {
-    return allItemValues(name, d->queryItems);
+    return allItemValues(name, queryItemList());
 }
 
 /*!
@@ -300,7 +273,7 @@ QStringList THttpRequest::queryItemList(const QString &key) const
  */
 QVariantList THttpRequest::queryItemVariantList(const QString &key) const
 {
-    return itemVariantList(key, d->queryItems);
+    return itemVariantList(key, queryItemList());
 }
 
 /*!
@@ -309,7 +282,7 @@ QVariantList THttpRequest::queryItemVariantList(const QString &key) const
  */
 QVariantMap THttpRequest::queryItems(const QString &key) const
 {
-    return itemMap(key, d->queryItems);
+    return itemMap(key, queryItemList());
 }
 
 
@@ -328,7 +301,7 @@ QVariantMap THttpRequest::itemMap(const QList<QPair<QString, QString>> &items)
  */
 QVariantMap THttpRequest::queryItems() const
 {
-    return itemMap(d->queryItems);
+    return itemMap(queryItemList());
 }
 
 /*!
@@ -344,7 +317,7 @@ QVariantMap THttpRequest::queryItems() const
  */
 bool THttpRequest::hasFormItem(const QString &name) const
 {
-    return hasItem(name, d->formItems);
+    return hasItem(name, formItemList());
 }
 
 /*!
@@ -363,7 +336,7 @@ QString THttpRequest::formItemValue(const QString &name) const
  */
 QString THttpRequest::formItemValue(const QString &name, const QString &defaultValue) const
 {
-    return itemValue(name, defaultValue, d->formItems);
+    return itemValue(name, defaultValue, formItemList());
 }
 
 /*!
@@ -373,7 +346,7 @@ QString THttpRequest::formItemValue(const QString &name, const QString &defaultV
  */
 QStringList THttpRequest::allFormItemValues(const QString &name) const
 {
-    return allItemValues(name, d->formItems);
+    return allItemValues(name, formItemList());
 }
 
 /*!
@@ -417,7 +390,7 @@ QVariantList THttpRequest::itemVariantList(const QString &key, const QList<QPair
  */
 QVariantList THttpRequest::formItemVariantList(const QString &key) const
 {
-    return itemVariantList(key, d->formItems);
+    return itemVariantList(key, formItemList());
 }
 
 
@@ -465,7 +438,7 @@ QVariantMap THttpRequest::itemMap(const QString &key, const QList<QPair<QString,
  */
 QVariantMap THttpRequest::formItems(const QString &key) const
 {
-    return itemMap(key, d->formItems);
+    return itemMap(key, formItemList());
 }
 
 /*!
@@ -473,7 +446,7 @@ QVariantMap THttpRequest::formItems(const QString &key) const
 */
 QVariantMap THttpRequest::formItems() const
 {
-    return itemMap(d->formItems);
+    return itemMap(formItemList());
 }
 
 
@@ -486,19 +459,19 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
         QString ctype = QString::fromLatin1(header.contentType().trimmed());
         if (ctype.startsWith(QLatin1String("application/x-www-form-urlencoded"), Qt::CaseInsensitive)) {
             if (!body.isEmpty()) {
-                d->formItems = THttpUtility::fromFormUrlEncoded(body);
+                formItemList() = THttpUtility::fromFormUrlEncoded(body);
             }
         } else if (ctype.startsWith(QLatin1String("application/json"), Qt::CaseInsensitive)) {
             QJsonParseError error;
-            d->jsonData = QJsonDocument::fromJson(body, &error);
+            jsonData() = QJsonDocument::fromJson(body, &error);
             if (error.error != QJsonParseError::NoError) {
                 tSystemWarn("Json data: {}\n error: {}\n at: {}", body.data(), error.errorString(),
                     error.offset);
             }
         } else if (ctype.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
             // multipart/form-data
-            d->multipartFormData = TMultipartFormData(body, boundary(), context);
-            d->formItems = d->multipartFormData.postParameters;
+            multipartFormData() = TMultipartFormData(body, boundary(), context);
+            formItemList() = multipartFormData().postParameters;
         } else {
             tSystemWarn("unsupported content-type: {}", ctype);
         }
@@ -510,7 +483,7 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
         QString query = QString::fromLatin1(data.value(1));
 
         if (!query.isEmpty()) {
-            d->queryItems = THttpRequest::fromQuery(query);
+            queryItemList() = THttpRequest::fromQuery(query);
         }
         break;
     }
@@ -575,8 +548,8 @@ QList<TCookie> THttpRequest::cookies() const
  */
 QVariantMap THttpRequest::allParameters() const
 {
-    auto params = d->queryItems;
-    params << d->formItems;
+    auto params = queryItemList();
+    params << formItemList();
     return itemMap(params);
 }
 
@@ -661,15 +634,102 @@ QHostAddress THttpRequest::originatingClientAddress() const
 QIODevice *THttpRequest::rawBody()
 {
     if (!bodyDevice) {
-        if (!d->multipartFormData.bodyFile.isEmpty()) {
-            auto p = new QFile(d->multipartFormData.bodyFile);
+        if (d->multipartFormData && !multipartFormData().bodyFile.isEmpty()) {
+            auto p = new QFile(multipartFormData().bodyFile);
             bodyDevice.reset(p);
         } else {
-            auto p = new QBuffer(&d->bodyArray);
+            auto p = new QBuffer(d->bodyArray.get());
             bodyDevice.reset(p);
         }
     }
     return bodyDevice.get();
+}
+
+
+QJsonDocument &THttpRequest::jsonData()
+{
+    if (!d->jsonData) {
+        d->jsonData.reset(new QJsonDocument{});
+    }
+    return *(d->jsonData);
+}
+
+
+const QJsonDocument &THttpRequest::jsonData() const
+{
+    if (!d->jsonData) {
+        d->jsonData.reset(new QJsonDocument{});
+    }
+    return *(d->jsonData);
+}
+
+
+TMultipartFormData &THttpRequest::multipartFormData()
+{
+    if (!d->multipartFormData) {
+        d->multipartFormData.reset(new TMultipartFormData{});
+    }
+    return *(d->multipartFormData);
+}
+
+
+const QByteArray &THttpRequest::bodyArray() const
+{
+    static const QByteArray dummy;
+
+    if (!d->bodyArray) {
+        return dummy;
+    }
+    return *(d->bodyArray);
+}
+
+
+QByteArray &THttpRequest::bodyArray()
+{
+    if (!d->bodyArray) {
+        d->bodyArray.reset(new QByteArray{});
+    }
+    return *(d->bodyArray);
+}
+
+
+const QList<QPair<QString, QString>> &THttpRequest::queryItemList() const
+{
+    static const QList<QPair<QString, QString>> dummy;
+
+    if (!d->queryItemList) {
+        return dummy;
+    }
+    return *(d->queryItemList);
+}
+
+
+QList<QPair<QString, QString>> &THttpRequest::queryItemList()
+{
+    if (!d->queryItemList) {
+        d->queryItemList.reset(new QList<QPair<QString, QString>>{});
+    }
+    return *(d->queryItemList);
+}
+
+
+const QList<QPair<QString, QString>> &THttpRequest::formItemList() const
+{
+    static const QList<QPair<QString, QString>> dummy;
+
+    if (!d->formItemList) {
+        return dummy;
+    }
+    return *(d->formItemList);
+}
+
+
+QList<QPair<QString, QString>> &THttpRequest::formItemList()
+{
+    if (!d->formItemList) {
+        d->formItemList.reset(new QList<QPair<QString, QString>>{});
+    }
+    return *(d->formItemList);
 }
 
 

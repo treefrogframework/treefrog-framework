@@ -357,36 +357,6 @@ int TUringServer::addSendZc(int fd, const void* buf, size_t len, TAwaitBase* awa
     return io_uring_submit(&_ring);
 }
 
-/*
-int TUringServer::addSendFile(int sd, int fd, int offset, size_t slice_len, TAwaitBase* await)
-{
-    int pipefd[2];
-    if (pipe2(pipefd, O_NONBLOCK | O_CLOEXEC) < 0) {
-        tSystemError("pipe2 error [{}:{}]", __FILE__, __LINE__);
-        return -1;
-    }
-
-    // 1. splice: file -> pipe
-    io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
-    io_uring_prep_splice(sqe, fd, offset, pipefd[1], -1, slice_len, 0);
-    if (await) {
-        await->clear();
-        io_uring_sqe_set_data(sqe, await);
-    }
-
-    sqe->flags |= IOSQE_IO_LINK;
-    // 2. splice: pipe -> sd
-    io_uring_sqe *sqe2 = io_uring_get_sqe(&_ring);
-    io_uring_prep_splice(sqe, pipefd[0], -1, sd, -1, slice_len, 0);
-    if (await) {
-        await->_sqecounter++;
-        io_uring_sqe_set_data(sqe2, await);
-    }
-    return io_uring_submit(&_ring);
-}
-*/
-
-
 // int TUringServer::addSendFile(int sd, int fd, int offset, size_t slice_len, TAwaitBase* await)
 // {
 //     size_t file_size = lseek(fd, 0, SEEK_END);
@@ -404,7 +374,6 @@ int TUringServer::addSendFile(int sd, int fd, int offset, size_t slice_len, TAwa
 
 //     return addSend(sd, const void* bu, size_t slice_len, await);
 // }
-
 
 
 //

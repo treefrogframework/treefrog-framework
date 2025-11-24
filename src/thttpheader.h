@@ -6,11 +6,13 @@
 class T_CORE_EXPORT THttpHeader : public TInternetMessageHeader {
 public:
     THttpHeader();
-    THttpHeader(const THttpHeader &other);
-    THttpHeader(const QByteArray &str);
-    virtual ~THttpHeader() { }
+    explicit THttpHeader(const QByteArray &str);
+    THttpHeader(const THttpHeader &other) = default;
+    THttpHeader &operator=(const THttpHeader &other) = default;
+    THttpHeader(THttpHeader &&) = default;
+    THttpHeader &operator=(THttpHeader &&) = default;
+    virtual ~THttpHeader() = default;
 
-    THttpHeader &operator=(const THttpHeader &other);
     virtual QByteArray toByteArray() const;
     virtual int majorVersion() const { return _majorVersion; }
     virtual int minorVersion() const { return _minorVersion; }
@@ -23,10 +25,12 @@ protected:
 
 class T_CORE_EXPORT THttpRequestHeader : public THttpHeader {
 public:
-    THttpRequestHeader();
-    THttpRequestHeader(const THttpRequestHeader &other);
-    THttpRequestHeader(const QByteArray &str);
-    THttpRequestHeader &operator=(const THttpRequestHeader &other);
+    THttpRequestHeader() = default;
+    explicit THttpRequestHeader(const QByteArray &str);
+    THttpRequestHeader(const THttpRequestHeader &other) = default;
+    THttpRequestHeader &operator=(const THttpRequestHeader &other) = default;
+    THttpRequestHeader(THttpRequestHeader &&) = default;
+    THttpRequestHeader &operator=(THttpRequestHeader &&) = default;
 
     const QByteArray &method() const { return _reqMethod; }
     const QByteArray &path() const { return _reqUri; }
@@ -44,14 +48,16 @@ private:
 
 class T_CORE_EXPORT THttpResponseHeader : public THttpHeader {
 public:
-    THttpResponseHeader();
-    THttpResponseHeader(const THttpResponseHeader &other);
-    THttpResponseHeader(const QByteArray &str);
+    THttpResponseHeader() = default;
+    explicit THttpResponseHeader(const QByteArray &str);
+    THttpResponseHeader(const THttpResponseHeader &) = default;
+    THttpResponseHeader &operator=(const THttpResponseHeader &) = default;
+    THttpResponseHeader(THttpResponseHeader &&) = default;
+    THttpResponseHeader &operator=(THttpResponseHeader &&) = default;
 
     Tf::StatusCode statusCode() const { return static_cast<Tf::StatusCode>(_statusCode); }
     void setStatusLine(Tf::StatusCode code, const QByteArray &text = QByteArray(), int majorVer = 1, int minorVer = 1);
     virtual QByteArray toByteArray() const;
-    THttpResponseHeader &operator=(const THttpResponseHeader &other);
     void clear();
 
 private:

@@ -11,6 +11,8 @@
 #include <QMap>
 #include <QUrl>
 #include <QStringEncoder>
+#include <chrono>
+#include <format>
 
 #if defined(Q_OS_WIN)
 #include <qt_windows.h>
@@ -424,6 +426,7 @@ QDateTime THttpUtility::fromHttpDateTimeUTCString(const QByteArray &utc)
 
 QByteArray THttpUtility::getUTCTimeString()
 {
+#if 0
     static const char *DAY[] = {"Sun, ", "Mon, ", "Tue, ", "Wed, ", "Thu, ", "Fri, ", "Sat, "};
     static const char *MONTH[] = {"Jan ", "Feb ", "Mar ", "Apr ", "May ", "Jun ", "Jul ", "Aug ", "Sep ", "Oct ", "Nov ", "Dec "};
 
@@ -472,4 +475,20 @@ QByteArray THttpUtility::getUTCTimeString()
 #endif  // Q_OS_UNIX
 
     return utcTime;
+#else
+    auto now = std::chrono::system_clock::now();
+    std::time_t t = std::chrono::system_clock::to_time_t(now);
+
+    std::tm tm{};
+#if defined(Q_OS_WIN)
+    gmtime_s(&tm, &t);
+#else
+    gmtime_r(&t, &tm);
+#endif
+    QByteArray buf;
+    buf.reserve(31);
+    int len = std::strftime(buf.data(), 31, "%a, %d %b %Y %H:%M:%S GMT", &tm);
+    buf.resize(len);
+    return buf;
+#endif
 }

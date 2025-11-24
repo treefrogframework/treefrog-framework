@@ -158,44 +158,47 @@ TDatabaseContext *Tf::currentDatabaseContext()
 {
     TDatabaseContext *context;
 
-    if (Tf::app()->multiProcessingModule() == TWebApplication::MultiProcessingModule::Epoll) {
+    switch (Tf::app()->multiProcessingModule()) {
+    case TWebApplication::MultiProcessingModule::Thread:
+        context = TDatabaseContext::currentDatabaseContext();
+        if (context) {
+            return context;
+        }
+
+        context = dynamic_cast<TDatabaseContext *>(QThread::currentThread());
+        if (context) {
+            return context;
+        }
+        break;
+
+    case TWebApplication::MultiProcessingModule::Epoll:
 #ifdef Q_OS_LINUX
         context = TMultiplexingServer::instance()->currentWorker();
         if (context) {
             return context;
         }
-
-        context = Tf::app()->mainDatabaseContext();
-        if (context) {
-            return context;
-        }
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
-    }
+        break;
 
-    if (Tf::app()->multiProcessingModule() == TWebApplication::MultiProcessingModule::Uring) {
+    case TWebApplication::MultiProcessingModule::Uring:
 #ifdef Q_OS_LINUX
         context = TUringServer::instance()->currentContext();
         if (context) {
             return context;
         }
-
-        context = Tf::app()->mainDatabaseContext();
-        if (context) {
-            return context;
-        }
 #else
-        tFatal("Unsupported MPM: epoll");
+        tFatal("Unsupported MPM: uring");
 #endif
+        break;
+
+    default:
+        tFatal("Unsupported MPM");
+        break;
     }
 
-    context = TDatabaseContext::currentDatabaseContext();
-    if (context) {
-        return context;
-    }
-
-    context = dynamic_cast<TDatabaseContext *>(QThread::currentThread());
+    context = Tf::app()->mainDatabaseContext();
     if (context) {
         return context;
     }

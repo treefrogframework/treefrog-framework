@@ -28,7 +28,6 @@ public:
 
     inline int await_resume()
     {
-        //tSystemDebug("await_resume : _len:{} _cqeflags:{} _cqeres:{}", _len, _cqeflags, _cqeres);
         return _cqeres;
     }
 
@@ -49,7 +48,6 @@ public:
     {
         _handle = handle;
         int res = TUringServer::instance()->addSendZc(_fd, _buf, _len, this);
-        // res = TUringServer::instance()->addSend(_fd, _buf, _len, this);
 
         if (res < 0) {
             tSystemError("addSend error: {}", strerror(errno));
@@ -131,7 +129,7 @@ private:
 
 TUringCoroutine::~TUringCoroutine()
 {
-    tSystemDebug("~TUringCoroutine: sd:{}", _sd);
+    //tSystemDebug("~TUringCoroutine: sd:{}", _sd);
     if (_sd > 0) {
         ::close(_sd);
     }
@@ -148,7 +146,9 @@ Task TUringCoroutine::start()
         TUringServer::instance()->registerForGC(this);
     });
 
+    THttpRequest request;
     int timeout = 5000;
+
     while (timeout > 0) {
         //int res;
         int64_t lengthToRead = INT64_MAX;
@@ -210,7 +210,7 @@ Task TUringCoroutine::start()
             }
         }
 
-        auto request = THttpRequest::generate(readBuffer, QHostAddress("localhost"), this);
+        request = std::move(THttpRequest::generate(readBuffer, QHostAddress("localhost"), this));
         execute(request);
 
         int res = co_await AsyncSend(_sd, _response.data(), _response.length());
@@ -257,7 +257,6 @@ Task TUringCoroutine::start()
                     break;
                 }
                 sent_len += res;
-                //tSystemDebug("### AsyncSend  res:{}  sent_len:{}", res, sent_len);
             }
 
             munmap(mapped, file_size);

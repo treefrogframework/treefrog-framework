@@ -8,10 +8,13 @@
 
 class T_CORE_EXPORT TInternetMessageHeader {
 public:
-    TInternetMessageHeader() { }
+    TInternetMessageHeader() = default;
+    explicit TInternetMessageHeader(const QByteArray &str);
     TInternetMessageHeader(const TInternetMessageHeader &other);
-    TInternetMessageHeader(const QByteArray &str);
-    virtual ~TInternetMessageHeader() { }
+    TInternetMessageHeader &operator=(const TInternetMessageHeader &other);
+    TInternetMessageHeader(TInternetMessageHeader &&) = default;
+    TInternetMessageHeader &operator=(TInternetMessageHeader &&) = default;
+    virtual ~TInternetMessageHeader() = default;
 
     bool hasRawHeader(const QByteArray &key) const;
     QByteArray rawHeader(const QByteArray &key) const;
@@ -32,7 +35,6 @@ public:
     void setDate(const QDateTime &dateTime);
     void setCurrentDate();
     virtual QByteArray toByteArray() const;
-    TInternetMessageHeader &operator=(const TInternetMessageHeader &other);
 
 protected:
     void parse(const QByteArray &header);
@@ -42,4 +44,3 @@ protected:
     RawHeaderPairList _headerPairList;
     mutable int64_t _contentLength {-1};
 };
-
