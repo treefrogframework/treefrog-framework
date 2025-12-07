@@ -4,7 +4,6 @@
 #include "thazardobject.h"
 #include "thazardptr.h"
 #include "tdeclexport.h"
-#include <TSystemGlobal>
 
 
 namespace Tf {
@@ -28,8 +27,8 @@ private:
         Node(Node &&) = delete;
         Node &operator=(Node &&) = delete;
     };
-
     TAtomicPtr<Node> stkHead {nullptr};
+
     TAtomic<int> counter {0};
 
 public:
@@ -40,7 +39,7 @@ public:
     TStack &operator=(TStack &&) = delete;
 
     void push(T val);
-    T pop(bool *ok = nullptr);
+    std::optional<T> pop();
     int count() const { return counter.load(); }
     int size() const { return counter.load(); }
     bool empty() const { return counter.load() == 0; }
@@ -67,10 +66,11 @@ inline void TStack<T>::push(T val)
 
 
 template <class T>
-inline T TStack<T>::pop(bool *ok)
+inline std::optional<T> TStack<T>::pop()
 {
-    T val;
+    std::optional<T> val;
     Node *pnode;
+
     while ((pnode = Tf::hazardPtrForStack().guard<Node>(&stkHead))) {
         if (stkHead.compareExchange(pnode, pnode->next)) {
             break;
@@ -82,37 +82,7 @@ inline T TStack<T>::pop(bool *ok)
         val = std::move(pnode->value);
         pnode->next = nullptr;
         pnode->deleteLater();
-
-        if (ok) {
-            *ok = true;
-        }
-    } else {
-        if (ok) {
-            *ok = false;
-        }
     }
     Tf::hazardPtrForStack().clear();
     return val;
 }
-
-
-/*
-template <class T>
-class TMoveStack : public std::deque<T> {
-public:
-    TMoveStack() = default;
-    TMoveStack(const TMoveStack &) = delete;
-    TMoveStack &operator=(const TMoveStack &) = delete;
-    TMoveStack(TMoveStack &&) noexcept = default;
-    TMoveStack &operator=(TMoveStack &&) noexcept = default;
-    void push(T value) { std::deque<T>::push_back(std::move(value)); }
-    T pop()
-    {
-        T v = std::move(std::deque<T>::back());
-        std::deque<T>::pop_back();
-        return v;
-    }
-    T &top() { return std::deque<T>::back(); }
-    const T &top() const { return std::deque<T>::back(); }
-};
-*/

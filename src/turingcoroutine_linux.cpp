@@ -1,5 +1,7 @@
 #include "turingcoroutine.h"
 #include "turingserver.h"
+#include "tthreadpoolawaiter.h"
+#include "tactioncontextroutine.h"
 #include "TSystemGlobal"
 #include "TAppSettings"
 #include "THttpRequest"
@@ -18,7 +20,7 @@ public:
     AsyncRecv(int fd, void* buffer, size_t length, int msecs) :
         _fd(fd), _buf(buffer), _len(length), _msecs(msecs) { }
 
-    void await_suspend(std::coroutine_handle<Task::promise_type> handle)
+    void await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
     {
         _handle = handle;
         if (TUringServer::instance()->addRecv(_fd, _buf, _len, _msecs, this) < 0) {
@@ -44,7 +46,7 @@ public:
     AsyncSend(int fd, const void *buf, size_t len) :
         _fd(fd), _buf(buf), _len(len) { }
 
-    void await_suspend(std::coroutine_handle<Task::promise_type> handle)
+    void await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
     {
         _handle = handle;
         int res = TUringServer::instance()->addSendZc(_fd, _buf, _len, this);
@@ -70,11 +72,11 @@ private:
 template <typename R>
 class AsyncFunction : public TAwaitBase {
 public:
-    explicit AsyncFunction(std::function<R()> f, TUringCoroutine *parent) :
-        TAwaitBase(parent), _func(std::move(f)) {}
+    explicit AsyncFunction(std::function<R()> f) :
+        _func(std::move(f)) {}
     ~AsyncFunction() { if (_fd > 0) ::close(_fd); }
 
-    void await_suspend(std::coroutine_handle<Task::promise_type> handle)
+    void await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
     {
         _handle = handle;
         _fd = eventfd(0, (EFD_NONBLOCK | EFD_CLOEXEC));
@@ -113,18 +115,18 @@ private:
 };
 
 
-class CurrentRoutineScope {
-public:
-    CurrentRoutineScope(TUringCoroutine *&slot, TUringCoroutine *now) :
-        _slot(slot), _prev(slot)
-    {
-        _slot = now;
-    }
-    ~CurrentRoutineScope() { _slot = _prev; }
-private:
-    TUringCoroutine *&_slot;
-    TUringCoroutine *_prev;
-};
+// class CurrentRoutineScope {
+// public:
+//     CurrentRoutineScope(TUringCoroutine *&slot, TUringCoroutine *now) :
+//         _slot(slot), _prev(slot)
+//     {
+//         _slot = now;
+//     }
+//     ~CurrentRoutineScope() { _slot = _prev; }
+// private:
+//     TUringCoroutine *&_slot;
+//     TUringCoroutine *_prev;
+// };
 
 
 TUringCoroutine::~TUringCoroutine()
@@ -136,7 +138,7 @@ TUringCoroutine::~TUringCoroutine()
 }
 
 
-Task TUringCoroutine::start()
+TUringTask TUringCoroutine::start()
 {
     static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
     static int keepAlivetimeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
@@ -146,7 +148,7 @@ Task TUringCoroutine::start()
         TUringServer::instance()->registerForGC(this);
     });
 
-    THttpRequest request;
+    TActionContextRoutine routine;
     int timeout = 5000;
 
     while (timeout > 0) {
@@ -210,12 +212,16 @@ Task TUringCoroutine::start()
             }
         }
 
-        request = std::move(THttpRequest::generate(readBuffer, QHostAddress("localhost"), this));
-        execute(request);
+        auto result = co_await TThreadPoolAwaiter([&] {
+            routine.start(readBuffer);
+            return routine.result;
+        });
+        _response = std::move(result.response);
+        _fileName = std::move(result.fileName);
 
         int res = co_await AsyncSend(_sd, _response.data(), _response.length());
         if (res <= 0) {
-            tSystemError("Send error fd={} res={}\n", _sd, res);
+            tSystemError("Send error fd={} res={}", _sd, res);
             co_return;
         }
 
@@ -271,7 +277,7 @@ Task TUringCoroutine::start()
     }
 }
 
-
+/*
 int64_t TUringCoroutine::writeResponse(THttpResponseHeader &header, QIODevice *body)
 {
     if (keepAliveTimeout() > 0) {
@@ -281,9 +287,9 @@ int64_t TUringCoroutine::writeResponse(THttpResponseHeader &header, QIODevice *b
     _response = header.toByteArray();
 
     if (body) {
-        if (auto *buf = dynamic_cast<QBuffer*>(body); buf) {
+        if (auto *buf = dynamic_cast<QBuffer*>(body); buf) {  // dynamic_cast is faster for QBuffer
             _response += buf->buffer();
-        } else if (auto *file = dynamic_cast<QFile*>(body); file) {
+        } else if (auto *file = qobject_cast<QFile*>(body); file) {
             _fileName = file->fileName();
         } else {
             tSystemError("Invalid body [{}:{}]", __FILE__, __LINE__);
@@ -291,3 +297,32 @@ int64_t TUringCoroutine::writeResponse(THttpResponseHeader &header, QIODevice *b
     }
     return 0;
 }
+*/
+
+// TAsyncTask<int> TUringCoroutine::executeRequest(THttpRequest &request)
+// {
+    // int res = co_await TThreadPool::instance().run([this](THttpRequest &req) {
+    //     execute(req);
+    //     return 0;
+    // }, request);
+    // co_return res;
+
+
+    // int x = 1;
+    // int res = co_await TThreadPool::instance().run([this](int &d) {
+    //     d++;
+    //     return 0;
+    // }, x);
+    // co_return res;
+
+
+    // tSystemInfo("#### foo0");
+    // int x = co_await TThreadPool::instance().run([](int a) {
+    //     tSystemInfo("#### foo1");
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    //     tSystemInfo("#### foo2 {}", a);
+    //     return a * 2;
+    // }, 3);
+    // tSystemInfo("#### foo3 {}", x);
+    // co_return x;
+//}

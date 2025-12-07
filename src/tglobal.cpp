@@ -22,6 +22,7 @@
 #include <TMultiplexingServer>
 #include <TActionWorker>
 #include "turingserver.h"
+#include "tactioncontextroutine.h"
 #endif
 #ifdef Q_OS_WIN
 #define NOMINMAX
@@ -138,13 +139,15 @@ TAbstractController *Tf::currentController()
 #endif
         break;
 
-    case TWebApplication::MultiProcessingModule::Uring:
+    case TWebApplication::MultiProcessingModule::Uring: {
 #ifdef Q_OS_LINUX
-        return TUringServer::instance()->currentController();
+        if (auto context = TActionContext::currentActionContext(); context) {
+            return context->currentController();
+        }
 #else
         tFatal("Unsupported MPM: uring");
 #endif
-        break;
+        break; }
 
     default:
         break;
@@ -156,25 +159,20 @@ TAbstractController *Tf::currentController()
 
 TDatabaseContext *Tf::currentDatabaseContext()
 {
-    TDatabaseContext *context;
-
     switch (Tf::app()->multiProcessingModule()) {
     case TWebApplication::MultiProcessingModule::Thread:
-        context = TDatabaseContext::currentDatabaseContext();
-        if (context) {
+        if (auto context = TDatabaseContext::currentDatabaseContext(); context) {
             return context;
         }
 
-        context = dynamic_cast<TDatabaseContext *>(QThread::currentThread());
-        if (context) {
+        if (auto context = dynamic_cast<TDatabaseContext *>(QThread::currentThread()); context) {
             return context;
         }
         break;
 
     case TWebApplication::MultiProcessingModule::Epoll:
 #ifdef Q_OS_LINUX
-        context = TMultiplexingServer::instance()->currentWorker();
-        if (context) {
+        if (auto context = TMultiplexingServer::instance()->currentWorker(); context) {
             return context;
         }
 #else
@@ -184,8 +182,11 @@ TDatabaseContext *Tf::currentDatabaseContext()
 
     case TWebApplication::MultiProcessingModule::Uring:
 #ifdef Q_OS_LINUX
-        context = TUringServer::instance()->currentContext();
-        if (context) {
+        if (auto context = dynamic_cast<TDatabaseContext *>(TActionContext::currentActionContext()); context) {
+            return context;
+        }
+
+        if (auto context = TDatabaseContext::currentDatabaseContext(); context) {
             return context;
         }
 #else
@@ -198,8 +199,7 @@ TDatabaseContext *Tf::currentDatabaseContext()
         break;
     }
 
-    context = Tf::app()->mainDatabaseContext();
-    if (context) {
+    if (auto context = Tf::app()->mainDatabaseContext(); context) {
         return context;
     }
 

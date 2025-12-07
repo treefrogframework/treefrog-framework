@@ -12,30 +12,30 @@
 #include "tsystemglobal.h"
 #include "turlroute.h"
 #include "turingcoroutine.h"
-#include <turingserver.h>
+#include "turingserver.h"
+#include "tfcore_unix.h"
 #include <QElapsedTimer>
 #include <TActionWorker>
 #include <TApplicationServerBase>
 #include <TThreadApplicationServer>
 #include <TWebApplication>
 #include <netinet/tcp.h>
+#include <sys/eventfd.h>
 
 constexpr int SEND_BUF_SIZE = 128 * 1024;
 constexpr int RECV_BUF_SIZE = 128 * 1024;
 constexpr int SPLICE_LEN = 1024 * 1024;
+constexpr uint64_t UD_NOTIFY = 0xFF00000000000000ULL;
 
 
 TUringServer *TUringServer::instance(int listeningSocket)
 {
-    static std::unique_ptr<TUringServer> instance;
-    static std::once_flag once;
-
-    std::call_once(once, [&]() {
+    static std::unique_ptr<TUringServer> instance = [&]() {
         if (listeningSocket <= 0) {
             throw StandardException("Invalid socket", __FILE__, __LINE__);
         }
-        instance = std::make_unique<TUringServer>(listeningSocket);
-    });
+        return std::make_unique<TUringServer>(listeningSocket);
+    }();
     return instance.get();
 }
 
@@ -81,12 +81,24 @@ TUringServer::TUringServer(int listeningSocket, QObject *parent) :
     TApplicationServerBase(),
     _listenSocket(listeningSocket)
 {
-    io_uring_queue_init(8192, &_ring, 0);
+    io_uring_queue_init(8192 * 2, &_ring, 0);
+
+    // Event fd
+    _notifyFd = eventfd(0, (EFD_NONBLOCK | EFD_CLOEXEC));
+    if (_notifyFd < 0) {
+        tSystemError("eventfd error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+        return;
+    }
+
+    addNotifyEvent();
 }
 
 
 TUringServer::~TUringServer()
 {
+    if (_notifyFd > 0) {
+        tf_close(_notifyFd);
+    }
     io_uring_queue_exit(&_ring);
 }
 
@@ -126,18 +138,28 @@ void TUringServer::run()
     instance()->addAccept(_listenSocket, &accepter);
 
     __kernel_timespec ts = {
-        .tv_sec = 2,   // 2秒
+        .tv_sec = 2,   // 2 secs
         .tv_nsec = 0
     };
 
     // --- イベントループ ---
     while (!_stopped) {
         if (_garbage.size() > 0) {
-            // Garbage collection
-            for (auto it = _garbage.begin(); it != _garbage.end(); ++it) {
-                delete *it;
+            for (auto &ptr : _garbage) {
+                delete ptr;
             }
             _garbage.clear();
+        }
+
+        // Resume handlers
+        auto h = _resumeHandlers.pop();
+        if (h) {
+            uint64_t tmp;
+            tf_read(_notifyFd, &tmp, sizeof(tmp));
+
+            do {
+                h->resume();
+            } while ((h = _resumeHandlers.pop()));
         }
 
         io_uring_cqe *cqe = nullptr;
@@ -163,6 +185,13 @@ void TUringServer::run()
 
         void *user_data = io_uring_cqe_get_data(cqe);
         if (user_data) {
+            if (user_data == (void*)UD_NOTIFY) {
+                if (!(cqe->flags & IORING_CQE_F_MORE)) {
+                    addNotifyEvent();
+                }
+                continue;
+            }
+
             auto *await = static_cast<TAwaitBase*>(user_data);
             if (await == &accepter) {
                 // Accepts
@@ -171,8 +200,12 @@ void TUringServer::run()
                     int fd = cqe->res;
                     setBufferOption(fd);
                     auto *coro = new TUringCoroutine(fd);
-                    Task task = coro->start();
+#if 0
+                    TUringTask task = coro->start();
                     task.handle.promise().self = coro;
+#else
+                    coro->start();
+#endif
                     await->clear();  // clear
                 } else {
                     int err = -cqe->res;
@@ -209,14 +242,32 @@ void TUringServer::run()
                     }
 
                     if (--await->_sqecounter == 0 && await->_handle && !await->_handle.done()) {
-                        _currentCoroutine = await->_handle.promise().self;
+                        //_currentCoroutine = await->_handle.promise().self;
                         await->_handle.resume();
-                        _currentCoroutine = nullptr;
+                        //_currentCoroutine = nullptr;
                     }
                 }
             }
         }
     }
+}
+
+void TUringServer::addNotifyEvent()
+{
+    if (_notifyFd <= 0) {
+        tSystemError("nofify fd error  [{}:{}]", __FILE__, __LINE__);
+        return;
+    }
+
+    io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
+    if (!sqe) {
+        tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+        return;
+    }
+
+    io_uring_prep_poll_multishot(sqe, _notifyFd, POLL_IN);
+    io_uring_sqe_set_data(sqe, (void*)UD_NOTIFY);
+    io_uring_submit(&_ring);
 }
 
 
@@ -242,17 +293,17 @@ bool TUringServer::isAutoReloadingEnabled()
 }
 
 
-TActionContext *TUringServer::currentContext() const
-{
-    return _currentCoroutine;
-}
+// TActionContext *TUringServer::currentContext() const
+// {
+//     return _currentCoroutine;
+// }
 
 
-TActionController *TUringServer::currentController() const
-{
-    auto *context = currentContext();
-    return (context) ? context->currentController() : nullptr;
-}
+// TActionController *TUringServer::currentController() const
+// {
+//     auto *context = currentContext();
+//     return (context) ? context->currentController() : nullptr;
+// }
 
 /*
 void TUringServer::timerEvent(QTimerEvent *event)
@@ -382,6 +433,11 @@ int TUringServer::addSendZc(int fd, const void* buf, size_t len, TAwaitBase* awa
 int TUringServer::addEvent(int fd, TAwaitBase* await) const
 {
     io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
+    if (!sqe) {
+        tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+        return -1;
+    }
+
     io_uring_prep_poll_add(sqe, fd, POLL_IN);
     if (await) {
         await->clear();
@@ -390,6 +446,33 @@ int TUringServer::addEvent(int fd, TAwaitBase* await) const
     return io_uring_submit(&_ring);
 }
 
+
+void TUringServer::addResumeHandle(std::coroutine_handle<TUringTask::promise_type> handle)
+{
+    _resumeHandlers.push(handle);
+
+    int64_t one = 1;
+    auto n = tf_write(_notifyFd, &one, sizeof(one));
+    if (n < 0) {
+        tSystemError("write error: {}.  fd:{} [{}:{}]", strerror(errno), _notifyFd, __FILE__, __LINE__);
+    }
+}
+
+
+/*
+int TUringServer::addResumeHandle(std::coroutine_handle<TUringTask::promise_type> handle) const
+{
+    // io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
+    // if (!sqe) {
+    //     tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+    //     return -1;
+    // }
+
+    // io_uring_prep_nop(sqe);
+    // io_uring_sqe_set_data(sqe, reinterpret_cast<void*>(UD_NOP_FLAG | (uint64_t)handle.address()));
+    // return io_uring_submit(&_ring);
+}
+*/
 
 void TUringServer::registerForGC(TUringCoroutine *coroutine)
 {

@@ -12,3 +12,9 @@
   \brief The TKvsDriver class is an abstract base class for accessing
   specific KVS databases. This class should not be used directly.
 */
+
+// key():
+//  MEMCACHED
+//  MONGODB
+//  REDIS
+//  MEMORY

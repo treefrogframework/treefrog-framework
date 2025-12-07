@@ -1,7 +1,7 @@
 #pragma once
 #include <TAtomic>
 #include <TKvsDatabase>
-#include <TStack>
+#include <TLockStack>
 #include <TGlobal>
 #include <QBasicTimer>
 #include <QStack>
@@ -36,10 +36,10 @@ private:
     TAtomic<uint> *lastCachedTime {nullptr};
     int maxConnects {0};
     QBasicTimer timer;
-    //std::vector<MoveStack<KvsDbPtr>> availableDatabases;
-    //std::vector<MoveStack<KvsDbPtr>> cachedDatabases;
-    std::vector<TStack<KvsDbPtr>> availableDatabases;
-    std::vector<TStack<KvsDbPtr>> cachedDatabases;
+    // std::vector<TStack<KvsDbPtr>> availableDatabases;
+    // std::vector<TStack<KvsDbPtr>> cachedDatabases;
+    std::vector<TLockStack<KvsDbPtr>> availableDatabases;
+    std::vector<TLockStack<KvsDbPtr>> cachedDatabases;
 
     T_DISABLE_COPY(TKvsDatabasePool)
     T_DISABLE_MOVE(TKvsDatabasePool)

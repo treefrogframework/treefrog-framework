@@ -6,7 +6,7 @@ QT -= gui
 DEFINES += TF_DLL
 
 # C++ Standards Support
-CONFIG += c++20
+CONFIG += c++23
 windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
 
 include(../../tfbase.pri)
@@ -30,5 +30,5 @@ windows {
     # shared link '-lglog'
     LIBS += $$system("pkg-config --libs libglog 2>/dev/null")
   }
-  linux-*:LIBS += -lrt $$system("pkg-config --libs libunwind 2>/dev/null")
+  linux-*:LIBS += -lrt -luring $$system("pkg-config --libs libunwind 2>/dev/null")
 }

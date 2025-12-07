@@ -24,6 +24,14 @@
 #include <THttpUtility>
 #include <TSessionStore>
 #include <TWebApplication>
+#include <thread>
+
+
+namespace {
+// Stores a pointer to current action context into TLS
+thread_local TActionContext *actionContextPtrTls = nullptr;
+
+}
 
 /*!
   \class TActionContext
@@ -31,14 +39,18 @@
   action controllers.
 */
 
+
 TActionContext::TActionContext() :
     TDatabaseContext()
-{ }
+{
+    tSystemDebug("TActionContext::TActionContext ptr:{}", (uint64_t)this);
+}
 
 
 TActionContext::~TActionContext()
 {
     release();
+    tSystemDebug("TActionContext::~TActionContext ptr:{}", (uint64_t)this);
 }
 
 
@@ -117,6 +129,8 @@ void TActionContext::execute(THttpRequest &request)
         // Call controller method
         TDispatcher<TActionController> ctlrDispatcher(route.controller);
         _currController = ctlrDispatcher.object();
+tSystemDebug("##################### _currController:{}  this:{}", (uint64_t)_currController, (uint64_t)this);
+tSystemDebug("####################1 currentDatabaseContext:{}   actioncontext:{}", (uint64_t)currentDatabaseContext(), (uint64_t)dynamic_cast<TActionContext*>(currentDatabaseContext()));
         if (_currController) {
             _currController->setActionName(route.action);
             _currController->setArguments(route.params);
@@ -497,4 +511,19 @@ int TActionContext::keepAliveTimeout()
         return std::max(timeout, 0);
     }();
     return keepAliveTimeout;
+}
+
+
+TActionContext *TActionContext::currentActionContext()
+{
+    return actionContextPtrTls;
+}
+
+
+void TActionContext::setCurrentActionContext(TActionContext *context)
+{
+    if (context && actionContextPtrTls) {
+        tSystemWarn("Duplicate set : setCurrentActionContext()");
+    }
+    actionContextPtrTls = context;
 }

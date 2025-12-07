@@ -31,10 +31,10 @@ protected:
         try {
             uint64_t lastNum = 0;
             for (;;) {
-                uint64_t num;
-                if (intQueue.dequeue(num)) {
+                auto num = intQueue.dequeue();
+                if (num) {
                     //std::cout << "pop:" << intQueue.count() << std::endl;
-                    QVERIFY(num == lastNum);
+                    QVERIFY(num.value() == lastNum);
                     lastNum++;
                     std::this_thread::yield();
                 }

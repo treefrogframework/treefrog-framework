@@ -1,4 +1,8 @@
 #pragma once
+#include <TCookieJar>
+#include <TGlobal>
+#include <THttpRequestHeader>
+#include <TMultipartFormData>
 #include <QByteArray>
 #include <QHostAddress>
 #include <QJsonDocument>
@@ -6,10 +10,6 @@
 #include <QPair>
 #include <QSharedData>
 #include <QVariant>
-#include <TCookieJar>
-#include <TGlobal>
-#include <THttpRequestHeader>
-#include <TMultipartFormData>
 #include <memory>
 
 class TActionContext;
@@ -40,8 +40,8 @@ public:
     THttpRequest();
     THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress, TActionContext *context);
     THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context);
-    THttpRequest(const THttpRequest &) = default;
-    THttpRequest &operator=(const THttpRequest &) = default;
+    THttpRequest(const THttpRequest &) = delete;
+    THttpRequest &operator=(const THttpRequest &) = delete;
     THttpRequest(THttpRequest &&) = default;
     THttpRequest &operator=(THttpRequest &&) = default;
     virtual ~THttpRequest() = default;

@@ -108,17 +108,16 @@ void TThreadApplicationServer::run()
             int socketDescriptor = tf_accept4(listenSocket, nullptr, nullptr, (SOCK_CLOEXEC | SOCK_NONBLOCK));
             if (socketDescriptor > 0) {
                 tSystemDebug("incomingConnection  sd:{}  thread count:{}  max:{}", socketDescriptor, TActionThread::threadCount(), maxThreads);
-                TActionThread *thread;
-                bool ok;
+                std::optional<TActionThread*> thread;
 
-                while (!((thread = threadPoolPtr().pop(&ok)) && ok)) {
+                while (!(thread = threadPoolPtr().pop())) {
                     std::this_thread::yield();
                     Tf::msleep(1);
                 }
 
-                tSystemDebug("thread ptr: {}", (quint64)thread);
-                thread->setSocketDescriptor(socketDescriptor);
-                thread->start();
+                tSystemDebug("thread ptr: {}", (quint64)*thread);
+                (*thread)->setSocketDescriptor(socketDescriptor);
+                (*thread)->start();
             }
         }
     }

@@ -68,7 +68,7 @@ void THazardRemoverThread::run()
 
 
 THazardPtrManager::THazardPtrManager() :
-    removerThread(new THazardRemoverThread())
+    removerThread(new THazardRemoverThread{})
 {
 }
 

@@ -197,15 +197,16 @@ bool TEpoll::deletePoll(TEpollSocket *socket)
 
 void TEpoll::dispatchEvents()
 {
-    TSendData *sd;
-    while (_sendRequests.dequeue(sd)) {
-        TEpollSocket *sock = sd->socket;
+    std::optional<TSendData*> sd;
+
+    while ((sd = _sendRequests.dequeue())) {
+        TEpollSocket *sock = (*sd)->socket;
 
         if (Q_UNLIKELY(sock->socketDescriptor() <= 0)) {
             continue;
         }
 
-        switch (sd->method) {
+        switch ((*sd)->method) {
         case TSendData::Disconnect:
             deletePoll(sock);
             sock->dispose();
@@ -213,14 +214,14 @@ void TEpoll::dispatchEvents()
 
         case TSendData::SwitchToWebSocket: {
             tSystemDebug("Switch to WebSocket");
-            Q_ASSERT(sd->buffer == nullptr);
+            Q_ASSERT((*sd)->buffer == nullptr);
 
-            QByteArray secKey = sd->header.rawHeader("Sec-WebSocket-Key");
+            QByteArray secKey = (*sd)->header.rawHeader("Sec-WebSocket-Key");
             tSystemDebug("secKey: {}", secKey);
             int newsocket = TApplicationServerBase::duplicateSocket(sock->socketDescriptor());
 
             // Switch to WebSocket
-            TEpollWebSocket *ws = new TEpollWebSocket(newsocket, sock->peerAddress(), sd->header);
+            TEpollWebSocket *ws = new TEpollWebSocket(newsocket, sock->peerAddress(), (*sd)->header);
             ws->moveToThread(Tf::app()->thread());
             bool res = ws->watch();
             if (!res) {
@@ -233,7 +234,7 @@ void TEpoll::dispatchEvents()
 
             // WebSocket opening
             TSession session;
-            QByteArray sessionId = sd->header.cookie(TSession::sessionName());
+            QByteArray sessionId = (*sd)->header.cookie(TSession::sessionName());
             if (!sessionId.isEmpty()) {
                 // Finds a session
                 session = TSessionManager::instance().findSession(sessionId);
@@ -244,11 +245,11 @@ void TEpoll::dispatchEvents()
 
         default:
             tSystemError("Logic error [{}:{}]", __FILE__, __LINE__);
-            delete sd->buffer;
+            delete (*sd)->buffer;
             break;
         }
 
-        delete sd;
+        delete *sd;
     }
 }
 

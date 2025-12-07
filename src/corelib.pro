@@ -350,6 +350,12 @@ HEADERS += tsharedmemorykvs.h
 SOURCES += tsharedmemorykvs.cpp
 HEADERS += tfilesystemlogger.h
 SOURCES += tfilesystemlogger.cpp
+HEADERS += tactioncontextroutine.h
+SOURCES += tactioncontextroutine.cpp
+# HEADERS += tthreadpool.h
+# SOURCES += tthreadpool.cpp
+HEADERS += tthreadpoolawaiter.h
+SOURCES += tthreadpoolawaiter.cpp
 
 !wasm {
   HEADERS += tsmtpmailer.h

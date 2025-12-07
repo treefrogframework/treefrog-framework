@@ -33,6 +33,8 @@ public:
     THttpRequest &httpRequest() override { return *_httpRequest; }
     void flushResponse(TActionController *controller, bool immediate);
     static int keepAliveTimeout();
+    static TActionContext *currentActionContext();
+    static void setCurrentActionContext(TActionContext *context);
 
 protected:
     void execute(THttpRequest &request);

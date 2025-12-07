@@ -1,13 +1,9 @@
 #include "tstack.h"
-#include <QThreadStorage>
-
-
-namespace {
-QThreadStorage<THazardPtr> hzptrTls;
-}
+#include <thread>
 
 
 THazardPtr &Tf::hazardPtrForStack()
 {
-    return hzptrTls.localData();
+    static thread_local THazardPtr hzptrTls;
+    return hzptrTls;
 }

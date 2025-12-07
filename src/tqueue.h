@@ -3,7 +3,6 @@
 #include "tatomicptr.h"
 #include "thazardobject.h"
 #include "thazardptr.h"
-#include <TGlobal>
 
 
 namespace Tf {
@@ -11,6 +10,9 @@ T_CORE_EXPORT THazardPtr &hazardPtrForQueue();
 }
 
 
+//
+// Non-blocking move queue
+//
 template <class T>
 class TQueue {
 private:
@@ -30,10 +32,11 @@ private:
 
 public:
     TQueue();
-    void enqueue(const T &val);
-    bool dequeue(T &val);
-    bool head(T &val);
+    void enqueue(T val);
+    std::optional<T> dequeue();
     int count() const { return counter.load(); }
+    int size() const { return counter.load(); }
+    bool empty() const { return counter.load() == 0; }
 
     T_DISABLE_COPY(TQueue)
     T_DISABLE_MOVE(TQueue)
@@ -50,9 +53,9 @@ inline TQueue<T>::TQueue()
 
 
 template <class T>
-inline void TQueue<T>::enqueue(const T &val)
+inline void TQueue<T>::enqueue(T val)
 {
-    auto *newnode = new Node(val);
+    auto *newnode = new Node(std::move(val));
     for (;;) {
         Node *tail = queTail.load();
         Node *next = tail->next.load();
@@ -76,9 +79,11 @@ inline void TQueue<T>::enqueue(const T &val)
 
 
 template <class T>
-inline bool TQueue<T>::dequeue(T &val)
+inline std::optional<T> TQueue<T>::dequeue()
 {
+    std::optional<T> val;
     Node *next;
+
     for (;;) {
         Node *head = queHead.load();
         Node *tail = queTail.load();
@@ -101,7 +106,7 @@ inline bool TQueue<T>::dequeue(T &val)
             }
 
             if (queHead.compareExchange(head, next)) {
-                val = next->value;
+                val = std::move(next->value);
                 head->deleteLater();  // gc
                 counter--;
                 break;
@@ -109,25 +114,5 @@ inline bool TQueue<T>::dequeue(T &val)
         }
     }
     Tf::hazardPtrForQueue().clear();
-    return (bool)next;
-}
-
-
-template <class T>
-inline bool TQueue<T>::head(T &val)
-{
-    Node *next;
-    for (;;) {
-        Node *headp = queHead.load();
-        next = Tf::hazardPtrForQueue().guard<Node>(&headp->next);
-
-        if (Q_LIKELY(headp == queHead.load())) {
-            if (next) {
-                val = next->value;
-            }
-            break;
-        }
-    }
-    Tf::hazardPtrForQueue().clear();
-    return (bool)next;
+    return val;
 }

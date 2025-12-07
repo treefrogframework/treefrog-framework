@@ -1,5 +1,5 @@
 #pragma once
-#include "tstack.h"
+#include <TLockStack>
 #include <QBasicTimer>
 #include <QTcpServer>
 #include <QtGlobal>
@@ -25,7 +25,7 @@ protected:
     void timerEvent(QTimerEvent *event) override;
 
 private:
-    static TStack<TActionThread *> *threadPoolPtr();
+    static TLockStack<TActionThread *> *threadPoolPtr();
 
     int listenSocket {0};
     int maxThreads {0};
@@ -52,7 +52,7 @@ protected:
     void run() override;
 
 private:
-    static TStack<TActionThread *> &threadPoolPtr();
+    static TLockStack<TActionThread *> &threadPoolPtr();
     TThreadApplicationServer(int listeningSocket, QObject *parent = nullptr);
 
     int listenSocket {0};

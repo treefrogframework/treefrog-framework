@@ -1,6 +1,7 @@
 #pragma once
 #include <TCookie>
 #include <TInternetMessageHeader>
+#include <QByteArray>
 
 
 class T_CORE_EXPORT THttpHeader : public TInternetMessageHeader {

@@ -6,9 +6,12 @@
 
 class T_CORE_EXPORT TSession : public QVariantMap {
 public:
-    TSession(const QByteArray &id = QByteArray());
-    TSession(const TSession &other);
-    TSession &operator=(const TSession &other);
+    explicit TSession(const QByteArray &id = QByteArray());
+    ~TSession() = default;
+    TSession(const TSession &other) = default;
+    TSession &operator=(const TSession &other) = default;
+    TSession(TSession &&other) = default;
+    TSession &operator=(TSession &&other) = default;
 
     QByteArray id() const { return sessionId; }
     void reset();
@@ -33,17 +36,17 @@ inline TSession::TSession(const QByteArray &id) :
 {
 }
 
-inline TSession::TSession(const TSession &other) :
-    QVariantMap(*static_cast<const QVariantMap *>(&other)), sessionId(other.sessionId)
-{
-}
+// inline TSession::TSession(const TSession &other) :
+//     QVariantMap(*static_cast<const QVariantMap *>(&other)), sessionId(other.sessionId)
+// {
+// }
 
-inline TSession &TSession::operator=(const TSession &other)
-{
-    QVariantMap::operator=(*static_cast<const QVariantMap *>(&other));
-    sessionId = other.sessionId;
-    return *this;
-}
+// inline TSession &TSession::operator=(const TSession &other)
+// {
+//     QVariantMap::operator=(*static_cast<const QVariantMap *>(&other));
+//     sessionId = other.sessionId;
+//     return *this;
+// }
 
 inline TSession::iterator TSession::insert(const QString &key, const QVariant &value)
 {

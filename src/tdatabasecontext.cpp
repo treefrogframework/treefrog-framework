@@ -14,14 +14,13 @@
 #include <TSystemGlobal>
 #include <TWebApplication>
 #include <QSqlDatabase>
-#include <QThreadStorage>
 #include <QtCore>
 #include <ctime>
+#include <thread>
 
 namespace {
 // Stores a pointer to current database context into TLS
-//  - qulonglong type to prevent qThreadStorage_deleteData() function to work
-QThreadStorage<qulonglong> databaseContextPtrTls;
+thread_local TDatabaseContext *databaseContextPtrTls = nullptr;
 
 }
 
@@ -194,16 +193,16 @@ int TDatabaseContext::idleTime() const
 
 TDatabaseContext *TDatabaseContext::currentDatabaseContext()
 {
-    return reinterpret_cast<TDatabaseContext *>(databaseContextPtrTls.localData());
+    return databaseContextPtrTls;
 }
 
 
 void TDatabaseContext::setCurrentDatabaseContext(TDatabaseContext *context)
 {
-    if (context && databaseContextPtrTls.localData()) {
+    if (context && databaseContextPtrTls) {
         tSystemWarn("Duplicate set : setCurrentDatabaseContext()");
     }
-    databaseContextPtrTls.setLocalData((qulonglong)context);
+    databaseContextPtrTls = context;
 }
 
 

@@ -2,7 +2,7 @@
 #include <TAtomic>
 #include <TGlobal>
 #include <TSqlDatabase>
-#include <TStack>
+#include <TLockStack>
 #include <QBasicTimer>
 #include <QDateTime>
 #include <QStack>
@@ -37,14 +37,13 @@ private:
     void pool(SqlDbPtr dbptr, bool forceClose = false);
     TSqlDatabasePool();
 
-    //mutable QRecursiveMutex _mutex;
     TAtomic<uint> *lastCachedTime {nullptr};
     int maxConnects {0};
     QBasicTimer timer;
-    // std::vector<MoveStack<SqlDbPtr>> availableDatabases;
-    // std::vector<MoveStack<SqlDbPtr>> cachedDatabases;
-    std::vector<TStack<SqlDbPtr>> availableDatabases;
-    std::vector<TStack<SqlDbPtr>> cachedDatabases;
+    // std::vector<TStack<SqlDbPtr>> availableDatabases;
+    // std::vector<TStack<SqlDbPtr>> cachedDatabases;
+    std::vector<TLockStack<SqlDbPtr>> availableDatabases;
+    std::vector<TLockStack<SqlDbPtr>> cachedDatabases;
 
     T_DISABLE_COPY(TSqlDatabasePool)
     T_DISABLE_MOVE(TSqlDatabasePool)

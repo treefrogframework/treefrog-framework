@@ -1,34 +1,28 @@
 #pragma once
-#include <TActionContext>
+//#include <TActionContext>
+//#include "tthreadpool.h"
 #include <QFile>
 #include <coroutine>
 
 class TUringCoroutine;
-struct Task;
+class THttpRequest;
+struct TUringTask;
 
-/*
-struct Task {
-    struct promise_type {
-        TUringCoroutine *self {nullptr};
-        Task get_return_object() { return {}; }
-        std::suspend_never initial_suspend() noexcept { return {}; }
-        std::suspend_never final_suspend() noexcept { return {}; }
-        void return_void() noexcept {}
-        void unhandled_exception() { std::terminate(); }
-    };
-};
-*/
 
-class TUringCoroutine : public TActionContext {
+//class TUringCoroutine : public TActionContext {
+class TUringCoroutine {
 public:
+    // TUringCoroutine(int socketDescriptor) :
+    //     TActionContext(), _sd(socketDescriptor) {}
     TUringCoroutine(int socketDescriptor) :
-        TActionContext(), _sd(socketDescriptor) {}
+        _sd(socketDescriptor) {}
     virtual ~TUringCoroutine();
 
-    Task start();
+    TUringTask start();
+    //TAsyncTask<int> executeRequest(THttpRequest &request);
 
-protected:
-    virtual int64_t writeResponse(THttpResponseHeader &, QIODevice *) override;
+// protected:
+//     virtual int64_t writeResponse(THttpResponseHeader &, QIODevice *) override;
 
 private:
     int _sd {0};
