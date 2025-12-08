@@ -69,40 +69,40 @@ private:
 };
 
 
-template <typename R>
-class AsyncFunction : public TAwaitBase {
-public:
-    explicit AsyncFunction(std::function<R()> f) :
-        _func(std::move(f)) {}
-    ~AsyncFunction() { if (_fd > 0) ::close(_fd); }
+// template <typename R>
+// class AsyncFunction : public TAwaitBase {
+// public:
+//     explicit AsyncFunction(std::function<R()> f) :
+//         _func(std::move(f)) {}
+//     ~AsyncFunction() { if (_fd > 0) ::close(_fd); }
 
-    void await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
-    {
-        _handle = handle;
-        _fd = eventfd(0, (EFD_NONBLOCK | EFD_CLOEXEC));
-        TUringServer::instance()->addEvent(_fd, this);
-        std::thread([this]() {
-            _result = _func();
-            notifyResume();
-        }).detach();
-    }
+//     void await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
+//     {
+//         _handle = handle;
+//         _fd = eventfd(0, (EFD_NONBLOCK | EFD_CLOEXEC));
+//         TUringServer::instance()->addEvent(_fd, this);
+//         std::thread([this]() {
+//             _result = _func();
+//             notifyResume();
+//         }).detach();
+//     }
 
-    R await_resume() { return _result; }
+//     R await_resume() { return _result; }
 
-protected:
-    void notifyResume()
-    {
-        if (_fd > 0) {
-            uint64_t one = 1;
-            write(_fd, &one, sizeof(one)); // 通知
-        }
-    }
+// protected:
+//     void notifyResume()
+//     {
+//         if (_fd > 0) {
+//             uint64_t one = 1;
+//             write(_fd, &one, sizeof(one)); // 通知
+//         }
+//     }
 
-private:
-    int _fd {0};
-    std::function<R()> _func;
-    R _result {};
-};
+// private:
+//     int _fd {0};
+//     std::function<R()> _func;
+//     R _result {};
+// };
 
 
 template<typename Func>

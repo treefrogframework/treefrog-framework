@@ -24,7 +24,6 @@
 
 constexpr int SEND_BUF_SIZE = 128 * 1024;
 constexpr int RECV_BUF_SIZE = 128 * 1024;
-constexpr int SPLICE_LEN = 1024 * 1024;
 constexpr uint64_t UD_NOTIFY = 0xFF00000000000000ULL;
 
 
@@ -142,24 +141,23 @@ void TUringServer::run()
         .tv_nsec = 0
     };
 
-    // --- イベントループ ---
+    std::optional<TUringCoroutine*> gcco;
+    std::optional<std::coroutine_handle<TUringTask::promise_type>> cohandle;
+
     while (!_stopped) {
-        if (_garbage.size() > 0) {
-            for (auto &ptr : _garbage) {
-                delete ptr;
-            }
-            _garbage.clear();
+        while ((gcco = _garbage.pop())) {
+            delete *gcco;
         }
 
         // Resume handlers
-        auto h = _resumeHandlers.pop();
-        if (h) {
+        cohandle = _resumeHandlers.pop();
+        if (cohandle) {
             uint64_t tmp;
             tf_read(_notifyFd, &tmp, sizeof(tmp));
 
             do {
-                h->resume();
-            } while ((h = _resumeHandlers.pop()));
+                cohandle->resume();
+            } while ((cohandle = _resumeHandlers.pop()));
         }
 
         io_uring_cqe *cqe = nullptr;
@@ -200,12 +198,7 @@ void TUringServer::run()
                     int fd = cqe->res;
                     setBufferOption(fd);
                     auto *coro = new TUringCoroutine(fd);
-#if 0
-                    TUringTask task = coro->start();
-                    task.handle.promise().self = coro;
-#else
                     coro->start();
-#endif
                     await->clear();  // clear
                 } else {
                     int err = -cqe->res;
@@ -242,9 +235,7 @@ void TUringServer::run()
                     }
 
                     if (--await->_sqecounter == 0 && await->_handle && !await->_handle.done()) {
-                        //_currentCoroutine = await->_handle.promise().self;
                         await->_handle.resume();
-                        //_currentCoroutine = nullptr;
                     }
                 }
             }
@@ -291,33 +282,6 @@ bool TUringServer::isAutoReloadingEnabled()
 {
     return _autoReload;
 }
-
-
-// TActionContext *TUringServer::currentContext() const
-// {
-//     return _currentCoroutine;
-// }
-
-
-// TActionController *TUringServer::currentController() const
-// {
-//     auto *context = currentContext();
-//     return (context) ? context->currentController() : nullptr;
-// }
-
-/*
-void TUringServer::timerEvent(QTimerEvent *event)
-{
-    if (event->timerId() != reloadTimer.timerId()) {
-        QThread::timerEvent(event);
-    } else {
-        if (newerLibraryExists()) {
-            tSystemInfo("Detect new library of application. Reloading the libraries.");
-            Tf::app()->exit(127);
-        }
-    }
-}
-*/
 
 //
 // Prepare a accept request
@@ -459,22 +423,7 @@ void TUringServer::addResumeHandle(std::coroutine_handle<TUringTask::promise_typ
 }
 
 
-/*
-int TUringServer::addResumeHandle(std::coroutine_handle<TUringTask::promise_type> handle) const
-{
-    // io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
-    // if (!sqe) {
-    //     tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
-    //     return -1;
-    // }
-
-    // io_uring_prep_nop(sqe);
-    // io_uring_sqe_set_data(sqe, reinterpret_cast<void*>(UD_NOP_FLAG | (uint64_t)handle.address()));
-    // return io_uring_submit(&_ring);
-}
-*/
-
 void TUringServer::registerForGC(TUringCoroutine *coroutine)
 {
-    _garbage.push_back(coroutine);
+    _garbage.push(coroutine);
 }
