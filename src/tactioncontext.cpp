@@ -129,8 +129,6 @@ void TActionContext::execute(THttpRequest &request)
         // Call controller method
         TDispatcher<TActionController> ctlrDispatcher(route.controller);
         _currController = ctlrDispatcher.object();
-tSystemDebug("##################### _currController:{}  this:{}", (uint64_t)_currController, (uint64_t)this);
-tSystemDebug("####################1 currentDatabaseContext:{}   actioncontext:{}", (uint64_t)currentDatabaseContext(), (uint64_t)dynamic_cast<TActionContext*>(currentDatabaseContext()));
         if (_currController) {
             _currController->setActionName(route.action);
             _currController->setArguments(route.params);

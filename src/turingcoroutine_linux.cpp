@@ -133,7 +133,7 @@ TUringCoroutine::~TUringCoroutine()
 {
     //tSystemDebug("~TUringCoroutine: sd:{}", _sd);
     if (_sd > 0) {
-        ::close(_sd);
+        tf_close(_sd);
     }
 }
 

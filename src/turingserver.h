@@ -36,7 +36,7 @@ public:
     };
 
     explicit TUringTask(std::coroutine_handle<promise_type> h) : handle(h) {}
-    std::coroutine_handle<promise_type> handle;
+    std::coroutine_handle<promise_type> handle {};
 };
 
 

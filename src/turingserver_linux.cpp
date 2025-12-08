@@ -156,7 +156,9 @@ void TUringServer::run()
             tf_read(_notifyFd, &tmp, sizeof(tmp));
 
             do {
-                cohandle->resume();
+                if (!cohandle->done()) {
+                    cohandle->resume();
+                }
             } while ((cohandle = _resumeHandlers.pop()));
         }
 

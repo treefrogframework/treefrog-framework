@@ -26,12 +26,13 @@ public:
         });
     }
 
-    ~TThreadPoolAwaiter() { if (_fd > 0) tf_close(_fd); }
+    ~TThreadPoolAwaiter() = default;
 
     bool await_ready() const noexcept { return false; }
 
     bool await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
     {
+        _handle = handle;
         QThreadPool::globalInstance()->start([this, handle] {
             try {
                 if constexpr (std::is_void_v<ReturnType>) {
@@ -40,7 +41,7 @@ public:
                     _result = _func();
                 }
             } catch (...) {
-                _eptr = std::current_exception();
+                handle.promise().exptr = std::current_exception();
             }
 
             TUringServer::instance()->addResumeHandle(handle);
@@ -50,8 +51,8 @@ public:
 
     Result await_resume()
     {
-        if (_eptr) {
-            std::rethrow_exception(_eptr);
+        if (_handle.promise().exptr) {
+            std::rethrow_exception(_handle.promise().exptr);
         }
 
         if constexpr (std::is_void_v<ReturnType>) {
@@ -63,6 +64,4 @@ public:
 private:
     FuncType _func;
     Result _result;
-    std::exception_ptr _eptr;
-    int _fd {0};
 };
