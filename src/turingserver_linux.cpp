@@ -80,7 +80,7 @@ TUringServer::TUringServer(int listeningSocket, QObject *parent) :
     TApplicationServerBase(),
     _listenSocket(listeningSocket)
 {
-    io_uring_queue_init(8192 * 2, &_ring, 0);
+    io_uring_queue_init(8192, &_ring, 0);
 
     // Event fd
     _notifyFd = eventfd(0, (EFD_NONBLOCK | EFD_CLOEXEC));
@@ -229,7 +229,7 @@ void TUringServer::run()
                     }
                 }
             } else {
-                tSystemDebug("cqe->res:{}  cqe->flags: {}", await->_cqeres, cqe->flags);
+                tSystemDebug("cqe->res:{}  cqe->flags: {}", cqe->res, cqe->flags);
                 if (cqe->flags != IORING_CQE_F_MORE) [[likely]] {
                     if (!await->_cqeres && !await->_cqeflags) {
                         await->_cqeres = cqe->res;

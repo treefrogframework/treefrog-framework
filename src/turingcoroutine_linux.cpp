@@ -105,7 +105,24 @@ public:
     bool completed() const override
     {
         //tSystemInfo("AsyncSendFile::completed : _offset:{} _cqeflags:{} _cqeres:{}", _offset, _cqeflags, _cqeres);
-        return (_cqeres < 0) || (_offset + _cqeres >= _fileSize);
+        switch (_state) {
+        case State::WaitForPollOut:
+            if (_cqeres == POLLOUT) {
+                return (_offset + _cqeres >= _fileSize);
+            } else {
+                // POLLERR or POLLHUP
+                return true;
+            }
+            break;
+
+        case State::Sending:
+            return (_cqeres <= 0);
+
+        case State::Idle:
+        default:
+            tSystemError("Bad status  [{}:{}]", __FILE__, __LINE__);
+            return true;
+        }
     }
 
     void iterate() override
@@ -116,7 +133,6 @@ public:
         switch (_state) {
         case State::WaitForPollOut:
             if (_cqeres < 0) {
-                // error
                 return;
             }
             _state = State::Idle;
@@ -144,7 +160,7 @@ public:
                 }
             }
 
-            int res = TUringServer::instance()->addPoll(_sd, POLLOUT, this);
+            int res = TUringServer::instance()->addPoll(_sd, (POLLOUT | POLLERR | POLLHUP), this);
             if (res < 0) {
                 tSystemError("addPoll error: {}", strerror(errno));
                 _cqeres = -1;
