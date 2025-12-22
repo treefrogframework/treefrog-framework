@@ -99,7 +99,7 @@ void TWebSocketFrame::clear()
     _maskKey = 0;
     _payloadLength = 0;
     _payload.truncate(0);
-    _state = Empty;
+    _state = ProcessingState::Empty;
     _valid = false;
 }
 
@@ -148,7 +148,7 @@ QByteArray TWebSocketFrame::toByteArray() const
 
 bool TWebSocketFrame::validate()
 {
-    if (_state != Completed) {
+    if (_state != ProcessingState::Completed) {
         return false;
     }
 

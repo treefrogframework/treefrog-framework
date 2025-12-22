@@ -16,7 +16,13 @@ public:
     }
     TLockStack &operator=(TLockStack &&) = delete;
 
-    void push(T val)
+    void push(const T &val)
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        _stack.push(val);
+    }
+
+    void push(T &&val)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _stack.push(std::move(val));
@@ -28,7 +34,7 @@ public:
         std::optional<T> val;
 
         if (!_stack.empty()) {
-            val = std::move(_stack.top());
+            val = std::forward<T>(_stack.top());
             _stack.pop();
         }
         return val;

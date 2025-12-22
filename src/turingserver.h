@@ -44,12 +44,14 @@ class TAwaitBase {
 public:
     virtual ~TAwaitBase() { }
     virtual bool await_ready() const noexcept { return false; }
-    inline void clear()
+    void clear()
     {
         _cqeres = 0;
         _cqeflags = 0;
         _sqecounter = 1;
     }
+    virtual void iterate() { }
+    virtual bool completed() const { return true; }
 
     std::coroutine_handle<TUringTask::promise_type> _handle {};
     int _cqeres {0};
@@ -76,7 +78,8 @@ public:
     int addRecv(int sd, void *buf, size_t len, int msecs = 0, TAwaitBase *await = nullptr) const;
     int addSend(int sd, const void* buf, size_t len, TAwaitBase *await = nullptr) const;
     int addSendZc(int sd, const void* buf, size_t len, TAwaitBase *await = nullptr) const;
-    int addEvent(int sd, TAwaitBase *await = nullptr) const;
+    int addSendFile(int sd, int fd, int offset, size_t len, int pipefd[2], TAwaitBase* await) const;
+    int addPoll(int sd, unsigned int poll_mask, TAwaitBase *await = nullptr) const;
     void addResumeHandle(std::coroutine_handle<TUringTask::promise_type> handle);
 
 protected:

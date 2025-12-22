@@ -17,13 +17,13 @@ constexpr uint READ_THRESHOLD_LENGTH = 4 * 1024 * 1024;  // bytes
 
 class AsyncRecv : public TAwaitBase {
 public:
-    AsyncRecv(int fd, void* buffer, size_t length, int msecs) :
-        _fd(fd), _buf(buffer), _len(length), _msecs(msecs) { }
+    AsyncRecv(int sd, void* buffer, size_t length, int msecs) :
+        _sd(sd), _buf(buffer), _len(length), _msecs(msecs) { }
 
     void await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
     {
         _handle = handle;
-        if (TUringServer::instance()->addRecv(_fd, _buf, _len, _msecs, this) < 0) {
+        if (TUringServer::instance()->addRecv(_sd, _buf, _len, _msecs, this) < 0) {
             tSystemError("addRecv error: {}", strerror(errno));
         }
     }
@@ -34,7 +34,7 @@ public:
     }
 
 private:
-    int _fd {0};
+    int _sd {0};
     void* _buf {nullptr};
     size_t _len {0};
     int _msecs {0};
@@ -43,13 +43,13 @@ private:
 
 class AsyncSend : public TAwaitBase {
 public:
-    AsyncSend(int fd, const void *buf, size_t len) :
-        _fd(fd), _buf(buf), _len(len) { }
+    AsyncSend(int sd, const void *buf, size_t len) :
+        _sd(sd), _buf(buf), _len(len) { }
 
     void await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
     {
         _handle = handle;
-        int res = TUringServer::instance()->addSendZc(_fd, _buf, _len, this);
+        int res = TUringServer::instance()->addSendZc(_sd, _buf, _len, this);
 
         if (res < 0) {
             tSystemError("addSend error: {}", strerror(errno));
@@ -63,46 +63,115 @@ public:
     }
 
 private:
-    int _fd {0};
+    int _sd {0};
     const void* _buf {nullptr};
     size_t _len {0};
 };
 
 
-// template <typename R>
-// class AsyncFunction : public TAwaitBase {
-// public:
-//     explicit AsyncFunction(std::function<R()> f) :
-//         _func(std::move(f)) {}
-//     ~AsyncFunction() { if (_fd > 0) ::close(_fd); }
+class AsyncSendFile : public TAwaitBase {
+public:
+    AsyncSendFile(int sd, int fd, int fileSize) :
+        _sd(sd), _fd(fd), _fileSize(fileSize)
+    {
+        if (::pipe2(_pipefd, O_CLOEXEC) < 0) {
+            tSystemError("pipe error: {}", strerror(errno));
+        }
+    }
 
-//     void await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
-//     {
-//         _handle = handle;
-//         _fd = eventfd(0, (EFD_NONBLOCK | EFD_CLOEXEC));
-//         TUringServer::instance()->addEvent(_fd, this);
-//         std::thread([this]() {
-//             _result = _func();
-//             notifyResume();
-//         }).detach();
-//     }
+    ~AsyncSendFile()
+    {
+        if (_pipefd[0] > 0) {
+            tf_close(_pipefd[0]);
+        }
 
-//     R await_resume() { return _result; }
+        if (_pipefd[1] > 0) {
+            tf_close(_pipefd[1]);
+        }
+    }
 
-// protected:
-//     void notifyResume()
-//     {
-//         if (_fd > 0) {
-//             uint64_t one = 1;
-//             write(_fd, &one, sizeof(one)); // 通知
-//         }
-//     }
+    void await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
+    {
+        _handle = handle;
+        iterate();
+    }
 
-// private:
-//     int _fd {0};
-//     std::function<R()> _func;
-//     R _result {};
-// };
+    inline int await_resume()
+    {
+        //tSystemInfo("AsyncSendFile::await_resume : _offset:{} _cqeflags:{} _cqeres:{}", _offset, _cqeflags, _cqeres);
+        return (_cqeres < 0) ? _cqeres : _offset;
+    }
+
+    bool completed() const override
+    {
+        //tSystemInfo("AsyncSendFile::completed : _offset:{} _cqeflags:{} _cqeres:{}", _offset, _cqeflags, _cqeres);
+        return (_cqeres < 0) || (_offset + _cqeres >= _fileSize);
+    }
+
+    void iterate() override
+    {
+        //tSystemInfo("AsyncSendFile::iterate : _offset:{}  state:{}", _offset, (int)_state);
+        constexpr size_t SPLICE_LEN = 256 * 1024;
+
+        switch (_state) {
+        case State::WaitForPollOut:
+            if (_cqeres < 0) {
+                // error
+                return;
+            }
+            _state = State::Idle;
+            _cqeres = 0;
+            [[fallthrough]];
+
+        case State::Idle: {
+            size_t len = std::min<size_t>(SPLICE_LEN, _fileSize - _offset);
+            int res = TUringServer::instance()->addSendFile(_sd, _fd, _offset, len, _pipefd, this);
+            if (res < 0) {
+                tSystemError("addSend error: {}", strerror(errno));
+                _cqeres = -1;
+            } else {
+                _state = State::Sending;
+            }
+            break; }
+
+        case State::Sending: {
+            if (_cqeres > 0) {
+                _offset += _cqeres;
+                _cqeres = 0;
+
+                if (_offset >= _fileSize) {
+                    return;
+                }
+            }
+
+            int res = TUringServer::instance()->addPoll(_sd, POLLOUT, this);
+            if (res < 0) {
+                tSystemError("addPoll error: {}", strerror(errno));
+                _cqeres = -1;
+            } else {
+                _state = State::WaitForPollOut;
+            }
+            break; }
+
+        default:
+            break;
+        }
+    }
+
+private:
+    enum class State {
+        Idle,
+        Sending,
+        WaitForPollOut,
+    };
+
+    int _sd {0};
+    int _fd {0};
+    size_t _fileSize {0};
+    size_t _offset {0};
+    int _pipefd[2] {0};
+    State _state {State::Idle};
+};
 
 
 template<typename Func>
@@ -113,20 +182,6 @@ public:
 private:
     Func _func;
 };
-
-
-// class CurrentRoutineScope {
-// public:
-//     CurrentRoutineScope(TUringCoroutine *&slot, TUringCoroutine *now) :
-//         _slot(slot), _prev(slot)
-//     {
-//         _slot = now;
-//     }
-//     ~CurrentRoutineScope() { _slot = _prev; }
-// private:
-//     TUringCoroutine *&_slot;
-//     TUringCoroutine *_prev;
-// };
 
 
 TUringCoroutine::~TUringCoroutine()
@@ -219,32 +274,33 @@ TUringTask TUringCoroutine::start()
         _response = std::move(result.response);
         _fileName = std::move(result.fileName);
 
-        int res = co_await AsyncSend(_sd, _response.data(), _response.length());
-        if (res <= 0) {
-            tSystemError("Send error fd={} res={}", _sd, res);
-            co_return;
+        if (!_response.isEmpty()) {
+            int res = co_await AsyncSend(_sd, _response.data(), _response.length());
+            if (res <= 0) {
+                tSystemError("Send error fd={} res={}", _sd, res);
+                co_return;
+            }
         }
 
         // file
         if (!_fileName.isEmpty()) {
-            //int64_t fileSize = QFileInfo(_fileName).size();
             int fd = ::open(qUtf8Printable(_fileName), O_RDONLY | O_CLOEXEC);
             if (fd < 0) {
-                tSystemDebug("File open error: {}", _fileName);
+                tSystemError("File open error: {}", _fileName);
                 Tf::warn("File open error: {}", _fileName);
                 co_return;
             }
 
             ScopeExitFunction fd_closing([fd]{ ::close(fd); });
 
-            const int64_t file_size = lseek(fd, 0, SEEK_END);
-            if (file_size < 0) {
-                tSystemDebug("lseek error: {}", strerror(errno));
+            struct stat st{};
+            if (fstat(fd, &st) != 0) {
+                tSystemError("fstat error: {}", strerror(errno));
                 co_return;
             }
-            lseek(fd, 0, SEEK_SET);
-
-            void *mapped = mmap(nullptr, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
+            const auto fileSize = st.st_size;
+#if 0
+            void *mapped = mmap(nullptr, fileSize, PROT_READ, MAP_PRIVATE, fd, 0);
             if (mapped == MAP_FAILED) {
                 tSystemError("mmap error: {}\n", strerror(errno));
                 co_return;
@@ -252,20 +308,25 @@ TUringTask TUringCoroutine::start()
 
             const int64_t slice_len = 16 * 1024;
             int64_t sent_len = 0;
-            while (sent_len < file_size) {
-                int64_t send_len = std::min(file_size - sent_len, slice_len);
+            while (sent_len < fileSize) {
+                int64_t send_len = std::min(fileSize - sent_len, slice_len);
                 res = co_await AsyncSend(_sd, (char*)mapped + sent_len, send_len);
                 if (res <= 0) {
                     if (res == -EAGAIN || res == -ENOMEM) {
                         continue;
                     }
-                    tSystemError("Send error fd={} res={}", _sd, res);
+                    tSystemError("Send error sd={} res={}", _sd, res);
                     break;
                 }
                 sent_len += res;
             }
 
-            munmap(mapped, file_size);
+            munmap(mapped, fileSize);
+#else
+            int res = co_await AsyncSendFile(_sd, fd, fileSize);
+            tSystemDebug("AsyncSendFile: res:{}", res);
+
+#endif
             _fileName.resize(0);
         }
 
@@ -276,53 +337,3 @@ TUringTask TUringCoroutine::start()
         }
     }
 }
-
-/*
-int64_t TUringCoroutine::writeResponse(THttpResponseHeader &header, QIODevice *body)
-{
-    if (keepAliveTimeout() > 0) {
-        header.setRawHeader(QByteArrayLiteral("Connection"), QByteArrayLiteral("Keep-Alive"));
-    }
-    // Writes HTTP header
-    _response = header.toByteArray();
-
-    if (body) {
-        if (auto *buf = dynamic_cast<QBuffer*>(body); buf) {  // dynamic_cast is faster for QBuffer
-            _response += buf->buffer();
-        } else if (auto *file = qobject_cast<QFile*>(body); file) {
-            _fileName = file->fileName();
-        } else {
-            tSystemError("Invalid body [{}:{}]", __FILE__, __LINE__);
-        }
-    }
-    return 0;
-}
-*/
-
-// TAsyncTask<int> TUringCoroutine::executeRequest(THttpRequest &request)
-// {
-    // int res = co_await TThreadPool::instance().run([this](THttpRequest &req) {
-    //     execute(req);
-    //     return 0;
-    // }, request);
-    // co_return res;
-
-
-    // int x = 1;
-    // int res = co_await TThreadPool::instance().run([this](int &d) {
-    //     d++;
-    //     return 0;
-    // }, x);
-    // co_return res;
-
-
-    // tSystemInfo("#### foo0");
-    // int x = co_await TThreadPool::instance().run([](int a) {
-    //     tSystemInfo("#### foo1");
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    //     tSystemInfo("#### foo2 {}", a);
-    //     return a * 2;
-    // }, 3);
-    // tSystemInfo("#### foo3 {}", x);
-    // co_return x;
-//}

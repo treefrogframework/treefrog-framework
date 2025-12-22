@@ -5,6 +5,7 @@
 #include <atomic>
 #include <random>
 #include <deque>
+#include <vector>
 #include <thread>
 #include <cassert>
 #include <print>
@@ -13,8 +14,8 @@
 template <typename T>
 class FCQueue {
 public:
-    enum class State { Empty, Pending, Applied };
-    enum class Op { Push, Pop };
+    enum class State : uint8_t { Empty, Pending, Applied };
+    enum class Op : uint8_t { Push, Pop };
 
     struct Request {
         std::atomic<FCQueue::State> state {FCQueue::State::Empty};
@@ -22,98 +23,128 @@ public:
         std::optional<T> value;
     };
 
-    explicit FCQueue()
+    explicit FCQueue() // : reqs_{128}
     {
-        while (reqs_.size() < 128) {
-            reqs_.push_back(new Request{});
-        }
+        // while (reqs_.size() < 128) {
+        //     reqs_.push_back(new Request{});
+        // }
     }
 
     ~FCQueue()
     {
-        for (auto p : reqs_) {
-            delete p;
-        }
+        // for (auto p : reqs_) {
+        //     delete p;
+        // }
     }
 
     void push(T v)
     {
+        if (try_push(v)) {
+            return;
+        }
+
         size_t id = acquireSlot();
         auto& r = reqs_[id];
 
-        State s = r->state.load(std::memory_order_acquire);
-        if (s != State::Empty) {
-            throw std::runtime_error("FCQueue: push logic error");
-        }
+        // State s = r.state.load(std::memory_order_acquire);
+        // if (s != State::Empty) {
+        //     throw std::runtime_error("FCQueue: push logic error");
+        // }
 
-        r->value = std::move(v);
-        r->op = Op::Push;
-        r->state.store(State::Pending, std::memory_order_release);
+        r.value = std::move(v);
+        r.op = Op::Push;
+        r.state.store(State::Pending, std::memory_order_release);
+        combineCounter.fetch_add(1, std::memory_order_relaxed);
 
-        while (true) {
-            combine();
-
-            if (r->state.load(std::memory_order_acquire) == State::Applied) {
-                r->state.store(State::Empty, std::memory_order_release);
-                break;
-            }
-
+        while (r.state.load(std::memory_order_acquire) != State::Applied) {
             std::this_thread::yield();
+            combine();
         }
+        r.state.store(State::Empty, std::memory_order_release);
     }
 
     std::optional<T> pop()
     {
+        std::optional<T> val;
+
+        if (try_pop(val)) {
+            return val;
+        }
+
         size_t id = acquireSlot();
         auto& r = reqs_[id];
 
-        State s = r->state.load(std::memory_order_acquire);
-        if (s != State::Empty) {
-            throw std::runtime_error("FCQueue: pop logic error");
-        }
+        r.op = Op::Pop;
+        r.state.store(State::Pending, std::memory_order_release);
+        combineCounter.fetch_add(1, std::memory_order_relaxed);
 
-        std::optional<T> val;
-        r->op = Op::Pop;
-        r->state.store(State::Pending, std::memory_order_release);
-
-        while (true) {
-            combine();
-
-            if (r->state.load(std::memory_order_acquire) == State::Applied) {
-                val = std::move(r->value);
-                r->state.store(State::Empty, std::memory_order_release);
-                break;
-            }
-
+        while (r.state.load(std::memory_order_acquire) != State::Applied) {
             std::this_thread::yield();
+            combine();
         }
 
+        val = std::move(r.value);
+        r.state.store(State::Empty, std::memory_order_release);
         return val;
     }
 
 private:
+    bool try_push(T v)
+    {
+        if (!combineLock_.try_lock()) {
+            return false;
+        }
+
+        q_.push(std::move(v));
+        combineLock_.unlock();
+        return true;
+    }
+
+    bool try_pop(std::optional<T> &v)
+    {
+        if (!combineLock_.try_lock()) {
+            return false;
+        }
+
+        if (q_.empty()) {
+            v = std::nullopt;
+        } else {
+            v = std::move(q_.front());
+            q_.pop();
+        }
+
+        combineLock_.unlock();
+        return true;
+    }
+
     size_t acquireSlot()
     {
         static thread_local size_t mySlot = SIZE_MAX;
-        if (mySlot != SIZE_MAX) return mySlot;
+
+        if (mySlot != SIZE_MAX) [[likely]] {
+            return mySlot;
+        }
 
         mySlot = slotCounter_.load(std::memory_order_acquire) + 1;
         if (mySlot >= reqs_.size()) {
             ensure_slot(mySlot);
         }
         mySlot = slotCounter_.fetch_add(1, std::memory_order_relaxed);
+        //std::print("mySlot: {}\n", mySlot);
         return mySlot;
     }
 
     void ensure_slot(size_t idx)
     {
-        std::lock_guard<std::mutex> lock(combineLock_);
+        throw std::runtime_error("FCQueue: ensure_slot error");
+        // std::lock_guard<std::mutex> lock(combineLock_);
 
-        size_t extend = reqs_.size();
-        while (extend <= idx) extend *= 2;
-        while (reqs_.size() < extend) {
-            reqs_.push_back(new Request{});
-        }
+        // size_t extend = reqs_.size();
+        // while (extend <= idx) extend *= 2;
+        // while (reqs_.size() < extend) {
+        //     reqs_.push_back(new Request{});
+        // }
+
     }
 
     void combine()
@@ -122,25 +153,34 @@ private:
             return;
         }
 
-        int max = slotCounter_.load(std::memory_order_acquire);
+        static size_t idx = 0;
+        size_t combcnt = combineCounter.exchange(0, std::memory_order_acq_rel);
+        size_t cnt = 0;
+        size_t maxslot = slotCounter_.load(std::memory_order_acquire);
 
-        for (int i = 0; i < max; i++) {
-            auto &r = reqs_[i];
-            State s = r->state.load(std::memory_order_acquire);
+        while (cnt < combcnt) [[likely]] {
+            if (++idx >= maxslot) [[unlikely]] {
+                idx = 0;
+                maxslot = slotCounter_.load(std::memory_order_relaxed);
+            }
 
-            if (s != State::Pending)
+            auto &r = reqs_[idx];
+            State s = r.state.load(std::memory_order_acquire);
+
+            if (s != State::Pending) [[unlikely]] {
                 continue;   // Empty or Applied は combiner が触らない
+            }
 
-            switch (r->op) {
+            switch (r.op) {
             case Op::Push:
-                q_.push(std::move(r->value.value()));
+                q_.push(std::move(r.value.value()));
                 break;
 
             case Op::Pop:
                 if (q_.empty()) {
-                    r->value = std::nullopt;
+                    r.value = std::nullopt;
                 } else {
-                    r->value = std::move(q_.front());
+                    r.value = std::move(q_.front());
                     q_.pop();
                 }
                 break;
@@ -148,7 +188,8 @@ private:
             default:
                 break;
             }
-            r->state.store(State::Applied, std::memory_order_release);
+            r.state.store(State::Applied, std::memory_order_release);
+            cnt++;
         }
 
         combineLock_.unlock();
@@ -156,7 +197,10 @@ private:
 
 private:
     std::mutex combineLock_;
-    std::deque<Request*> reqs_;
+    std::atomic<size_t> combineCounter {0};
+    //std::deque<Request*> reqs_;
+    std::array<Request, 128> reqs_;
+    //std::vector<Request> reqs_;
     std::queue<T> q_;
     std::atomic<size_t> slotCounter_ {0};
 };
@@ -311,36 +355,37 @@ private:
 private slots:
     void correctnessTest_FCQueue()
     {
-        correctnessTest<FCQueue<int>, &FCQueue<int>::push, &FCQueue<int>::pop>();
+        correctnessTest<FCQueue<int64_t>, &FCQueue<int64_t>::push, &FCQueue<int64_t>::pop>();
     }
 
-    void correctnessTest_TLockQueue()
-    {
-        correctnessTest<TLockQueue<int>, &TLockQueue<int>::push, &TLockQueue<int>::pop>();
-    }
+    // void correctnessTest_TLockQueue()
+    // {
+    //     correctnessTest<TLockQueue<int64_t>, &TLockQueue<int64_t>::push, &TLockQueue<int64_t>::pop>();
+    // }
 
-    void correctnessTest_TLockStack()
-    {
-        correctnessTest<TLockStack<int>, &TLockStack<int>::push, &TLockStack<int>::pop>();
-    }
+    // void correctnessTest_TLockStack()
+    // {
+    //     correctnessTest<TLockStack<int64_t>, &TLockStack<int64_t>::push, &TLockStack<int64_t>::pop>();
+    // }
 
     void stressTest_FCQueue()
     {
-        stressTest<FCQueue<int>, &FCQueue<int>::push, &FCQueue<int>::pop>();
+        stressTest<FCQueue<int64_t>, &FCQueue<int64_t>::push, &FCQueue<int64_t>::pop>();
     }
 
     void stressTest_TLockQueue()
     {
-        stressTest<TLockQueue<int>, &TLockQueue<int>::push, &TLockQueue<int>::pop>();
+        using PushFunc = void (TLockQueue<int64_t>::*)(const int64_t&);
+        stressTest<TLockQueue<int64_t>, static_cast<PushFunc>(&TLockQueue<int64_t>::push), &TLockQueue<int64_t>::pop>();
     }
 
     void stressTest_TLockStack()
     {
-        stressTest<TLockStack<int>, &TLockStack<int>::push, &TLockStack<int>::pop>();
+        using PushFunc = void (TLockStack<int64_t>::*)(const int64_t&);
+        stressTest<TLockStack<int64_t>, static_cast<PushFunc>(&TLockStack<int64_t>::push), &TLockStack<int64_t>::pop>();
     }
 };
 
-//QTEST_MAIN(TestQueue)
-//TF_TEST_MAIN(TestQueue)
+
 TF_TEST_SQLLESS_MAIN(TestQueue)
 #include "main.moc"

@@ -14,10 +14,10 @@ public:
     class Handle {
     public:
         Handle() = default;
-        Handle(KvsDbPtr ptr) : _dbptr(std::move(ptr)) {}
+        explicit Handle(KvsDbPtr ptr) : _dbptr(std::move(ptr)) {}
         Handle(const Handle &) = delete;
         Handle &operator=(const Handle &) = delete;
-        Handle(Handle &&other) noexcept = default;
+        Handle(Handle &&other) { *this = std::move(other); }
         Handle &operator=(Handle &&other);
         ~Handle();
 

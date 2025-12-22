@@ -172,7 +172,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
         websocketFrames().append(TWebSocketFrame());
     } else {
         const TWebSocketFrame &f = websocketFrames().last();
-        if (f.state() == TWebSocketFrame::Completed) {
+        if (f.state() == TWebSocketFrame::ProcessingState::Completed) {
             websocketFrames().append(TWebSocketFrame());
         }
     }
@@ -190,7 +190,7 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
 
     while (!ds.atEnd()) {
         switch (pfrm->state()) {
-        case TWebSocketFrame::Empty: {
+        case TWebSocketFrame::ProcessingState::Empty: {
             hdr = dev->peek(14);
             QDataStream dshdr(hdr);
             dshdr.setByteOrder(QDataStream::BigEndian);
@@ -247,9 +247,9 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
             }
 
             if (pfrm->payloadLength() == 0) {
-                pfrm->setState(TWebSocketFrame::Completed);
+                pfrm->setState(TWebSocketFrame::ProcessingState::Completed);
             } else {
-                pfrm->setState(TWebSocketFrame::HeaderParsed);
+                pfrm->setState(TWebSocketFrame::ProcessingState::HeaderParsed);
                 if (pfrm->payloadLength() >= 2 * 1024 * 1024 * 1024ULL) {
                     tSystemError("Too big frame  [{}:{}]", __FILE__, __LINE__);
                     pfrm->clear();
@@ -266,8 +266,8 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
             break;
         }
 
-        case TWebSocketFrame::HeaderParsed:  // fall through
-        case TWebSocketFrame::MoreData: {
+        case TWebSocketFrame::ProcessingState::HeaderParsed:  // fall through
+        case TWebSocketFrame::ProcessingState::MoreData: {
             tSystemDebug("WebSocket reading payload:  available length:{}", dev->bytesAvailable());
             tSystemDebug("WebSocket parsing  length to read:{}  current buf len:{}", (quint64)pfrm->payloadLength(), (qint64)pfrm->payload().size());
             uint64_t size = std::min((uint64_t)(pfrm->payloadLength() - pfrm->payload().size()), (uint64_t)dev->bytesAvailable());
@@ -296,22 +296,22 @@ int TAbstractWebSocket::parse(QByteArray &recvData)
             tSystemDebug("WebSocket payload curent buf len: {}", (qint64)pfrm->payload().length());
 
             if ((uint64_t)pfrm->payload().size() == pfrm->payloadLength()) {
-                pfrm->setState(TWebSocketFrame::Completed);
+                pfrm->setState(TWebSocketFrame::ProcessingState::Completed);
                 tSystemDebug("Parse Completed   payload len: {}", (qint64)pfrm->payload().size());
             } else {
-                pfrm->setState(TWebSocketFrame::MoreData);
+                pfrm->setState(TWebSocketFrame::ProcessingState::MoreData);
                 tSystemDebug("Parse MoreData   payload len: {}", (qint64)pfrm->payload().size());
             }
             break;
         }
 
-        case TWebSocketFrame::Completed:  // fall through
+        case TWebSocketFrame::ProcessingState::Completed:  // fall through
         default:
             Q_ASSERT(0);
             break;
         }
 
-        if (pfrm->state() == TWebSocketFrame::Completed) {
+        if (pfrm->state() == TWebSocketFrame::ProcessingState::Completed) {
             if (Q_UNLIKELY(!pfrm->validate())) {
                 pfrm->clear();
                 continue;

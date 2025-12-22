@@ -47,7 +47,7 @@ TEpollWebSocket::~TEpollWebSocket()
 bool TEpollWebSocket::canReadRequest()
 {
     for (auto &frm : (const QList<TWebSocketFrame> &)_frames) {
-        if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
+        if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::ProcessingState::Completed) {
             return true;
         }
     }
@@ -113,7 +113,7 @@ QList<QPair<int, QByteArray>> TEpollWebSocket::readAllBinaryRequest()
         while (!_frames.isEmpty()) {
             TWebSocketFrame frm = _frames.takeFirst();
             payload += frm.payload();
-            if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
+            if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::ProcessingState::Completed) {
                 ret << qMakePair(opcode, payload);
                 break;
             }
@@ -151,7 +151,7 @@ void TEpollWebSocket::process()
 
     auto payloads = readAllBinaryRequest();
     if (!payloads.isEmpty()) {
-        TWebSocketWorker *_worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
+        TWebSocketWorker *_worker = new TWebSocketWorker(TWebSocketWorker::RunMode::Receiving, this, reqHeader.path());
         _worker->setPayloads(payloads);
         startWorker(_worker);
         delete _worker;
@@ -182,7 +182,7 @@ void TEpollWebSocket::releaseWorker()
 
 void TEpollWebSocket::startWorkerForOpening(const TSession &session)
 {
-    TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Opening, this, reqHeader.path());
+    TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::RunMode::Opening, this, reqHeader.path());
     worker->setSession(session);
     startWorker(worker);
 
@@ -194,7 +194,7 @@ void TEpollWebSocket::startWorkerForOpening(const TSession &session)
 void TEpollWebSocket::startWorkerForClosing()
 {
     if (!closing.load()) {
-        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
+        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::RunMode::Closing, this, reqHeader.path());
         startWorker(worker);
 
         releaseWorker();

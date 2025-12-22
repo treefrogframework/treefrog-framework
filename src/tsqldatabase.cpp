@@ -39,8 +39,8 @@ TSqlDatabase::TSqlDatabase(TSqlDatabase &&other)
 TSqlDatabase &TSqlDatabase::operator=(TSqlDatabase &&other)
 {
     if (this != &other) {
-        _sqlDatabase = other._sqlDatabase;
-        _postOpenStatements = other._postOpenStatements;
+        _sqlDatabase = std::forward<QSqlDatabase>(other._sqlDatabase);
+        _postOpenStatements = std::forward<QStringList>(other._postOpenStatements);
         _enableUpsert = other._enableUpsert;
         _driverExtension = std::move(other._driverExtension);
     }

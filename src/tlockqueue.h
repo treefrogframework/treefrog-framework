@@ -7,7 +7,13 @@
 template <typename T>
 class TLockQueue {
 public:
-    void push(T val)
+    void push(const T &val)
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        _queue.push(val);
+    }
+
+    void push(T &&val)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _queue.push(std::move(val));
@@ -19,7 +25,7 @@ public:
         std::optional<T> val;
 
         if (!_queue.empty()) {
-            val = std::move(_queue.front());
+            val = std::forward<T>(_queue.front());
             _queue.pop();
         }
         return val;

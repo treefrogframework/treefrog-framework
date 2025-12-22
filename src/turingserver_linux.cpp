@@ -166,7 +166,7 @@ void TUringServer::run()
         int res = io_uring_wait_cqe_timeout(&_ring, &cqe, &ts);
         Tf::ScopeExitFunction seen([&]{ if (cqe) io_uring_cqe_seen(&_ring, cqe); });
 
-        if (res < 0 || !cqe) {
+        if (res < 0 || !cqe) [[unlikely]] {
             if (res == -EINTR || res == -EAGAIN) {
                 continue;
             }
@@ -184,8 +184,8 @@ void TUringServer::run()
         }
 
         void *user_data = io_uring_cqe_get_data(cqe);
-        if (user_data) {
-            if (user_data == (void*)UD_NOTIFY) {
+        if (user_data) [[likely]] {
+            if (user_data == (void*)UD_NOTIFY) [[unlikely]] {
                 if (!(cqe->flags & IORING_CQE_F_MORE)) {
                     addNotifyEvent();
                 }
@@ -230,14 +230,18 @@ void TUringServer::run()
                 }
             } else {
                 tSystemDebug("cqe->res:{}  cqe->flags: {}", await->_cqeres, cqe->flags);
-                if (cqe->flags != IORING_CQE_F_MORE) {
+                if (cqe->flags != IORING_CQE_F_MORE) [[likely]] {
                     if (!await->_cqeres && !await->_cqeflags) {
                         await->_cqeres = cqe->res;
                         await->_cqeflags = cqe->flags;
                     }
 
                     if (--await->_sqecounter == 0 && await->_handle && !await->_handle.done()) {
-                        await->_handle.resume();
+                        if (await->completed()) {
+                            await->_handle.resume();
+                        } else {
+                            await->iterate();
+                        }
                     }
                 }
             }
@@ -393,10 +397,7 @@ int TUringServer::addSendZc(int fd, const void* buf, size_t len, TAwaitBase* awa
 // }
 
 
-//
-// Prepare a event request
-//
-int TUringServer::addEvent(int fd, TAwaitBase* await) const
+int TUringServer::addSendFile(int sd, int fd, int offset, size_t len, int pipefd[2], TAwaitBase* await) const
 {
     io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
     if (!sqe) {
@@ -404,13 +405,62 @@ int TUringServer::addEvent(int fd, TAwaitBase* await) const
         return -1;
     }
 
-    io_uring_prep_poll_add(sqe, fd, POLL_IN);
+    io_uring_prep_splice(sqe, fd, offset, pipefd[1], -1, len, SPLICE_F_MOVE | SPLICE_F_MORE);
+    if (await) {
+        await->clear();
+        io_uring_sqe_set_data(sqe, await);
+    }
+
+    io_uring_sqe *sqe2 = io_uring_get_sqe(&_ring);
+    if (!sqe2) {
+        tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+        return -1;
+    }
+
+    io_uring_prep_splice(sqe2, pipefd[0], -1, sd, -1, len, SPLICE_F_MOVE | SPLICE_F_MORE);
+    if (await) {
+        await->_sqecounter++;
+        io_uring_sqe_set_data(sqe2, await);
+    }
+    return io_uring_submit(&_ring);
+}
+
+
+int TUringServer::addPoll(int sd, unsigned int poll_mask, TAwaitBase *await) const
+{
+    io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
+    if (!sqe) {
+        tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+        return -1;
+    }
+
+    io_uring_prep_poll_add(sqe, sd, poll_mask);
     if (await) {
         await->clear();
         io_uring_sqe_set_data(sqe, await);
     }
     return io_uring_submit(&_ring);
 }
+
+
+//
+// Prepare a event request
+//
+// int TUringServer::addEvent(int fd, TAwaitBase* await) const
+// {
+//     io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
+//     if (!sqe) {
+//         tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+//         return -1;
+//     }
+
+//     io_uring_prep_poll_add(sqe, fd, POLL_IN);
+//     if (await) {
+//         await->clear();
+//         io_uring_sqe_set_data(sqe, await);
+//     }
+//     return io_uring_submit(&_ring);
+// }
 
 
 void TUringServer::addResumeHandle(std::coroutine_handle<TUringTask::promise_type> handle)

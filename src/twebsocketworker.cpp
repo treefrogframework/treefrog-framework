@@ -56,7 +56,7 @@ void TWebSocketWorker::setSession(const TSession &session)
 
 void TWebSocketWorker::run()
 {
-    if (_mode == Receiving) {
+    if (_mode == RunMode::Receiving) {
         for (auto &p : (const QList<QPair<int, QByteArray>> &)_payloads) {
             execute(p.first, p.second);
         }
@@ -93,7 +93,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
         }
 
         switch (_mode) {
-        case Opening: {
+        case RunMode::Opening: {
             bool res = endpoint->onOpen(_httpSession);
             if (res) {
                 // For switch response
@@ -105,17 +105,16 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
             } else {
                 endpoint->taskList.prepend(qMakePair((int)TWebSocketEndpoint::OpenError, QVariant()));
             }
-            break;
-        }
+            break; }
 
-        case Closing:
+        case RunMode::Closing:
             if (!_socket->closing.exchange(true)) {
                 endpoint->onClose(Tf::GoingAway);
                 endpoint->unsubscribeFromAll();
             }
             break;
 
-        case Receiving: {
+        case RunMode::Receiving: {
 
             switch (opcode) {
             case TWebSocketFrame::TextFrame:
@@ -139,8 +138,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                     endpoint->unsubscribeFromAll();
                 }
                 endpoint->close(closeCode);  // close response or disconnect
-                break;
-            }
+                break; }
 
             case TWebSocketFrame::Ping:
                 endpoint->onPing(payload);

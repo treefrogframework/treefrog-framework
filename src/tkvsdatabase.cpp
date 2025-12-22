@@ -315,7 +315,7 @@ void TKvsDatabase::moveToThread(QThread *targetThread)
 TKvsDatabase &TKvsDatabase::operator=(TKvsDatabase &&other)
 {
     if (this != &other) {
-        _connectName = other._connectName;
+        _connectName = std::forward<QString>(other._connectName);
         _driver = other._driver;
         other._driver = nullptr;
     }
