@@ -14,13 +14,13 @@ page_id: "020.0"
 安装Qt库和开发工具:
 
 ```
- $ sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev gcc g++ clang make cmake
+ $ sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 gcc g++ clang make cmake
 ```
 
 现在安装数据库客户端库:
 
 ```
-$ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1
+$ sudo apt-get install -y libmongoc-dev libbson-dev
 ```
 
 ### 安装说明
