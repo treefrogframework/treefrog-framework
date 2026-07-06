@@ -176,6 +176,7 @@ socket_error:
     TDatabaseContext::setCurrentDatabaseContext(nullptr);
     _httpSocket->deleteLater();
     _httpSocket = nullptr;
+    _readBuffer.resize(0);
 }
 
 
