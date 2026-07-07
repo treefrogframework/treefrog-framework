@@ -56,7 +56,9 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 #if defined(Q_OS_UNIX) || !defined(TF_NO_DEBUG)
 void writeFailure(const char *data, size_t size)
 {
-    tSystemError("{}", (const char *)QByteArray(data, size).replace('\n', "").data());
+    QByteArray message(data, qsizetype(size));
+    message.replace('\n', "");
+    tSystemError("{}", message.constData());
 }
 #endif
 
