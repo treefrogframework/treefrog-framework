@@ -25,7 +25,7 @@ The source code packages of TreeFrog Framework are available.
 
 | Source         | File                             |
 |----------------|----------------------------------|
-| version 2.11.1 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.11.1.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.11.1.tar.gz) |
+| version 2.11.2 | [<i class="fa fa-download" aria-hidden="true"></i> treefrog-framework-2.11.2.tar.gz](https://github.com/treefrogframework/treefrog-framework/archive/v2.11.2.tar.gz) |
 
  </div>
 

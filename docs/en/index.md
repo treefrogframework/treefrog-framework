@@ -37,13 +37,19 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Sep. 27, 2025
+### TreeFrog Framework version 2.11.2 (stable) release <span style="color: red;">New!</span>
+
+ - Updated the internally used MongoDB C Driver to version 2.1.0.
+ - Added support for std::format style formatting in logging functions.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Jul. 5, 2025
-### TreeFrog Framework version 2.11.1 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.11.1 (stable) release
 
  - Fixed a compilation error bug in tftest.h.
  - Updated test macros.
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 May 5, 2025
 ### TreeFrog Framework version 2.11.0 (stable) release

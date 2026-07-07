@@ -40,12 +40,17 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2025/7/5  TreeFrog Framework バージョン2.11.1 （安定版）リリース <span style="color: red;">New!</span>
+### 2025/9/27  TreeFrog Framework バージョン2.11.2 （安定版）リリース <span style="color: red;">New!</span>
+
+ - 内部で使用している MongoDB C ドライバをバージョン 2.1.0 に更新
+ - ロギング関数を std::format スタイルの書き方に対応
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2025/7/5  TreeFrog Framework バージョン2.11.1 （安定版）リリース
 
  - tftest.hのコンパイルエラーを修正
  - テストマクロの更新
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2025/5/5  TreeFrog Framework バージョン2.11.0 （安定版）リリース
 
