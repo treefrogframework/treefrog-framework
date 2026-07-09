@@ -172,8 +172,8 @@ jobs:
       run: |
         ./testall.sh
 
-  build-macos:
-    runs-on: macos-latest
+  build-macos26:
+    runs-on: macos-26
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
@@ -222,8 +222,8 @@ jobs:
       run: |
         ./testall.sh
 
-  build-macos-sharedlink:
-    runs-on: macos-latest
+  build-macos15-sharedlink:
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
@@ -366,7 +366,7 @@ jobs:
         testall.bat
 
   build-windows-qt68-msvc2022:
-    runs-on: windows-2022
+    runs-on: windows-2025
     steps:
     - uses: actions/checkout@main
     - name: Checkout msbuild
