@@ -314,15 +314,11 @@ jobs:
       run: |
         ./testall.sh
 
-  build-windows-qt68-msvc2022:
-    runs-on: windows-latest
+  build-windows-qt68-msvc2026:
+    runs-on: windows-2025-vs2026
     steps:
-    - uses: actions/checkout@main
-    - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v2
-      with:
-        vs-version: '[17,18)'  # 17.xx
-        msbuild-architecture: x64
+    - name: Checkout repository
+      uses: actions/checkout@main
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -333,11 +329,10 @@ jobs:
     - name: Install tools
       run: |
         choco install sqlite -y --no-progress
-        choco install cmake -y --version=3.31.7 --no-progress
     - name: Debug build
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
@@ -355,7 +350,7 @@ jobs:
     - name: Release build
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
@@ -370,10 +365,16 @@ jobs:
       run: |
         testall.bat
 
-  build-windows-qt68-msvc2019:
-    runs-on: windows-latest
+  build-windows-qt68-msvc2022:
+    runs-on: windows-2022
     steps:
     - uses: actions/checkout@main
+    - name: Checkout msbuild
+      id: checkout_msbuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: '[17,18)'  # 17.xx
+        msbuild-architecture: x64
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -381,16 +382,14 @@ jobs:
         host:         windows
         target:       desktop
         setup-python: false
-    - name: Install VisualStudio tools
+    - name: Install tools
       run: |
-        choco install visualstudio2019community -y --no-progress
-        choco install visualstudio2019-workload-nativedesktop -y --no-progress
         choco install sqlite -y --no-progress
-        choco install cmake -y --version=3.31.7 --no-progress
+        #choco install cmake -y --version=3.31.7 --no-progress
     - name: Debug build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
@@ -408,7 +407,7 @@ jobs:
     - name: Release build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
@@ -424,7 +423,7 @@ jobs:
         testall.bat
 
   build-windows-qt65-msvc2019:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
     - uses: actions/checkout@main
     - name: Install Qt
