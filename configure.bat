@@ -117,7 +117,7 @@ if "%VisualStudioVersion%" == "18.0" (
   set CMAKEOPT=-A x64 -T v142
   set MSVSVER=2019
 ) else (
-  echo Use Visual Studio 2022 or 2019
+  echo Use Visual Studio 2026, 2022 or 2019
   pause
   exit /b 1
 )
@@ -182,12 +182,12 @@ set CMAKECMD=cmake %CMAKEOPT% -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
 
-set DEVENVCMD=devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
-echo %DEVENVCMD%
-%DEVENVCMD% >nul 2>&1
+set BUILDCMD=cmake --build . --config Release --target mongoc_static --clean-first
+echo %BUILDCMD%
+%BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  %DEVENVCMD%
+  %BUILDCMD%
   echo;
   echo Build failed.
   echo MongoDB driver not available.
@@ -202,7 +202,10 @@ rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
 rmdir /s /q lz4\build\cmake\build >nul 2>&1
-cmake %CMAKEOPT% -S lz4\build\cmake -B lz4\build\cmake\build -DBUILD_STATIC_LIBS=ON
+set CMAKECMD=cmake %CMAKEOPT% -S lz4\build\cmake -B lz4\build\cmake\build -DBUILD_STATIC_LIBS=ON
+echo %CMAKECMD%
+%CMAKECMD% >nul 2>&1
+
 set BUILDCMD=cmake --build lz4\build\cmake\build --config Release --clean-first -j
 echo %BUILDCMD%
 %BUILDCMD% >nul 2>&1
@@ -227,12 +230,13 @@ rmdir /s /q build >nul 2>&1
 set CMAKECMD=cmake -S . -B build %CMAKEOPT% -DBUILD_SHARED_LIBS=OFF
 echo %CMAKECMD%
 %CMAKECMD%
-set CMAKECMD=cmake --build build -j
-echo %CMAKECMD%
-%CMAKECMD% >nul 2>&1
+
+set BUILDCMD=cmake --build build -j
+echo %BUILDCMD%
+%BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  %CMAKECMD%
+  %BUILDCMD%
   echo;
   echo Build failed.
   echo glog not available.
