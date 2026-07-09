@@ -315,10 +315,16 @@ jobs:
         ./testall.sh
 
   build-windows-qt68-msvc2026:
-    runs-on: windows-2025-vs2026
+    runs-on: windows-2022
     steps:
     - name: Checkout repository
       uses: actions/checkout@main
+    - name: Checkout msbuild
+      id: checkout_msbuild
+      uses: microsoft/setup-msbuild@v3
+      with:
+        vs-version: '[18,19)'  # 18.xx
+        msbuild-architecture: x64
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -329,6 +335,7 @@ jobs:
     - name: Install tools
       run: |
         choco install sqlite -y --no-progress
+        #choco install cmake -y --version=3.31.7 --no-progress
     - name: Debug build
       shell: cmd
       run: |
@@ -366,12 +373,12 @@ jobs:
         testall.bat
 
   build-windows-qt68-msvc2022:
-    runs-on: windows-2025
+    runs-on: windows-2022
     steps:
     - uses: actions/checkout@main
     - name: Checkout msbuild
       id: checkout_msbuild
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
       with:
         vs-version: '[17,18)'  # 17.xx
         msbuild-architecture: x64
