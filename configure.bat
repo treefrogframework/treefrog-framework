@@ -101,7 +101,12 @@ if /i not "%Platform%" == "x64" (
 
 :: vcvarsall.bat setup
 set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
-if "%VisualStudioVersion%" == "17.0" (
+if "%VisualStudioVersion%" == "18.0" (
+  :: Visual Studio 2026
+  set VCVARSOPT=amd64
+  set CMAKEOPT=-A x64 -T v145
+  set MSVSVER=2026
+) else if "%VisualStudioVersion%" == "17.0" (
   :: Visual Studio 2022
   set VCVARSOPT=amd64
   set CMAKEOPT=-A x64 -T v143
