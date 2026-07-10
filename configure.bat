@@ -4,7 +4,7 @@
 set VERSION=2.11.3
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=2.1.0
-set LZ4_VERSION=1.9.4
+set LZ4_VERSION=1.10.0
 set GLOG_VERSION=0.7.1
 set BASEDIR=%~dp0
 set CL=/MP
@@ -182,7 +182,7 @@ set CMAKECMD=cmake %CMAKEOPT% -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
 
-set BUILDCMD=cmake --build . --config Release --target mongoc_static --clean-first
+set BUILDCMD=cmake --build . --config Release --target mongoc_static --clean-first -j
 echo %BUILDCMD%
 %BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
@@ -201,12 +201,13 @@ cd %BASEDIR%3rdparty
 rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
-rmdir /s /q lz4\build\cmake\build >nul 2>&1
-set CMAKECMD=cmake %CMAKEOPT% -S lz4\build\cmake -B lz4\build\cmake\build -DBUILD_STATIC_LIBS=ON
+cd %BASEDIR%3rdparty\lz4
+rmdir /s /q build\cmake\build >nul 2>&1
+set CMAKECMD=cmake %CMAKEOPT% -S build\cmake -B build\cmake\build -DBUILD_STATIC_LIBS=ON
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
 
-set BUILDCMD=cmake --build lz4\build\cmake\build --config Release --clean-first -j
+set BUILDCMD=cmake --build build\cmake\build --config Release --clean-first -j
 echo %BUILDCMD%
 %BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
