@@ -15,9 +15,10 @@
 #include <time.h>
 
 
-TSharedMemory::TSharedMemory(const QString &name) :
-    _name(name)
-{ }
+TSharedMemory::TSharedMemory(const QString &name)
+{
+    _name = (name.startsWith("/") ? "" : "/") + name;
+}
 
 
 TSharedMemory::~TSharedMemory()
