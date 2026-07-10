@@ -346,6 +346,7 @@ jobs:
       shell: cmd
       working-directory: src/test
       run: |
+        call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         call testall.bat
     - name: Release build
       shell: cmd
@@ -363,6 +364,7 @@ jobs:
       shell: cmd
       working-directory: tools\test
       run: |
+        call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         testall.bat
 
   build-windows-qt68-msvc2022:
