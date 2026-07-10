@@ -75,7 +75,7 @@ bool TSharedMemory::create(size_t size)
     return true;
 
 error:
-    tSystemError("SharedMemory create error.  name:{} size:{} [{}:{}]", _name, (qulonglong)size, __FILE__, __LINE__);
+    tSystemError("SharedMemory create error.  name:{} size:{} errno:{} [{}:{}]", _name, (qulonglong)size, errno, __FILE__, __LINE__);
 
     if (_fd > 0) {
         tf_close(_fd);
