@@ -222,8 +222,8 @@ jobs:
       run: |
         ./testall.sh
 
-  build-macos15-sharedlink:
-    runs-on: macos-15
+  build-macos26-sharedlink:
+    runs-on: macos-26
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
@@ -268,8 +268,8 @@ jobs:
       run: |
         ./testall.sh
 
-  build-macos14:
-    runs-on: macos-14
+  build-macos15:
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
