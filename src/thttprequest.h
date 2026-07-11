@@ -20,6 +20,8 @@ class T_CORE_EXPORT THttpRequestData {
 public:
     THttpRequestData() = default;
     ~THttpRequestData() = default;
+    THttpRequestData(const THttpRequestData &) = delete;
+    THttpRequestData &operator=(const THttpRequestData &) = delete;
     THttpRequestData(THttpRequestData &&) = default;
     THttpRequestData &operator=(THttpRequestData &&) = default;
 
@@ -30,8 +32,6 @@ public:
     std::unique_ptr<TMultipartFormData> multipartFormData;
     std::unique_ptr<QJsonDocument> jsonData;
     QHostAddress clientAddress;
-
-    T_DISABLE_COPY(THttpRequestData)
 };
 
 
@@ -40,11 +40,11 @@ public:
     THttpRequest();
     THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress, TActionContext *context);
     THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context);
+    virtual ~THttpRequest() = default;
     THttpRequest(const THttpRequest &) = delete;
     THttpRequest &operator=(const THttpRequest &) = delete;
     THttpRequest(THttpRequest &&) = default;
     THttpRequest &operator=(THttpRequest &&) = default;
-    virtual ~THttpRequest() = default;
 
     const THttpRequestHeader &header() const { return d->header; }
     Tf::HttpMethod method() const;

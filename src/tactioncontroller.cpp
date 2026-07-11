@@ -225,9 +225,7 @@ const QStringList &TActionController::availableControllers()
         QStringList controllers;
         for (auto it = Tf::objectFactories()->cbegin(); it != Tf::objectFactories()->cend(); ++it) {
             if (it.key().endsWith("controller")) {
-            //if (it->first.endsWith("controller")) {
                 controllers << QString::fromLatin1(it.key());
-                //controllers << QString::fromLatin1(it->first);
             }
         }
         std::sort(controllers.begin(), controllers.end());

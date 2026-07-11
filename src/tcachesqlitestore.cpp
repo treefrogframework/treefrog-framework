@@ -67,7 +67,6 @@ bool TCacheSQLiteStore::createTable(const QString &table)
     bool ret = queryNonTrx(db->sqlDatabase(), QStringLiteral("CREATE TABLE IF NOT EXISTS %1 (%2 TEXT PRIMARY KEY, %3 INTEGER, %4 BLOB)").arg(table, KEY_COLUMN, TIMESTAMP_COLUMN, BLOB_COLUMN));
     queryNonTrx(db->sqlDatabase(), QStringLiteral("VACUUM"));
 
-    //TSqlDatabasePool::instance()->pool(db);
     return ret;
 }
 

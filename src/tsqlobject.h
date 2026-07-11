@@ -41,8 +41,4 @@ protected:
     TSqlDatabase &getDatabase();
 
     QSqlError sqlError;
-
-private:
-    //QSqlDatabase _database;
-    //TSqlDatabase _database;  これに変えたい
 };
