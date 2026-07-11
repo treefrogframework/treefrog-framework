@@ -332,6 +332,13 @@ int64_t Tf::getMSecsSinceEpoch()
 }
 
 
+bool getAbortOnFatalFlag()
+{
+    static bool ret = Tf::appSettings()->value(Tf::ApplicationAbortOnFatal).toBool();
+    return ret;
+}
+
+
 /*!
   \def T_EXPORT(VAR)
   Exports the current value of a local variable named \a VAR from the

@@ -457,14 +457,14 @@ int deleteScaffold(const QString &name)
         // Removes controllers
         rmfiles(ctrls, allRemove, quit, D_CTRLS, "controllers.pro");
         if (quit) {
-            ::_exit(1);
+            std::exit(1);
             return 1;
         }
 
         // Removes models
         rmfiles(models, allRemove, quit, D_MODELS, "models.pro");
         if (quit) {
-            ::_exit(1);
+            std::exit(1);
             return 1;
         }
 

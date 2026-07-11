@@ -190,7 +190,7 @@ int64_t THttpSocket::writeRawData(const QByteArray &data)
 
 bool THttpSocket::waitForReadyReadRequest(int msecs)
 {
-    static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
+    static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
 
     int64_t buflen = _readBuffer.capacity() - _readBuffer.size();
     int64_t len = readRawData(_readBuffer.data() + _readBuffer.size(), buflen, msecs);

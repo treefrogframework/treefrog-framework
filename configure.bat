@@ -1,11 +1,11 @@
 @echo off
 @setlocal
 
-set VERSION=2.11.2
+set VERSION=2.11.3
 set TFDIR=C:\TreeFrog\%VERSION%
 set MONBOC_VERSION=2.1.0
-set LZ4_VERSION=1.9.4
-set GLOG_VERSION=0.7.0
+set LZ4_VERSION=1.10.0
+set GLOG_VERSION=0.7.1
 set BASEDIR=%~dp0
 set CL=/MP
 
@@ -101,7 +101,12 @@ if /i not "%Platform%" == "x64" (
 
 :: vcvarsall.bat setup
 set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
-if "%VisualStudioVersion%" == "17.0" (
+if "%VisualStudioVersion%" == "18.0" (
+  :: Visual Studio 2026
+  set VCVARSOPT=amd64
+  set CMAKEOPT=-A x64 -T v145
+  set MSVSVER=2026
+) else if "%VisualStudioVersion%" == "17.0" (
   :: Visual Studio 2022
   set VCVARSOPT=amd64
   set CMAKEOPT=-A x64 -T v143
@@ -112,7 +117,7 @@ if "%VisualStudioVersion%" == "17.0" (
   set CMAKEOPT=-A x64 -T v142
   set MSVSVER=2019
 ) else (
-  echo Use Visual Studio 2022 or 2019
+  echo Use Visual Studio 2026, 2022 or 2019
   pause
   exit /b 1
 )
@@ -177,12 +182,12 @@ set CMAKECMD=cmake %CMAKEOPT% -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
 
-set DEVENVCMD=devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
-echo %DEVENVCMD%
-%DEVENVCMD% >nul 2>&1
+set BUILDCMD=cmake --build . --config Release --target mongoc_static --clean-first -j
+echo %BUILDCMD%
+%BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  %DEVENVCMD%
+  %BUILDCMD%
   echo;
   echo Build failed.
   echo MongoDB driver not available.
@@ -196,9 +201,13 @@ cd %BASEDIR%3rdparty
 rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
-rmdir /s /q lz4\build\cmake\build >nul 2>&1
-cmake %CMAKEOPT% -S lz4\build\cmake -B lz4\build\cmake\build -DBUILD_STATIC_LIBS=ON
-set BUILDCMD=cmake --build lz4\build\cmake\build --config Release --clean-first -j
+cd %BASEDIR%3rdparty\lz4
+rmdir /s /q build\cmake\build >nul 2>&1
+set CMAKECMD=cmake %CMAKEOPT% -S build\cmake -B build\cmake\build -DBUILD_STATIC_LIBS=ON
+echo %CMAKECMD%
+%CMAKECMD% >nul 2>&1
+
+set BUILDCMD=cmake --build build\cmake\build --config Release --clean-first -j
 echo %BUILDCMD%
 %BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
@@ -222,12 +231,13 @@ rmdir /s /q build >nul 2>&1
 set CMAKECMD=cmake -S . -B build %CMAKEOPT% -DBUILD_SHARED_LIBS=OFF
 echo %CMAKECMD%
 %CMAKECMD%
-set CMAKECMD=cmake --build build -j
-echo %CMAKECMD%
-%CMAKECMD% >nul 2>&1
+
+set BUILDCMD=cmake --build build -j
+echo %BUILDCMD%
+%BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  %CMAKECMD%
+  %BUILDCMD%
   echo;
   echo Build failed.
   echo glog not available.
