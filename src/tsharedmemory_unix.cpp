@@ -40,16 +40,25 @@ bool TSharedMemory::create(size_t size)
 
     struct stat st;
     header_t *header = nullptr;
+    int flags = 0;
 
     // Creates shared memory
-    _fd = shm_open(qUtf8Printable(_name), O_CREAT | O_RDWR | O_CLOEXEC, S_IRUSR | S_IWUSR);
+    _fd = shm_open(qUtf8Printable(_name), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (_fd < 0) {
         // error
+        tSystemError("SharedMemory shm_open error.  name:{} size:{} errno:{} [{}:{}]", _name, (qulonglong)size, errno, __FILE__, __LINE__);
+        goto error;
+    }
+
+    flags = fcntl(_fd, F_GETFD);
+    if (flags < 0 || fcntl(_fd, F_SETFD, flags | FD_CLOEXEC) < 0) {
+        tSystemError("SharedMemory fcntl error.  name:{} size:{} errno:{} [{}:{}]", _name, (qulonglong)size, errno, __FILE__, __LINE__);
         goto error;
     }
 
     if (fstat(_fd, &st) < 0) {
         // error
+        tSystemError("SharedMemory fstat error.  name:{} size:{} errno:{} [{}:{}]", _name, (qulonglong)size, errno, __FILE__, __LINE__);
         goto error;
     }
 
@@ -57,6 +66,7 @@ bool TSharedMemory::create(size_t size)
     if ((size_t)st.st_size < size) {
         if (ftruncate(_fd, size) < 0) {
             // error
+            tSystemError("SharedMemory ftruncate error.  name:{} size:{} errno:{} [{}:{}]", _name, (qulonglong)size, errno, __FILE__, __LINE__);
             goto error;
         }
     }
@@ -64,6 +74,7 @@ bool TSharedMemory::create(size_t size)
     _ptr = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, _fd, 0);
     if (!_ptr || _ptr == MAP_FAILED) {
         // error
+        tSystemError("SharedMemory mmap error.  name:{} size:{} errno:{} [{}:{}]", _name, (qulonglong)size, errno, __FILE__, __LINE__);
         goto error;
     }
 
@@ -75,8 +86,6 @@ bool TSharedMemory::create(size_t size)
     return true;
 
 error:
-    tSystemError("SharedMemory create error.  name:{} size:{} errno:{} [{}:{}]", _name, (qulonglong)size, errno, __FILE__, __LINE__);
-
     if (_fd > 0) {
         tf_close(_fd);
         _fd = 0;
