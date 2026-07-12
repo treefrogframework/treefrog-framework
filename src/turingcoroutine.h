@@ -1,6 +1,6 @@
 #pragma once
 
-struct TUringTask;
+class TUringTask;
 
 
 class TUringCoroutine {

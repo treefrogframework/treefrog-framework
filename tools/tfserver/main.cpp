@@ -208,6 +208,12 @@ int main(int argc, char *argv[])
     bool showRoutesOption = args.contains(SHOW_ROUTES_OPTION);
     ushort portNumber = args.value(PORT_OPTION).toUShort();
 
+#if defined(Q_OS_UNIX) || !defined(TF_NO_DEBUG)
+    // Setup signal handlers for SIGSEGV, SIGILL, SIGFPE, SIGABRT and SIGBUS
+    google::InstallFailureWriter(writeFailure);
+    google::InstallFailureSignalHandler();
+#endif
+
 #ifdef Q_OS_UNIX
     webapp.watchUnixSignal(SIGTERM);
     if (!debug) {
@@ -217,12 +223,6 @@ int main(int argc, char *argv[])
     if (!debug) {
         webapp.ignoreConsoleSignal();
     }
-#endif
-
-#if defined(Q_OS_UNIX) || !defined(TF_NO_DEBUG)
-    // Setup signal handlers for SIGSEGV, SIGILL, SIGFPE, SIGABRT and SIGBUS
-    google::InstallFailureWriter(writeFailure);
-    google::InstallFailureSignalHandler();
 #endif
 
     // Sets the app locale
