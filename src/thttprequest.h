@@ -81,6 +81,7 @@ public:
     QIODevice *rawBody();
     bool hasJson() const { return d->jsonData && !d->jsonData->isNull(); }
     const QJsonDocument &jsonData() const;
+    QJsonDocument &jsonData();
 
     static THttpRequest generate(QByteArray &byteArray, const QHostAddress &address, TActionContext *context);
     static QList<QPair<QString, QString>> fromQuery(const QString &query);
@@ -93,7 +94,6 @@ protected:
     QList<QPair<QString, QString>> &queryItemList();
     const QList<QPair<QString, QString>> &formItemList() const;
     QList<QPair<QString, QString>> &formItemList();
-    QJsonDocument &jsonData();
 
     static bool hasItem(const QString &name, const QList<QPair<QString, QString>> &items);
     static QString itemValue(const QString &name, const QString &defaultValue, const QList<QPair<QString, QString>> &items);
