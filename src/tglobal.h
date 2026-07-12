@@ -211,7 +211,11 @@ inline TDebug tTrace()
 template <typename... Args>
 inline void tFatal(const char *fmt, Args&&... args)
 {
-    TDebug(Tf::FatalLevel).fatal(fmt, std::forward<Args>(args)...);
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).fatal("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).fatal(fmt, std::forward<Args>(args)...);
+    }
 
     if (getAbortOnFatalFlag()) {
 #if defined(Q_OS_UNIX)
@@ -225,31 +229,51 @@ inline void tFatal(const char *fmt, Args&&... args)
 template <typename... Args>
 inline void tError(const char *fmt, Args&&... args)
 {
-    TDebug(Tf::FatalLevel).error(fmt, std::forward<Args>(args)...);
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).error("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).error(fmt, std::forward<Args>(args)...);
+    }
 }
 
 template <typename... Args>
 inline void tWarn(const char *fmt, Args&&... args)
 {
-    TDebug(Tf::FatalLevel).warn(fmt, std::forward<Args>(args)...);
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).warn("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).warn(fmt, std::forward<Args>(args)...);
+    }
 }
 
 template <typename... Args>
 inline void tInfo(const char *fmt, Args&&... args)
 {
-    TDebug(Tf::FatalLevel).info(fmt, std::forward<Args>(args)...);
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).info("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).info(fmt, std::forward<Args>(args)...);
+    }
 }
 
 template <typename... Args>
 inline void tDebug(const char *fmt, Args&&... args)
 {
-    TDebug(Tf::FatalLevel).debug(fmt, std::forward<Args>(args)...);
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).debug("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).debug(fmt, std::forward<Args>(args)...);
+    }
 }
 
 template <typename... Args>
 inline void tTrace(const char *fmt, Args&&... args)
 {
-    TDebug(Tf::FatalLevel).trace(fmt, std::forward<Args>(args)...);
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).trace("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).trace(fmt, std::forward<Args>(args)...);
+    }
 }
 
 

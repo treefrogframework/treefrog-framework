@@ -47,8 +47,9 @@ public:
 protected:
     void run() {
         for (;;) {
-            Box box;
-            if (stackBox.pop(box)) {
+            auto opbox = stackBox.pop();
+            if (opbox) {
+                auto box = opbox.value();
                 Q_ASSERT(box.a + box.b == 1000);
             }
             //Tf::msleep(1);
@@ -67,7 +68,9 @@ protected:
     void run() {
         for (;;) {
             Box box;
-            if (stackBox.top(box)) {
+            auto opbox = stackBox.pop();
+            if (opbox) {
+                box = opbox.value();
                 Q_ASSERT(box.a + box.b == 1000);
                 box.a++;
                 box.b--;

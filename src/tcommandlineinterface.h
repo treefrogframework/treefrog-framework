@@ -23,12 +23,6 @@
             {                                                                                                       \
                 returnCode = STATICFUNCTION();                                                                      \
                 commitTransactions();                                                                               \
-                for (auto it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {                              \
-                    it.value().database().close(); /* close SQL database */                                         \
-                }                                                                                                   \
-                for (auto it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {                              \
-                    it.value().close(); /* close KVS database */                                                    \
-                }                                                                                                   \
                 QEventLoop eventLoop;                                                                               \
                 while (eventLoop.processEvents()) { }                                                               \
             }                                                                                                       \
@@ -36,7 +30,7 @@
         TWebApplication app(argc, argv);                                                                            \
         Tf::setupSystemLogger(new TStdErrSystemLogger);                                                             \
         Tf::setupQueryLogger();                                                                                     \
-        app.setMultiProcessingModule(TWebApplication::Thread);                                                      \
+        app.setMultiProcessingModule(TWebApplication::MultiProcessingModule::Thread);                               \
         int idx = QCoreApplication::arguments().indexOf("-e");                                                      \
         QString env = (idx > 0) ? QCoreApplication::arguments().value(idx + 1) : QString("product");                \
         app.setDatabaseEnvironment(env);                                                                            \

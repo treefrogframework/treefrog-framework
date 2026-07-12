@@ -74,7 +74,7 @@ TKvsDatabasePool::~TKvsDatabasePool()
     timer.stop();
 
     for (int eng = 0; eng < (int)Tf::KvsEngine::Num; eng++) {
-        if (!Tf::app()->isKvsAvailable((Tf::KvsEngine)eng)) {
+        if (!Tf::app() || !Tf::app()->isKvsAvailable((Tf::KvsEngine)eng)) {
             continue;
         }
 

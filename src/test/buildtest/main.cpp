@@ -245,18 +245,15 @@ void stack()
 {
     TStack<QString> stack;
     stack.push(QString());
-    QString s;
-    stack.pop(s);
-    stack.top(s);
+    auto s = stack.pop();
+    stack.count();
 }
 
 void queue()
 {
     TQueue<QString> queue;
     queue.enqueue(QString());
-    QString s;
-    queue.dequeue(s);
-    queue.head(s);
+    auto s = queue.dequeue();
     queue.count();
 }
 

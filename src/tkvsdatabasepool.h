@@ -36,8 +36,6 @@ private:
     TAtomic<uint> *lastCachedTime {nullptr};
     int maxConnects {0};
     QBasicTimer timer;
-    // std::vector<TStack<KvsDbPtr>> availableDatabases;
-    // std::vector<TStack<KvsDbPtr>> cachedDatabases;
     std::vector<TLockStack<KvsDbPtr>> availableDatabases;
     std::vector<TLockStack<KvsDbPtr>> cachedDatabases;
 

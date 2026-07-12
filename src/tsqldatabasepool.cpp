@@ -44,23 +44,25 @@ TSqlDatabasePool::~TSqlDatabasePool()
 {
     timer.stop();
 
-    for (int j = 0; j < Tf::app()->sqlDatabaseSettingsCount(); ++j) {
-        auto &cache = cachedDatabases[j];
-        QString name;
-        while (!cache.empty()) {
-            std::optional<SqlDbPtr> db = cache.pop();
-            if (db) {
-                name = (*db)->connectionName();
-                closeDatabase(*(*db));
-                TSqlDatabase::removeDatabase(name);
+    if (Tf::app()) {
+        for (int j = 0; j < Tf::app()->sqlDatabaseSettingsCount(); ++j) {
+            auto &cache = cachedDatabases[j];
+            QString name;
+            while (!cache.empty()) {
+                std::optional<SqlDbPtr> db = cache.pop();
+                if (db) {
+                    name = (*db)->connectionName();
+                    closeDatabase(*(*db));
+                    TSqlDatabase::removeDatabase(name);
+                }
             }
-        }
 
-        auto &stack = availableDatabases[j];
-        while (!stack.empty()) {
-            std::optional<SqlDbPtr> db = stack.pop();
-            if (db) {
-                TSqlDatabase::removeDatabase((*db)->sqlDatabase().connectionName());
+            auto &stack = availableDatabases[j];
+            while (!stack.empty()) {
+                std::optional<SqlDbPtr> db = stack.pop();
+                if (db) {
+                    TSqlDatabase::removeDatabase((*db)->sqlDatabase().connectionName());
+                }
             }
         }
     }

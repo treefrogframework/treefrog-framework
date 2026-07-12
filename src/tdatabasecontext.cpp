@@ -33,6 +33,7 @@ thread_local TDatabaseContext *databaseContextPtrTls = nullptr;
 TDatabaseContext::TDatabaseContext()
 {
     const int count = Tf::app()->sqlDatabaseSettingsCount();
+
     if (sqlTransactions.size() < (size_t)count) {
         sqlTransactions.resize(count);
     }
@@ -133,11 +134,12 @@ void TDatabaseContext::release()
 
 void TDatabaseContext::setTransactionEnabled(bool enable, int id)
 {
-    if (id < 0) {
+    if (id < 0 || id >= (int)sqlTransactions.size()) {
         Tf::error("Invalid database ID: {}", id);
         return;
     }
-    return sqlTransactions[id].setEnabled(enable);
+
+    sqlTransactions[id].setEnabled(enable);
 }
 
 

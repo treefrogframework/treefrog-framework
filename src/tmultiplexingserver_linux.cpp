@@ -43,7 +43,7 @@ void TMultiplexingServer::instantiate(int listeningSocket)
 TMultiplexingServer *TMultiplexingServer::instance()
 {
     if (Q_UNLIKELY(!multiplexingServer)) {
-        tFatal("Call TMultiplexingServer::instantiate() function first");
+        Tf::fatal("Call TMultiplexingServer::instantiate() function first");
     }
     return multiplexingServer.get();
 }
