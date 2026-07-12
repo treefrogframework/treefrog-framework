@@ -7,8 +7,8 @@ on:
     branches: [ master, develop ]
 
 jobs:
-  build-ubuntu:
-    runs-on: ubuntu-24.04
+  build-ubuntu26:
+    runs-on: ubuntu-26.04
     steps:
     - uses: actions/checkout@main
     - name: apt
@@ -62,8 +62,8 @@ jobs:
       run: |
         ./testall.sh
 
-  build-ubuntu-sharedlink:
-    runs-on: ubuntu-24.04
+  build-ubuntu26-sharedlink:
+    runs-on: ubuntu-26.04
     steps:
     - uses: actions/checkout@main
     - name: apt
@@ -117,8 +117,8 @@ jobs:
       run: |
         ./testall.sh
 
-  build-ubuntu22:
-    runs-on: ubuntu-22.04
+  build-ubuntu24:
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@main
     - name: apt

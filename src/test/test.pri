@@ -6,7 +6,7 @@ QT -= gui
 DEFINES += TF_DLL
 
 # C++ Standards Support
-CONFIG += c++23
+CONFIG += c++20
 windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
 
 include(../../tfbase.pri)

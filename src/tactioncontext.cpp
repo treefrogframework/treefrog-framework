@@ -43,14 +43,14 @@ thread_local TActionContext *actionContextPtrTls = nullptr;
 TActionContext::TActionContext() :
     TDatabaseContext()
 {
-    tSystemDebug("TActionContext::TActionContext ptr:{}", (uint64_t)this);
+    tSystemDebug("TActionContext::TActionContext ptr:{}", (quint64)this);
 }
 
 
 TActionContext::~TActionContext()
 {
     release();
-    tSystemDebug("TActionContext::~TActionContext ptr:{}", (uint64_t)this);
+    tSystemDebug("TActionContext::~TActionContext ptr:{}", (quint64)this);
 }
 
 
