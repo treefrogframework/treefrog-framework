@@ -7,12 +7,12 @@ class T_CORE_EXPORT THazardObject {
 public:
     THazardObject();
     THazardObject(const THazardObject &);
-    THazardObject(THazardObject &&) = default;
+    THazardObject &operator=(const THazardObject &) { return *this; }
+    THazardObject(THazardObject &&) = delete;
+    THazardObject &operator=(THazardObject &&) = delete;
     virtual ~THazardObject() { }
 
     void deleteLater();
-    THazardObject &operator=(const THazardObject &) { return *this; }
-    THazardObject &operator=(THazardObject &&) { return *this; }
 
 private:
     THazardObject *next {nullptr};

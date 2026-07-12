@@ -3,6 +3,7 @@
 #include "tsharedmemorykvs.h"
 #include "tcommandlineinterface.h"
 #include "tglobal.h"
+#include <thread>
 
 
 const QString SHM_NAME = "tfcache.shm";

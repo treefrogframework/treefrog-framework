@@ -8,8 +8,6 @@
 #include "tdispatcher.h"
 #include "thazardptrmanager.h"
 #include "tsystemglobal.h"
-#include <QMap>
-#include <QStringList>
 #include <TActionController>
 #include <TAppSettings>
 #include <TJSLoader>
@@ -18,7 +16,11 @@
 #include <TThreadApplicationServer>
 #include <TUrlRoute>
 #include <TWebApplication>
+#ifdef Q_OS_LINUX
 #include "turingserver.h"
+#endif
+#include <QMap>
+#include <QStringList>
 #include <cstdlib>
 #include <cstdio>
 #include <memory>

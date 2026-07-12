@@ -19,13 +19,14 @@ public:
     void stop() override;
     void setAutoReloadingEnabled(bool enable) override;
     bool isAutoReloadingEnabled() override;
+    static TThreadApplicationServer *instance(int listeningSocket = 0, QObject *parent = nullptr);
 
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
     void timerEvent(QTimerEvent *event) override;
 
 private:
-    static TLockStack<TActionThread *> *threadPoolPtr();
+    static TLockStack<TActionThread *> &threadPool();
 
     int listenSocket {0};
     int maxThreads {0};
@@ -44,7 +45,7 @@ public:
     void stop() override;
     void setAutoReloadingEnabled(bool enable) override;
     bool isAutoReloadingEnabled() override;
-    static TThreadApplicationServer *instance(int listeningSocket = 0,QObject *parent = nullptr);
+    static TThreadApplicationServer *instance(int listeningSocket = 0, QObject *parent = nullptr);
 
 protected:
     void incomingConnection(qintptr socketDescriptor);
@@ -52,7 +53,7 @@ protected:
     void run() override;
 
 private:
-    static TLockStack<TActionThread *> &threadPoolPtr();
+    static TLockStack<TActionThread *> &threadPool();
     TThreadApplicationServer(int listeningSocket, QObject *parent = nullptr);
 
     int listenSocket {0};

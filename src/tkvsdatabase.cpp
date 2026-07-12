@@ -35,7 +35,7 @@ public:
 
 static TKvsDatabaseDict *databaseDict()
 {
-    static std::unique_ptr<TKvsDatabaseDict> dict{new TKvsDatabaseDict{}};
+    static std::unique_ptr<TKvsDatabaseDict> dict = std::make_unique<TKvsDatabaseDict>();
     return dict.get();
 }
 

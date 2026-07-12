@@ -17,7 +17,7 @@
   an web application server for thread.
 */
 
-TLockStack<TActionThread *> &TThreadApplicationServer::threadPoolPtr()
+TLockStack<TActionThread *> &TThreadApplicationServer::threadPool()
 {
     static TLockStack<TActionThread *> threadPool;
     return threadPool;

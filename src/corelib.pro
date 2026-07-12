@@ -354,8 +354,6 @@ HEADERS += tactioncontextroutine.h
 SOURCES += tactioncontextroutine.cpp
 # HEADERS += tthreadpool.h
 # SOURCES += tthreadpool.cpp
-HEADERS += tthreadpoolawaiter.h
-SOURCES += tthreadpoolawaiter.cpp
 
 !wasm {
   HEADERS += tsmtpmailer.h
@@ -409,6 +407,8 @@ linux-* {
   SOURCES += turingcoroutine_linux.cpp
   HEADERS += tactionworker.h
   SOURCES += tactionworker.cpp
+  HEADERS += tthreadpoolawaiter.h
+  SOURCES += tthreadpoolawaiter.cpp
 #  HEADERS += tactionroutine.h
 #  SOURCES += tactionroutine.cpp
   HEADERS += tepoll.h

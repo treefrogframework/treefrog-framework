@@ -87,7 +87,7 @@ THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &b
 THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context) :
     d(std::make_unique<THttpRequestData>())
 {
-    d->header = std::move(THttpRequestHeader{header});
+    d->header = THttpRequestHeader{header};
     d->clientAddress = clientAddress;
 
     if (d->header.contentType().trimmed().toLower().startsWith(QByteArrayLiteral("multipart/form-data"))) {

@@ -71,14 +71,14 @@ TSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
     int n = 0;
     do {
         if (!handle || !handle->isValid()) {
-            handle = std::move(TSqlDatabasePool::instance()->database(id));
+            handle = TSqlDatabasePool::instance()->database(id);
         }
 
         if (tx.begin()) {
             break;
         }
 
-        handle = std::move(TSqlDatabase::Handle{});
+        handle = TSqlDatabase::Handle{};
     } while (++n < 2);  // try two times
 
     idleElapsed = (uint)std::time(nullptr);
@@ -102,7 +102,7 @@ TKvsDatabase::Handle &TDatabaseContext::getKvsDatabase(Tf::KvsEngine engine)
 {
     auto &handle = kvsDatabases[(int)engine];
     if (!handle || !handle->isValid()) {
-        handle = std::move(TKvsDatabasePool::instance()->database(engine));
+        handle = TKvsDatabasePool::instance()->database(engine);
     }
 
     idleElapsed = (uint)std::time(nullptr);

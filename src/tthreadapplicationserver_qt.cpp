@@ -30,12 +30,12 @@ TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject 
     for (int i = 0; i < maxThreads; i++) {
         TActionThread *thread = new TActionThread(0);
         connect(thread, &TActionThread::finished, [=]() {
-            threadPoolPtr()->push(thread);
+            threadPool().push(thread);
         });
-        threadPoolPtr()->push(thread);
+        threadPool().push(thread);
     }
 
-    Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::Thread);
+    Q_ASSERT(Tf::app()->multiProcessingModule() == TWebApplication::MultiProcessingModule::Thread);
 }
 
 
@@ -84,15 +84,14 @@ void TThreadApplicationServer::stop()
 void TThreadApplicationServer::incomingConnection(qintptr socketDescriptor)
 {
     tSystemDebug("incomingConnection  sd:{}  thread count:{}  max:{}", (qint64)socketDescriptor, TActionThread::threadCount(), maxThreads);
-    TActionThread *thread;
-    bool ok;
+    std::optional<TActionThread *> thread;
 
-    while (!((thread = threadPoolPtr().pop(&ok) && ok)) {
+    while (!((thread = threadPool().pop()) && thread)) {
         std::this_thread::yield();
         //qApp->processEvents(QEventLoop::ExcludeSocketNotifiers);
         Tf::msleep(1);
     }
-    tSystemDebug("thread ptr: {}", (uint64_t)thread);
-    thread->setSocketDescriptor(socketDescriptor);
-    thread->start();
+    tSystemDebug("thread ptr: {}", (uint64_t)*thread);
+    (*thread)->setSocketDescriptor(socketDescriptor);
+    (*thread)->start();
 }
