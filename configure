@@ -161,9 +161,8 @@ fi
 
 # search qmake command
 if [ -z "$QMAKE" ]; then
-  which qmake-qt5 >/dev/null 2>&1 && QMAKE=qmake-qt5
-  which qmake     >/dev/null 2>&1 && QMAKE=qmake
-  which qmake6    >/dev/null 2>&1 && QMAKE=qmake6
+  which qmake6 >/dev/null 2>&1 && QMAKE=qmake6
+  which qmake  >/dev/null 2>&1 && QMAKE=qmake
 
   if [ -z "$QMAKE" ]; then
     echo "qmake: command not found"
