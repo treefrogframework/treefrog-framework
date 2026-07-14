@@ -97,6 +97,7 @@ void TActionContext::execute(THttpRequest &request)
         QString path = THttpUtility::fromUrlEncoding(reqHeader.path().mid(0, reqHeader.path().indexOf('?')));
 
         if (LimitRequestBodyBytes > 0 && reqHeader.contentLength() > (uint)LimitRequestBodyBytes) {
+            tSystemWarn("Content-Length: {}  LimitRequestBodyBytes:{}", reqHeader.contentLength(), LimitRequestBodyBytes);
             throw ClientErrorException((int)Tf::StatusCode::RequestEntityTooLarge, __FILE__, __LINE__);  // Request Entity Too Large
         }
 

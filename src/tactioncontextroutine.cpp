@@ -10,11 +10,6 @@
 #include <QMutexLocker>
 
 
-// TActionContextRoutine::TActionContextRoutine(QWaitCondition &cv, QMutex &mutex, TQueue<std::function<void()>> &tasks, bool &stop) :
-//     _cv(cv), _mutex(mutex), _tasks(tasks), _stop(stop)
-// { }
-
-
 void TActionContextRoutine::start(QByteArray &readBuffer)
 {
     TActionContext::setCurrentActionContext(this);

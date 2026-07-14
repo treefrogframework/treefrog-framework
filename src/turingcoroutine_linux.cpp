@@ -211,7 +211,7 @@ TUringCoroutine::~TUringCoroutine()
 
 TUringTask TUringCoroutine::start()
 {
-    static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
+    static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
     static int keepAlivetimeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
     constexpr int64_t bufsize = 8 * 1024;
 
@@ -298,7 +298,7 @@ TUringTask TUringCoroutine::start()
             }
         }
 
-        // file
+        // File
         if (!_fileName.isEmpty()) {
             int fd = ::open(qUtf8Printable(_fileName), O_RDONLY | O_CLOEXEC);
             if (fd < 0) {
