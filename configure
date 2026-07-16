@@ -150,8 +150,8 @@ else
 fi
 
 cd "$BASEDIR"
-replace "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
-replace "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
+replace "s|unix:LIBS +=.*|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,${LIBDIR} -L${LIBDIR} -ltreefrog\r|" defaults/appbase.pri
+replace "s|unix:INCLUDEPATH +=.*|unix:INCLUDEPATH += ${INCLUDEDIR}\r|" defaults/appbase.pri
 
 if [ -n "$ENABLE_DEBUG" ]; then
   OPT="$OPT CONFIG+=debug"
@@ -224,7 +224,7 @@ if [ -z "$ENABLE_SHARED_MONGOC" ]; then
   $CMAKE --build . --target mongoc_static --clean-first -j >/dev/null 2>&1
   RET=$?
   if [ $RET != 0 ]; then
-    echo "failed"
+    echo "Build failed"
     echo "MongoDB driver not available."
     exit $RET
   fi
@@ -242,8 +242,8 @@ if ! [[ "$SPEC" =~ "wasm" ]]; then
     $CMAKE --build build --clean-first -j >/dev/null 2>&1
     RET=$?
     if [ $RET != 0 ]; then
-      make -C build
-      echo "failed"
+      $CMAKE --build build
+      echo "Build failed"
       echo "glog not available."
       exit $RET
     fi
@@ -261,8 +261,8 @@ if [ -z "$ENABLE_SHARED_LZ4" ]; then
   $CMAKE --build bin --clean-first -j >/dev/null 2>&1
   RET=$?
   if [ $RET != 0 ]; then
-    make SHELL='bash -x' lib
-    echo "failed"
+    $CMAKE --build bin
+    echo "Build failed"
     echo "LZ4 not available."
     exit $RET
   fi
