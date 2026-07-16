@@ -14,6 +14,7 @@
 #include <TBson>
 #include <atomic>
 extern "C" {
+#include <mongoc/mongoc.h>
 #include <bson/bson.h>
 }
 
@@ -237,7 +238,11 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
     case QMetaType::QVariantList:  // FALLTHRU
     case QMetaType::QStringList: {
         bson_t child;
+#if MONGOC_CHECK_VERSION(2, 3, 0)
         BSON_APPEND_ARRAY_UNSAFE_BEGIN(bson, qUtf8Printable(key), &child);
+#else
+        BSON_APPEND_ARRAY_BEGIN(bson, qUtf8Printable(key), &child);
+#endif
 
         int i = 0;
         for (auto &var : (const QList<QVariant> &)value.toList()) {
