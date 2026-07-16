@@ -16,7 +16,12 @@ done
 [ -f Makefile ] && make -k distclean
 rm -f Makefile
 
-qmake -r
+if which qmake6 >/dev/null; then
+  qmake6 -r
+else
+  qmake -r
+fi
+
 make -j8
 if [ "$?" != 0 ]; then
   echo
