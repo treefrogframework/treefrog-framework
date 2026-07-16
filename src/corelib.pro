@@ -37,7 +37,7 @@ INSTALLS += target
 
 windows {
   INCLUDEPATH += ../3rdparty/lz4/lib
-  LIBS += ../3rdparty/lz4/build/cmake/build/Release/lz4_static.lib
+  LIBS += ../3rdparty/lz4/bin/Release/lz4_static.lib
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
   QMAKE_CXXFLAGS += /wd 4819 /wd 4661
@@ -58,7 +58,7 @@ unix {
     CONFIG -= shared
     CONFIG += static
     INCLUDEPATH += ../include ../3rdparty/lz4/lib
-    OBJECTS += ../3rdparty/lz4/lib/liblz4.a
+    OBJECTS += ../3rdparty/lz4/bin/liblz4.a
     QT_WASM_PTHREAD_POOL_SIZE=32
     QT_WASM_INITIAL_MEMORY=1000MB
 
@@ -66,7 +66,7 @@ unix {
     # UNIX
     isEmpty( enable_shared_lz4 ) {
       # Static link
-      LIBS += ../3rdparty/lz4/lib/liblz4.a
+      LIBS += ../3rdparty/lz4/bin/liblz4.a
       INCLUDEPATH += ../include ../3rdparty/lz4/lib
     } else {
       LIBS += $$system("pkg-config --libs liblz4 2>/dev/null")

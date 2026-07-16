@@ -237,7 +237,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
     case QMetaType::QVariantList:  // FALLTHRU
     case QMetaType::QStringList: {
         bson_t child;
-        BSON_APPEND_ARRAY_BEGIN(bson, qUtf8Printable(key), &child);
+        BSON_APPEND_ARRAY_UNSAFE_BEGIN(bson, qUtf8Printable(key), &child);
 
         int i = 0;
         for (auto &var : (const QList<QVariant> &)value.toList()) {

@@ -3,7 +3,7 @@
 
 set VERSION=2.12.0
 set TFDIR=C:\TreeFrog\%VERSION%
-set MONBOC_VERSION=2.1.0
+set MONBOC_VERSION=2.3.3
 set LZ4_VERSION=1.10.0
 set GLOG_VERSION=0.7.1
 set BASEDIR=%~dp0
@@ -202,12 +202,12 @@ rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
 cd %BASEDIR%3rdparty\lz4
-rmdir /s /q build\cmake\build >nul 2>&1
-set CMAKECMD=cmake %CMAKEOPT% -S build\cmake -B build\cmake\build -DBUILD_STATIC_LIBS=ON
+rmdir /s /q bin >nul 2>&1
+set CMAKECMD=cmake %CMAKEOPT% -S build\cmake -B bin -DBUILD_STATIC_LIBS=ON
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
 
-set BUILDCMD=cmake --build build\cmake\build --config Release --clean-first -j
+set BUILDCMD=cmake --build bin --config Release --clean-first -j
 echo %BUILDCMD%
 %BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (

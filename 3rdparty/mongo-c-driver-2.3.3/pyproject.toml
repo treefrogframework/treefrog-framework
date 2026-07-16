@@ -1,0 +1,73 @@
+[project]
+name = "mongo-c-driver"
+version = "0.1.0"
+description = "For development only."
+requires-python = ">=3.10"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    { include-group = "docs" },
+    { include-group = "evg" },
+    { include-group = "format" },
+]
+
+format = [
+    # tools/format.py
+    "clang-format~=20.1.0",
+]
+
+format-scripts = [
+    "ruff>=0.13.0",
+    "shfmt-py>=3.12.0.2",
+]
+
+docs = [
+    # .evergreen/scripts/build-docs.sh
+    "furo>=2023.5.20",
+    "sphinx-design>=0.5.0",
+    "sphinx>=7.1.1,<9.0",
+]
+
+evg = [
+    # .evergreen/config_generator
+    "packaging>=14.0",
+    "pydantic>=2.8",
+    "shrub-py>=3.7",
+
+    # .evergreen/legacy_config_generator/evergreen_config_generator/__init__.py
+    "yamlloader>=1.5",
+]
+
+[project.scripts]
+mc-evg-generate = "config_generator.generate:main"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    ".evergreen/config_generator",
+]
+
+[tool.ruff]
+line-length = 120
+src = [".evergreen", "etc"]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+
+[tool.uv]
+required-environments = [
+    "platform_system == 'Linux' and platform_machine == 'x86_64'",
+    "platform_system == 'Linux' and platform_machine == 'aarch64'",
+    "platform_system == 'Linux' and platform_machine == 'ppc64le'",
+    "platform_system == 'Linux' and platform_machine == 's390x'",
+
+    "platform_system == 'Darwin' and platform_machine == 'x86_64'",
+    "platform_system == 'Darwin' and platform_machine == 'arm64'",
+
+    "platform_system == 'Windows' and platform_machine == 'AMD64'",
+]
