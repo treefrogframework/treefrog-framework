@@ -49,7 +49,7 @@ jobs:
     - name: tmake test
       working-directory: tools/tmake/test
       run: |
-        qmake tmaketest.pro
+        qmake6 tmaketest.pro
         make -j4
         ./tmaketest.sh
     - name: releasetest
@@ -99,7 +99,7 @@ jobs:
     - name: tmake test
       working-directory: tools/tmake/test
       run: |
-        qmake tmaketest.pro
+        qmake6 tmaketest.pro
         make -j4
         ./tmaketest.sh
     - name: releasetest
@@ -149,7 +149,7 @@ jobs:
     - name: tmake test
       working-directory: tools/tmake/test
       run: |
-        qmake tmaketest.pro
+        qmake6 tmaketest.pro
         make -j4
         ./tmaketest.sh
     - name: releasetest
