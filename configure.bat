@@ -178,7 +178,7 @@ mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
 cd %BASEDIR%3rdparty\mongo-driver
 rd /s /q CMakeFiles >nul 2>&1
 del /f /q CMakeCache.txt Makefile >nul 2>&1
-set CMAKECMD=cmake %CMAKEOPT% -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF
+set CMAKECMD=cmake %CMAKEOPT% -S . -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
 
@@ -228,11 +228,15 @@ del /f /q glog >nul 2>&1
 mklink /j glog glog-%GLOG_VERSION% >nul 2>&1
 cd %BASEDIR%3rdparty\glog
 rmdir /s /q build >nul 2>&1
-set CMAKECMD=cmake -S . -B build %CMAKEOPT% -DBUILD_SHARED_LIBS=OFF
+set CMAKECMD=cmake -S . -B build %CMAKEOPT% -DBUILD_SHARED_LIBS=OFF -DWITH_GFLAGS=OFF
 echo %CMAKECMD%
 %CMAKECMD%
 
-set BUILDCMD=cmake --build build -j
+if "%DEBUG%" == "yes" (
+  set BUILDCMD=cmake --build build --config Debug -j
+) else (
+  set BUILDCMD=cmake --build build --config Release -j
+)
 echo %BUILDCMD%
 %BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (

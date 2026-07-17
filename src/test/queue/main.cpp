@@ -87,11 +87,9 @@ private slots:
 
 void TestQueue::initTestCase()
 {
-#if defined(Q_OS_UNIX) || !defined(QT_NO_DEBUG)
     // Setup signal handlers for SIGSEGV, SIGILL, SIGFPE, SIGABRT and SIGBUS
     google::InstallFailureWriter(writeFailure);
     google::InstallFailureSignalHandler();
-#endif
 }
 
 
