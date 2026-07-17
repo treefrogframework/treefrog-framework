@@ -1,25 +1,24 @@
 #pragma once
 #include <TAtomic>
 #include <TKvsDatabase>
+#include <TLockStack>
 #include <TGlobal>
 #include <QBasicTimer>
 #include <QStack>
 #include <QObject>
 #include <QString>
 #include <QMutex>
-
-class QSettings;
-template <class T> class TStack;
+#include <vector>
+#include <deque>
 
 
 class T_CORE_EXPORT TKvsDatabasePool : public QObject {
     Q_OBJECT
 public:
-    ~TKvsDatabasePool();
-    TKvsDatabase database(Tf::KvsEngine engine);
-    void pool(TKvsDatabase &database);
-    TKvsDatabaseData getDatabaseSettings(Tf::KvsEngine engine) const;
+    using KvsDbPtr = std::unique_ptr<TKvsDatabase>;
 
+    ~TKvsDatabasePool();
+    TKvsDatabase::Handle database(Tf::KvsEngine engine);
     static TKvsDatabasePool *instance();
 
 protected:
@@ -31,14 +30,16 @@ protected:
 
 private:
     TKvsDatabasePool();
+    void pool(KvsDbPtr dbptr);
 
-    mutable QRecursiveMutex _mutex;
-    QStack<QString> *cachedDatabase {nullptr};
+    //mutable QRecursiveMutex _mutex;
     TAtomic<uint> *lastCachedTime {nullptr};
-    QStack<QString> *availableNames {nullptr};
     int maxConnects {0};
     QBasicTimer timer;
+    std::vector<TLockStack<KvsDbPtr>> availableDatabases;
+    std::vector<TLockStack<KvsDbPtr>> cachedDatabases;
 
     T_DISABLE_COPY(TKvsDatabasePool)
     T_DISABLE_MOVE(TKvsDatabasePool)
+    friend class TKvsDatabase;
 };

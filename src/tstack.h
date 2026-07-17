@@ -11,35 +11,53 @@ T_CORE_EXPORT THazardPtr &hazardPtrForStack();
 }
 
 
+//
+// Non-blocking move stack
+//
 template <class T>
 class TStack {
 private:
     struct Node : public THazardObject {
         T value;
         Node *next {nullptr};
-        Node(const T &v) :
-            value(v) { }
-    };
 
+        Node(T &&v) : value(std::move(v)) { }
+        Node(const Node &) = delete;
+        Node &operator=(const Node &) = delete;
+        Node(Node &&) = delete;
+        Node &operator=(Node &&) = delete;
+    };
     TAtomicPtr<Node> stkHead {nullptr};
+
     TAtomic<int> counter {0};
 
 public:
-    TStack() { }
-    void push(const T &val);
-    bool pop(T &val);
-    bool top(T &val);
-    int count() const { return counter.load(); }
+    TStack() = default;
+    TStack(const TStack &) = delete;
+    TStack &operator=(const TStack &) = delete;
+    TStack(TStack &&) noexcept;
+    TStack &operator=(TStack &&) = delete;
 
-    T_DISABLE_COPY(TStack)
-    T_DISABLE_MOVE(TStack)
+    void push(T val);
+    std::optional<T> pop();
+    int count() const { return counter.load(); }
+    int size() const { return counter.load(); }
+    bool empty() const { return counter.load() == 0; }
 };
 
 
 template <class T>
-inline void TStack<T>::push(const T &val)
+inline TStack<T>::TStack(TStack &&other) noexcept
 {
-    auto *pnode = new Node(val);
+    stkHead = other.stkHead;
+    counter.store(other.counter.load());
+}
+
+
+template <class T>
+inline void TStack<T>::push(T val)
+{
+    auto *pnode = new Node(std::move(val));
     do {
         pnode->next = stkHead.load();
     } while (!stkHead.compareExchange(pnode->next, pnode));
@@ -48,9 +66,11 @@ inline void TStack<T>::push(const T &val)
 
 
 template <class T>
-inline bool TStack<T>::pop(T &val)
+inline std::optional<T> TStack<T>::pop()
 {
+    std::optional<T> val;
     Node *pnode;
+
     while ((pnode = Tf::hazardPtrForStack().guard<Node>(&stkHead))) {
         if (stkHead.compareExchange(pnode, pnode->next)) {
             break;
@@ -59,25 +79,10 @@ inline bool TStack<T>::pop(T &val)
 
     if (pnode) {
         counter--;
-        val = pnode->value;
+        val = std::move(pnode->value);
         pnode->next = nullptr;
         pnode->deleteLater();
     }
     Tf::hazardPtrForStack().clear();
-    return (bool)pnode;
+    return val;
 }
-
-
-template <class T>
-inline bool TStack<T>::top(T &val)
-{
-    Node *pnode;
-    pnode = Tf::hazardPtrForStack().guard<Node>(&stkHead);
-
-    if (pnode) {
-        val = pnode->value;
-    }
-    Tf::hazardPtrForStack().clear();
-    return (bool)pnode;
-}
-

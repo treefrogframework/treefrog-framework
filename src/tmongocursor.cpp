@@ -9,7 +9,7 @@
 #include <TBson>
 #include <TMongoCursor>
 extern "C" {
-#include <mongoc.h>
+#include "mongoc/mongoc.h"
 }
 
 

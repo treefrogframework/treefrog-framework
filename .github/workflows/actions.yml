@@ -7,19 +7,14 @@ on:
     branches: [ master, develop ]
 
 jobs:
-  build-ubuntu:
-    runs-on: ubuntu-24.04
+  build-ubuntu26:
+    runs-on: ubuntu-26.04
     steps:
     - uses: actions/checkout@main
     - name: apt
       run: |
-        sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev gcc g++ clang make cmake yarn
-    - name: qmake version
-      run: |
-        sudo rm -f /usr/bin/qmake
-        sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
-        qmake -v
+        sudo apt update -qq
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liburing-dev gcc g++ clang make cmake yarnpkg
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --spec=linux-g++ --enable-debug
@@ -54,7 +49,7 @@ jobs:
     - name: tmake test
       working-directory: tools/tmake/test
       run: |
-        qmake tmaketest.pro
+        qmake6 tmaketest.pro
         make -j4
         ./tmaketest.sh
     - name: releasetest
@@ -62,19 +57,14 @@ jobs:
       run: |
         ./testall.sh
 
-  build-ubuntu-sharedlink:
-    runs-on: ubuntu-24.04
+  build-ubuntu26-sharedlink:
+    runs-on: ubuntu-26.04
     steps:
     - uses: actions/checkout@main
     - name: apt
       run: |
-        sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake yarn
-    - name: qmake version
-      run: |
-        sudo rm -f /usr/bin/qmake
-        sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
-        qmake -v
+        sudo apt update -qq
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev liburing-dev gcc g++ clang make cmake yarnpkg
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-lz4 --spec=linux-clang --enable-debug
@@ -109,7 +99,7 @@ jobs:
     - name: tmake test
       working-directory: tools/tmake/test
       run: |
-        qmake tmaketest.pro
+        qmake6 tmaketest.pro
         make -j4
         ./tmaketest.sh
     - name: releasetest
@@ -117,19 +107,14 @@ jobs:
       run: |
         ./testall.sh
 
-  build-ubuntu22:
-    runs-on: ubuntu-22.04
+  build-ubuntu24:
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@main
     - name: apt
       run: |
-        sudo apt-get update -qq
-        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev gcc g++ clang make cmake yarn
-    - name: qmake version
-      run: |
-        sudo rm -f /usr/bin/qmake
-        sudo ln -sf /usr/bin/qmake6 /usr/bin/qmake
-        qmake -v
+        sudo apt update -qq
+        sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liblz4-dev liburing-dev gcc g++ clang make cmake yarn
     - name: configure for debug
       run: |
         ./configure --prefix=/usr/local --spec=linux-g++ --enable-debug
@@ -164,7 +149,7 @@ jobs:
     - name: tmake test
       working-directory: tools/tmake/test
       run: |
-        qmake tmaketest.pro
+        qmake6 tmaketest.pro
         make -j4
         ./tmaketest.sh
     - name: releasetest
@@ -172,8 +157,8 @@ jobs:
       run: |
         ./testall.sh
 
-  build-macos:
-    runs-on: macos-latest
+  build-macos26:
+    runs-on: macos-26
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
@@ -222,14 +207,14 @@ jobs:
       run: |
         ./testall.sh
 
-  build-macos-sharedlink:
-    runs-on: macos-latest
+  build-macos26-sharedlink:
+    runs-on: macos-26
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
+        brew install qt6 jq mongo-c-driver@2 glog lz4 yarn
     - name: configure for debug
       run: |
         export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
@@ -268,18 +253,18 @@ jobs:
       run: |
         ./testall.sh
 
-  build-macos14:
-    runs-on: macos-14
+  build-macos15:
+    runs-on: macos-15
     steps:
     - uses: actions/checkout@main
     - name: Homebrew
       run: |
         which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
+        brew install qt6 jq yarn
     - name: configure for debug
       run: |
         export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
-        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
+        ./configure --prefix=/usr/local --enable-debug
     - name: build for debug
       run: |
         make -j4 -C src
@@ -289,7 +274,7 @@ jobs:
     - name: configure
       run: |
         export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
-        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
+        ./configure --prefix=/usr/local
     - name: build
       run: |
         make -j4 -C src
@@ -314,76 +299,25 @@ jobs:
       run: |
         ./testall.sh
 
-  build-macos13:
-    runs-on: macos-13
+  build-windows-qt68-msvc2026:
+    runs-on: windows-2025-vs2026
     steps:
-    - uses: actions/checkout@main
-    - name: Homebrew
-      run: |
-        which pkg-config || brew install pkg-config
-        brew install qt6 jq mongo-c-driver@1 gflags glog lz4 yarn
-    - name: configure for debug
-      run: |
-        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
-        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4 --enable-debug
-    - name: build for debug
-      run: |
-        make -j4 -C src
-        sudo make -C src install
-        make -j4 -C tools
-        sudo make -C tools install
-    - name: configure
-      run: |
-        export PKG_CONFIG_PATH=$(echo "$(find -L "$(brew --prefix)/opt" -type d \( -path "*/lib/pkgconfig" -o -path "*/share/pkgconfig" \) 2>/dev/null)" | sort -u | paste -sd ":" -):$PKG_CONFIG_PATH
-        ./configure --prefix=/usr/local --enable-shared-mongoc --enable-shared-glog --enable-shared-lz4
-    - name: build
-      run: |
-        make -j4 -C src
-        sudo make -C src install
-        make -j4 -C tools
-        sudo make -C tools install
-    - name: version
-      run: |
-        treefrog -v
-        tspawn --show-drivers
-    - name: brew install for test
-      run: |
-        brew install redis memcached
-        brew services start redis
-        brew services start memcached
-    - name: testall.sh
-      working-directory: src/test
-      run: |
-        ./testall.sh
-    - name: releasetest
-      working-directory: tools/test
-      run: |
-        ./testall.sh
-
-  build-windows-qt68-msvc2022:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@main
-    - name: Setup msbuild
-      uses: microsoft/setup-msbuild@v2
-      with:
-        vs-version: '[17,18)'  # 17.xx
-        msbuild-architecture: x64
+    - name: Checkout repository
+      uses: actions/checkout@main
     - name: Install Qt
-      uses: jurplel/install-qt-action@v4.1.1
+      uses: jurplel/install-qt-action@v4
       with:
-        version:      6.8.0
+        version:      6.8
         host:         windows
         target:       desktop
         setup-python: false
     - name: Install tools
       run: |
         choco install sqlite -y --no-progress
-        choco install cmake -y --version=3.31.7 --no-progress
     - name: Debug build
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
@@ -397,11 +331,12 @@ jobs:
       shell: cmd
       working-directory: src/test
       run: |
+        call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         call testall.bat
     - name: Release build
       shell: cmd
       run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
@@ -414,29 +349,33 @@ jobs:
       shell: cmd
       working-directory: tools\test
       run: |
+        call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         testall.bat
 
-  build-windows-qt68-msvc2019:
-    runs-on: windows-latest
+  build-windows-qt68-msvc2022:
+    runs-on: windows-2022
     steps:
     - uses: actions/checkout@main
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v4.1.1
+    - name: Checkout msbuild
+      id: checkout_msbuild
+      uses: microsoft/setup-msbuild@v3
       with:
-        version:      6.8.0
+        vs-version: '[17,18)'  # 17.xx
+        msbuild-architecture: x64
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version:      6.8
         host:         windows
         target:       desktop
         setup-python: false
-    - name: Install VisualStudio tools
+    - name: Install tools
       run: |
-        choco install visualstudio2019community -y --no-progress
-        choco install visualstudio2019-workload-nativedesktop -y --no-progress
         choco install sqlite -y --no-progress
-        choco install cmake -y --version=3.31.7 --no-progress
     - name: Debug build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         qmake -version
         call configure.bat --enable-debug
@@ -454,7 +393,7 @@ jobs:
     - name: Release build
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set CL=/MP
         call configure.bat
         cd src
@@ -470,13 +409,13 @@ jobs:
         testall.bat
 
   build-windows-qt65-msvc2019:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
     - uses: actions/checkout@main
     - name: Install Qt
-      uses: jurplel/install-qt-action@v4.1.1
+      uses: jurplel/install-qt-action@v4
       with:
-        version:      6.5.2
+        version:      6.5
         host:         windows
         target:       desktop
         arch:         win64_msvc2019_64

@@ -7,9 +7,7 @@
 
 #include "tkvsdatabasepool.h"
 #include "tfnamespace.h"
-#include "tsqldatabasepool.h"
 #include "tsystemglobal.h"
-#include "tstack.h"
 #include <QDateTime>
 #include <QMap>
 #include <QStringList>
@@ -17,6 +15,7 @@
 #include <QMutexLocker>
 #include <TWebApplication>
 #include <ctime>
+#include <memory>
 
 /*!
   \class TKvsDatabasePool
@@ -53,13 +52,13 @@ static KvsEngineHash *kvsEngineHash()
 
 TKvsDatabasePool *TKvsDatabasePool::instance()
 {
-    static TKvsDatabasePool *databasePool = []() {
-        auto *pool = new TKvsDatabasePool;
+    static std::unique_ptr<TKvsDatabasePool> databasePool = []() {
+        std::unique_ptr<TKvsDatabasePool> pool{new TKvsDatabasePool{}};
         pool->maxConnects = Tf::app()->maxNumberOfThreadsPerAppServer();
         pool->init();
         return pool;
     }();
-    return databasePool;
+    return databasePool.get();
 }
 
 
@@ -71,46 +70,50 @@ TKvsDatabasePool::TKvsDatabasePool() :
 
 TKvsDatabasePool::~TKvsDatabasePool()
 {
-    QMutexLocker locker(&_mutex);
+    //QMutexLocker locker(&_mutex);
     timer.stop();
 
     for (int eng = 0; eng < (int)Tf::KvsEngine::Num; eng++) {
-        if (!Tf::app()->isKvsAvailable((Tf::KvsEngine)eng)) {
+        if (!Tf::app() || !Tf::app()->isKvsAvailable((Tf::KvsEngine)eng)) {
             continue;
         }
 
-        auto &cache = cachedDatabase[eng];
+        auto &cache = cachedDatabases[eng];
         QString name;
-        while (!cache.isEmpty()) {
-            name = cache.pop();
-            TKvsDatabase::database(name).close();
-            TKvsDatabase::removeDatabase(name);
+        while (!cache.empty()) {
+            auto db = cache.pop();
+            if (db) {
+                name = (*db)->connectionName();
+                (*db)->close();
+                TKvsDatabase::removeDatabase(name);
+            }
         }
 
-        auto &stack = availableNames[eng];
-        while (!stack.isEmpty()) {
-            name = stack.pop();
-            TKvsDatabase::removeDatabase(name);
+        auto &stack = availableDatabases[eng];
+        while (!stack.empty()) {
+            auto db = stack.pop();
+            if (db) {
+                name = (*db)->connectionName();
+                TKvsDatabase::removeDatabase(name);
+            }
         }
     }
 
-    delete[] cachedDatabase;
     delete[] lastCachedTime;
-    delete[] availableNames;
 }
 
 
 void TKvsDatabasePool::init()
 {
-    if (cachedDatabase) {
+    if (lastCachedTime) {
         return;
     }
 
-    QMutexLocker locker(&_mutex);
+    //QMutexLocker locker(&_mutex);
 
-    cachedDatabase = new QStack<QString>[(int)Tf::KvsEngine::Num];
+    cachedDatabases.resize((int)Tf::KvsEngine::Num);
+    availableDatabases.resize((int)Tf::KvsEngine::Num);
     lastCachedTime = new TAtomic<uint>[(int)Tf::KvsEngine::Num];
-    availableNames = new QStack<QString>[(int)Tf::KvsEngine::Num];
     bool aval = false;
 
     // Adds databases previously
@@ -126,17 +129,19 @@ void TKvsDatabasePool::init()
             tSystemDebug("KVS database available. engine:{}", (int)engine);
         }
 
-        auto &stack = availableNames[(int)engine];
+        auto &stack = availableDatabases[(int)engine];
         for (int i = 0; i < maxConnects; ++i) {
-            TKvsDatabase db = TKvsDatabase::addDatabase(drv, QString::asprintf(CONN_NAME_FORMAT, (int)engine, i));
-            if (!db.isValid()) {
+            QString name = QString::asprintf(CONN_NAME_FORMAT, (int)engine, i);
+            TKvsDatabase::addDatabase(drv, name);
+            auto db = TKvsDatabase::database(name);
+            if (!db->isValid()) {
                 Tf::warn("KVS init parameter is invalid");
                 break;
             }
 
-            setDatabaseSettings(db, engine);
-            stack.push(db.connectionName());  // push onto stack
-            tSystemDebug("Add KVS successfully. name:{}", qUtf8Printable(db.connectionName()));
+            setDatabaseSettings(*db, engine);
+            tSystemDebug("Add KVS successfully. name:{}", db->connectionName());
+            stack.push(std::move(db));  // push onto stack
         }
     }
 
@@ -147,10 +152,8 @@ void TKvsDatabasePool::init()
 }
 
 
-TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
+TKvsDatabase::Handle TKvsDatabasePool::database(Tf::KvsEngine engine)
 {
-    QMutexLocker locker(&_mutex);
-
     if (!Tf::app()->isKvsAvailable(engine)) {
         switch (engine) {
         case Tf::KvsEngine::MongoDB:
@@ -177,51 +180,49 @@ TKvsDatabase TKvsDatabasePool::database(Tf::KvsEngine engine)
             throw RuntimeException("No such KVS engine", __FILE__, __LINE__);
             break;
         }
-        return TKvsDatabase();
+        return TKvsDatabase::Handle();
     }
 
-    auto &cache = cachedDatabase[(int)engine];
-    auto &stack = availableNames[(int)engine];
+    auto &cache = cachedDatabases[(int)engine];
+    auto &stack = availableDatabases[(int)engine];
 
-    for (;;) {
-        QString name;
-        if (!cache.isEmpty()) {
-            name = cache.pop();
-            auto db = TKvsDatabase::database(name);
-            if (Q_LIKELY(db.isOpen())) {
-                tSystemDebug("Gets cached KVS database: {}", qUtf8Printable(db.connectionName()));
-                db.moveToThread(QThread::currentThread());  // move to thread
-                return db;
+    while (true) {
+        auto dbptr = cache.pop();
+        if (dbptr) {
+            if ((*dbptr)->isOpen()) {
+                tSystemDebug("Gets cached KVS database: {}", (*dbptr)->connectionName());
+                (*dbptr)->moveToThread(QThread::currentThread());  // move to thread
+                return TKvsDatabase::Handle(std::move(*dbptr));
             } else {
-                tSystemError("Pooled database is not open: {}  [{}:{}]", qUtf8Printable(db.connectionName()), __FILE__, __LINE__);
-                stack.push(name);
+                tSystemError("Pooled database is not open: {}  [{}:{}]", (*dbptr)->connectionName(), __FILE__, __LINE__);
+                stack.push(std::move(*dbptr));
                 continue;
             }
         }
 
-        if (Q_LIKELY(!stack.isEmpty())) {
-            name = stack.pop();
-            auto db = TKvsDatabase::database(name);
-            db.moveToThread(QThread::currentThread());  // move to thread
-
-            if (Q_UNLIKELY(!db.open())) {
-                Tf::error("KVS Database open error. Invalid database settings, or maximum number of KVS connection exceeded.");
-                tSystemError("KVS database open error: {}", qUtf8Printable(db.connectionName()));
-                return TKvsDatabase();
-            }
-
-            tSystemDebug("KVS opened successfully  env:{} connectname:{} dbname:{}", qUtf8Printable(Tf::app()->databaseEnvironment()), qUtf8Printable(db.connectionName()), qUtf8Printable(db.databaseName()));
-            tSystemDebug("Gets KVS database: {}", qUtf8Printable(db.connectionName()));
-            // Executes post-open statements
-            if (!db.postOpenStatements().isEmpty()) {
-                for (QString st : db.postOpenStatements()) {
-                    st = st.trimmed();
-                    db.command(st);
-                }
-            }
-
-            return db;
+        dbptr = stack.pop();
+        if (!dbptr) {
+            break;
         }
+        (*dbptr)->moveToThread(QThread::currentThread());  // move to thread
+
+        if (!(*dbptr)->open()) {
+            Tf::error("KVS Database open error. Invalid database settings, or maximum number of KVS connection exceeded.");
+            tSystemError("KVS database open error: {}", (*dbptr)->connectionName());
+            return TKvsDatabase::Handle();
+        }
+
+        tSystemDebug("KVS opened successfully  env:{} connectname:{} dbname:{}", Tf::app()->databaseEnvironment(), (*dbptr)->connectionName(), (*dbptr)->databaseName());
+        tSystemDebug("Gets KVS database: {}", (*dbptr)->connectionName());
+
+        // Executes post-open statements
+        if (!(*dbptr)->postOpenStatements().isEmpty()) {
+            for (QString st : (*dbptr)->postOpenStatements()) {
+                st = st.trimmed();
+                (*dbptr)->command(st);
+            }
+        }
+        return TKvsDatabase::Handle(std::move(*dbptr));
     }
 
     throw RuntimeException("No pooled connection", __FILE__, __LINE__);
@@ -235,12 +236,12 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
     QString databaseName = settings.value("DatabaseName").toString().trimmed();
 
     if (!databaseName.isEmpty()) {
-        tSystemDebug("KVS db name:{}  driver name:{}", qUtf8Printable(databaseName), qUtf8Printable(database.driverName()));
+        tSystemDebug("KVS db name:{}  driver name:{}", databaseName, database.driverName());
         database.setDatabaseName(databaseName);
     }
 
     QString hostName = settings.value("HostName").toString().trimmed();
-    tSystemDebug("KVS HostName: {}", qUtf8Printable(hostName));
+    tSystemDebug("KVS HostName: {}", hostName);
     if (!hostName.isEmpty()) {
         database.setHostName(hostName);
     }
@@ -252,25 +253,25 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
     }
 
     QString userName = settings.value("UserName").toString().trimmed();
-    tSystemDebug("KVS UserName: {}", qUtf8Printable(userName));
+    tSystemDebug("KVS UserName: {}", userName);
     if (!userName.isEmpty()) {
         database.setUserName(userName);
     }
 
     QString password = settings.value("Password").toString().trimmed();
-    tSystemDebug("KVS Password: {}", qUtf8Printable(password));
+    tSystemDebug("KVS Password: {}", password);
     if (!password.isEmpty()) {
         database.setPassword(password);
     }
 
     QString connectOptions = settings.value("ConnectOptions").toString().trimmed();
-    tSystemDebug("KVS ConnectOptions: {}", qUtf8Printable(connectOptions));
+    tSystemDebug("KVS ConnectOptions: {}", connectOptions);
     if (!connectOptions.isEmpty()) {
         database.setConnectOptions(connectOptions);
     }
 
     QStringList postOpenStatements = settings.value("PostOpenStatements").toString().trimmed().split(";", Tf::SkipEmptyParts);
-    tSystemDebug("KVS postOpenStatements: {}", qUtf8Printable(postOpenStatements.join(";")));
+    tSystemDebug("KVS postOpenStatements: {}", postOpenStatements.join(";"));
     if (!postOpenStatements.isEmpty()) {
         database.setPostOpenStatements(postOpenStatements);
     }
@@ -279,54 +280,33 @@ bool TKvsDatabasePool::setDatabaseSettings(TKvsDatabase &database, Tf::KvsEngine
 }
 
 
-TKvsDatabaseData TKvsDatabasePool::getDatabaseSettings(Tf::KvsEngine engine) const
+void TKvsDatabasePool::pool(KvsDbPtr dbptr)
 {
-    QMutexLocker locker(&_mutex);
+    //QMutexLocker locker(&_mutex);
 
-    TKvsDatabaseData settrings;
-    auto &stack = availableNames[(int)engine];
-
-    QString name;
-    for (;;) {
-        if (Q_LIKELY(!stack.isEmpty())) {
-            name = stack.pop();
-            return TKvsDatabase::settings(name);
-            stack.push(name);
-        }
-    }
-
-    throw RuntimeException("No pooled connection", __FILE__, __LINE__);
-}
-
-
-void TKvsDatabasePool::pool(TKvsDatabase &database)
-{
-    QMutexLocker locker(&_mutex);
-
-    if (Q_LIKELY(database.isValid())) {
+    if (dbptr->isValid()) {
         bool ok;
-        int engine = database.connectionName().left(2).toInt(&ok);
-        if (Q_UNLIKELY(!ok)) {
+        int engine = dbptr->connectionName().left(2).toInt(&ok);
+        if (!ok) {
             throw RuntimeException("No such KVS engine", __FILE__, __LINE__);
         }
 
-        if (database.isOpen()) {
-            cachedDatabase[engine].push(database.connectionName());
+        if (dbptr->isOpen()) {
+            tSystemDebug("Pooled KVS database: {}  count:{}", dbptr->connectionName(), (qint64)cachedDatabases.size());
+            cachedDatabases[engine].push(std::move(dbptr));
             lastCachedTime[engine].store((uint)std::time(nullptr));
-            tSystemDebug("Pooled KVS database: {}  count:{}", qUtf8Printable(database.connectionName()), (qint64)cachedDatabase->count());
         } else {
-            tSystemWarn("Closed KVS database connection, name: {}", qUtf8Printable(database.connectionName()));
-            availableNames[engine].push(database.connectionName());
+            tSystemWarn("Closed KVS database connection, name: {}", dbptr->connectionName());
+            availableDatabases[engine].push(std::move(dbptr));
         }
     }
-    database = TKvsDatabase();  // Sets an invalid object
 }
 
 
 void TKvsDatabasePool::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timer.timerId()) {
-        QMutexLocker locker(&_mutex);
+        //QMutexLocker locker(&_mutex);
         QString name;
 
         // Closes extra-connection
@@ -335,13 +315,13 @@ void TKvsDatabasePool::timerEvent(QTimerEvent *event)
                 continue;
             }
 
-            auto &cache = cachedDatabase[e];
+            auto &cache = cachedDatabases[e];
             while (lastCachedTime[e].load() < (uint)std::time(nullptr) - 30
-                && !cache.isEmpty()) {
-                name = cache.pop();
-                TKvsDatabase::database(name).close();
-                tSystemDebug("Closed KVS database connection, name: {}", qUtf8Printable(name));
-                availableNames[e].push(name);
+                && !cache.empty()) {
+                auto db = cache.pop();
+                (*db)->close();
+                tSystemDebug("Closed KVS database connection, name: {}", (*db)->connectionName());
+                availableDatabases[e].push(std::move(*db));
             }
         }
     } else {

@@ -434,13 +434,13 @@ bool TSharedMemoryKvs::unlock()
 TSharedMemoryKvsDriver *TSharedMemoryKvs::driver()
 {
 #ifdef TF_NO_DEBUG
-    return (TSharedMemoryKvsDriver *)_database.driver();
+    return (_database) ? (TSharedMemoryKvsDriver *)_database->driver() : nullptr;
 #else
-    if (!_database.driver()) {
+    if (!_database || !_database->driver()) {
         return nullptr;
     }
 
-    TSharedMemoryKvsDriver *driver = dynamic_cast<TSharedMemoryKvsDriver *>(_database.driver());
+    TSharedMemoryKvsDriver *driver = dynamic_cast<TSharedMemoryKvsDriver *>(_database->driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }
@@ -454,13 +454,13 @@ TSharedMemoryKvsDriver *TSharedMemoryKvs::driver()
 const TSharedMemoryKvsDriver *TSharedMemoryKvs::driver() const
 {
 #ifdef TF_NO_DEBUG
-    return (const TSharedMemoryKvsDriver *)_database.driver();
+    return (_database) ? (const TSharedMemoryKvsDriver *)_database->driver() : nullptr;
 #else
-    if (!_database.driver()) {
+    if (!_database || !_database->driver()) {
         return nullptr;
     }
 
-    const TSharedMemoryKvsDriver *driver = dynamic_cast<const TSharedMemoryKvsDriver *>(_database.driver());
+    const TSharedMemoryKvsDriver *driver = dynamic_cast<const TSharedMemoryKvsDriver *>(_database->driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }

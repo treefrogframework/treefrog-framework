@@ -1,0 +1,10 @@
+# src/utf8proc-2.8.0/utf8proc.c:368:53: runtime error: applying zero offset to null pointer
+# src/utf8proc-2.8.0/utf8proc.c:554:20: runtime error: applying zero offset to null pointer
+#
+# Upstream Fix: https://github.com/JuliaStrings/utf8proc/pull/240
+#
+# Context: https://github.com/llvm/llvm-project/commit/536b0ee40ab97f2878dc124a321cf9108ee3d233
+# > To make things more fun, in C (6.5.6p8), applying *any* offset to null pointer
+# > is undefined, although Clang front-end pessimizes the code by not lowering
+# > that info, so this UB is "harmless".
+pointer-overflow:utf8proc.c

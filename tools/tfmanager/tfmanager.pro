@@ -39,7 +39,7 @@ windows {
   }
 } else:unix {
   LIBS += -Wl,-rpath,$$lib.path -L$$lib.path -ltreefrog
-  linux-*:LIBS += -lrt
+  linux-*:LIBS += -lrt -luring
 }
 
 INSTALLS += target

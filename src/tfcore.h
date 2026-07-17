@@ -9,21 +9,21 @@
 #include <cstdio>
 #include <cstring>
 
-#define TF_EINTR_LOOP(func)              \
+#define TF_EINTR_LOOP(func) {            \
     int ret;                             \
     do {                                 \
         errno = 0;                       \
         ret = (func);                    \
     } while (ret < 0 && errno == EINTR); \
-    return ret;
+    return ret; }
 
-#define TF_EAGAIN_LOOP(func)                                  \
+#define TF_EAGAIN_LOOP(func) {                                \
     int ret;                                                  \
     do {                                                      \
         errno = 0;                                            \
         ret = (func);                                         \
     } while (ret < 0 && (errno == EINTR || errno == EAGAIN)); \
-    return ret;
+    return ret; }
 
 
 #ifdef Q_OS_UNIX

@@ -47,20 +47,20 @@ static QString read(const QString &filePath)
     }
 
     if (!script.exists()) {
-        tSystemError("TJSLoader file not found: {}", qUtf8Printable(filePath));
+        tSystemError("TJSLoader file not found: {}", filePath);
         return QString();
     }
 
     if (!script.open(QIODevice::ReadOnly)) {
         // open error
-        tSystemError("TJSLoader file open error: {}", qUtf8Printable(filePath));
+        tSystemError("TJSLoader file open error: {}", filePath);
         return QString();
     }
 
     QTextStream stream(&script);
     QString program = stream.readAll();
     script.close();
-    tSystemDebug("TJSLoader file read: {}", qUtf8Printable(script.fileName()));
+    tSystemDebug("TJSLoader file read: {}", script.fileName());
     return program;
 }
 
@@ -227,7 +227,7 @@ QString TJSLoader::absolutePath(const QString &moduleName, const QDir &dir, AltJ
     }
 
     if (filePath.isEmpty()) {
-        tSystemError("TJSLoader file not found: {}", qUtf8Printable(moduleName));
+        tSystemError("TJSLoader file not found: {}", moduleName);
     } else {
         filePath = QFileInfo(filePath).canonicalFilePath();
     }
@@ -267,7 +267,7 @@ QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
         // loads module
         filePath = search(_module, _altJs);
         if (filePath.isEmpty()) {
-            tSystemError("TJSLoader: Module not found: {}", qUtf8Printable(_module));
+            tSystemError("TJSLoader: Module not found: {}", _module);
             return ret;
         }
 
@@ -291,13 +291,13 @@ QJSValue TJSLoader::importTo(TJSModule *context, bool isMain) const
 
     ret = context->evaluate(program, _module);
     if (ret.isError()) {
-        tSystemError("TJSLoader evaluation: Uncaught exception at line {} : {}", ret.property("lineNumber").toInt(), qUtf8Printable(ret.toString()));
+        tSystemError("TJSLoader evaluation: Uncaught exception at line {} : {}", ret.property("lineNumber").toInt(), ret.toString());
     } else {
-        tSystemDebug("TJSLoader evaluation completed: {}", qUtf8Printable(_module));
+        tSystemDebug("TJSLoader evaluation completed: {}", _module);
 
         if (isMain) {
             context->_modulePath = filePath;
-            tSystemDebug("TJSLoader Module path: {}", qUtf8Printable(context->_modulePath));
+            tSystemDebug("TJSLoader Module path: {}", context->_modulePath);
         }
     }
     return ret;
@@ -386,9 +386,9 @@ void TJSLoader::replaceRequire(TJSModule *context, QString &content, const QDir 
 
                 QJSValue res = context->evaluate(require, module);
                 if (res.isError()) {
-                    tSystemError("TJSLoader evaluation error: {}", qUtf8Printable(module));
+                    tSystemError("TJSLoader evaluation error: {}", module);
                 } else {
-                    tSystemDebug("TJSLoader evaluation completed: {}", qUtf8Printable(module));
+                    tSystemDebug("TJSLoader evaluation completed: {}", module);
                     // Inserts the loaded file path
                     context->_loadedFiles.insert(filePath, varName);
                 }

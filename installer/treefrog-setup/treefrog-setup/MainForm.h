@@ -47,11 +47,11 @@ namespace treefrogsetup {
         //
         // ÉoÅ[ÉWÉáÉì
         //
-        static initonly String^ VERSION_STR6_NEW  = L"6.9";
-        static initonly String^ VERSION_STR6_PREV = L"6.8";
+        static initonly String^ VERSION_STR6_NEW  = L"6.11";
+        static initonly String^ VERSION_STR6_PREV = L"6.10";
 
-        static initonly int RCID_NEW  = IDR_TREEFROG_QT609_MSI;
-        static initonly int RCID_PREV = IDR_TREEFROG_QT608_MSI;
+        static initonly int RCID_NEW  = IDR_TREEFROG_QT611_MSI;
+        static initonly int RCID_PREV = IDR_TREEFROG_QT610_MSI;
 
     public:
         MainForm(void)

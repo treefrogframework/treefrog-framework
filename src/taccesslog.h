@@ -3,6 +3,7 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <TGlobal>
+#include <memory>
 
 
 class T_CORE_EXPORT TAccessLog {
@@ -23,15 +24,10 @@ public:
 class T_CORE_EXPORT TAccessLogger {
 public:
     TAccessLogger();
-    TAccessLogger(const TAccessLogger &other) = delete;
-    TAccessLogger(TAccessLogger &&other);
-    ~TAccessLogger();
-    TAccessLogger &operator=(const TAccessLogger &other) = delete;
-    TAccessLogger &operator=(TAccessLogger &&other);
+    TAccessLogger(TAccessLogger &&other) = default;
+    TAccessLogger &operator=(TAccessLogger &&other) = default;
 
-    void open();
     void write();
-    void close();
 
     void setTimestamp(const QDateTime &timestamp)
     {
@@ -54,7 +50,12 @@ public:
         }
     }
 
-    int statusCode() const { return (_accessLog) ? _accessLog->statusCode : -1; }
+    inline int statusCode() const { return (_accessLog) ? _accessLog->statusCode : -1; }
+
+    inline void setStatusCode(Tf::StatusCode statusCode)
+    {
+        setStatusCode((int)statusCode);
+    }
 
     void setStatusCode(int statusCode)
     {
@@ -63,7 +64,7 @@ public:
         }
     }
 
-    int responseBytes() const { return (_accessLog) ? _accessLog->responseBytes : -1; }
+    inline int responseBytes() const { return (_accessLog) ? _accessLog->responseBytes : -1; }
 
     void setResponseBytes(int bytes)
     {
@@ -78,6 +79,8 @@ public:
     }
 
 private:
-    TAccessLog *_accessLog {nullptr};
+    std::unique_ptr<TAccessLog> _accessLog;
     QElapsedTimer _timer;
+
+    T_DISABLE_COPY(TAccessLogger)
 };

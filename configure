@@ -150,8 +150,8 @@ else
 fi
 
 cd "$BASEDIR"
-replace "s|unix:LIBS +=.*$|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,$LIBDIR -L$LIBDIR -ltreefrog|" defaults/appbase.pri
-replace "s|unix:INCLUDEPATH +=.*$|unix:INCLUDEPATH += $INCLUDEDIR|" defaults/appbase.pri
+replace "s|unix:LIBS +=.*|unix:LIBS += -Wl,-rpath,. -Wl,-rpath,${LIBDIR} -L${LIBDIR} -ltreefrog\r|" defaults/appbase.pri
+replace "s|unix:INCLUDEPATH +=.*|unix:INCLUDEPATH += ${INCLUDEDIR}\r|" defaults/appbase.pri
 
 if [ -n "$ENABLE_DEBUG" ]; then
   OPT="$OPT CONFIG+=debug"
@@ -161,9 +161,8 @@ fi
 
 # search qmake command
 if [ -z "$QMAKE" ]; then
-  which qmake-qt5 >/dev/null 2>&1 && QMAKE=qmake-qt5
-  which qmake     >/dev/null 2>&1 && QMAKE=qmake
-  which qmake6    >/dev/null 2>&1 && QMAKE=qmake6
+  which qmake6 >/dev/null 2>&1 && QMAKE=qmake6
+  which qmake  >/dev/null 2>&1 && QMAKE=qmake
 
   if [ -z "$QMAKE" ]; then
     echo "qmake: command not found"
@@ -222,11 +221,10 @@ if [ -z "$ENABLE_SHARED_MONGOC" ]; then
   find . -type f | grep Makefile | xargs rm -f
   find . -type f | grep cmake_install | xargs rm -f
   $CMAKE -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF >/dev/null 2>&1
-  make clean >/dev/null 2>&1
-  make -j${NPROC} mongoc_static >/dev/null 2>&1
+  $CMAKE --build . --target mongoc_static --clean-first -j >/dev/null 2>&1
   RET=$?
   if [ $RET != 0 ]; then
-    echo "failed"
+    echo "Build failed"
     echo "MongoDB driver not available."
     exit $RET
   fi
@@ -240,12 +238,12 @@ if ! [[ "$SPEC" =~ "wasm" ]]; then
   if [ -z "$ENABLE_SHARED_GLOG" ]; then
     echo
     echo -n "Compiling glog ... "
-    $CMAKE -S . -B build -G "Unix Makefiles" -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_STANDARD=14 >/dev/null 2>&1
-    make -j${NPROC} -C build >/dev/null 2>&1
+    $CMAKE -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DWITH_GFLAGS=OFF >/dev/null 2>&1
+    $CMAKE --build build --clean-first -j >/dev/null 2>&1
     RET=$?
     if [ $RET != 0 ]; then
-      make -C build
-      echo "failed"
+      $CMAKE --build build
+      echo "Build failed"
       echo "glog not available."
       exit $RET
     fi
@@ -255,15 +253,16 @@ fi
 
 # compile LZ4
 cd "$BASEDIR/3rdparty/lz4"
-make clean >/dev/null 2>&1
 if [ -z "$ENABLE_SHARED_LZ4" ]; then
   echo
   echo -n "Compiling LZ4 ... "
-  make -j${NPROC} lib >/dev/null 2>&1
+  rm -rf bin
+  $CMAKE -S build/cmake -B bin -DCMAKE_BUILD_TYPE=Release -DBUILD_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF >/dev/null 2>&1
+  $CMAKE --build bin --clean-first -j >/dev/null 2>&1
   RET=$?
   if [ $RET != 0 ]; then
-    make SHELL='bash -x' lib
-    echo "failed"
+    $CMAKE --build bin
+    echo "Build failed"
     echo "LZ4 not available."
     exit $RET
   fi

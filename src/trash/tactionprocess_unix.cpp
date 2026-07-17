@@ -78,7 +78,7 @@ void TActionProcess::start()
         tf_close_socket(TActionContext::socketDescriptor());
         emit started();
     } else {
-        tFatal("fork failed: {}", qUtf8Printable(qt_error_string(lastForkErrno)));
+        tFatal("fork failed: {}", qt_error_string(lastForkErrno));
         QCoreApplication::exit(-1);
     }
 }

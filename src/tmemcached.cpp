@@ -283,13 +283,13 @@ QByteArray TMemcached::requestLine(const QByteArray &command, const QByteArray &
 TMemcachedDriver *TMemcached::driver()
 {
 #ifdef TF_NO_DEBUG
-    return (TMemcachedDriver *)_database.driver();
+    return (_database) ? (TMemcachedDriver *)_database->driver() : nullptr;
 #else
-    if (!_database.driver()) {
+    if (!_database || !_database->driver()) {
         return nullptr;
     }
 
-    TMemcachedDriver *driver = dynamic_cast<TMemcachedDriver *>(_database.driver());
+    TMemcachedDriver *driver = dynamic_cast<TMemcachedDriver *>(_database->driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }
@@ -303,13 +303,13 @@ TMemcachedDriver *TMemcached::driver()
 const TMemcachedDriver *TMemcached::driver() const
 {
 #ifdef TF_NO_DEBUG
-    return (const TMemcachedDriver *)_database.driver();
+    return (_database) ? (TMemcachedDriver *)_database->driver() : nullptr;
 #else
-    if (!_database.driver()) {
+    if (!_database || !_database->driver()) {
         return nullptr;
     }
 
-    const TMemcachedDriver *driver = dynamic_cast<const TMemcachedDriver *>(_database.driver());
+    const TMemcachedDriver *driver = dynamic_cast<const TMemcachedDriver *>(_database->driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }

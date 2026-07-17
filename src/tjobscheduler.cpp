@@ -121,20 +121,20 @@ void TJobScheduler::run()
         Tf::warn("Caught ClientErrorException: status code:{}", e.statusCode());
         tSystemWarn("Caught ClientErrorException: status code:{}", e.statusCode());
     } catch (SqlException &e) {
-        Tf::error("Caught SqlException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught SqlException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught SqlException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught SqlException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
     } catch (KvsException &e) {
-        Tf::error("Caught KvsException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught KvsException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught KvsException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught KvsException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
     } catch (SecurityException &e) {
-        Tf::error("Caught SecurityException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught SecurityException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught SecurityException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught SecurityException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
     } catch (RuntimeException &e) {
-        Tf::error("Caught RuntimeException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught RuntimeException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught RuntimeException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught RuntimeException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
     } catch (StandardException &e) {
-        Tf::error("Caught StandardException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught StandardException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught StandardException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught StandardException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
     } catch (std::exception &e) {
         Tf::error("Caught Exception: {}", e.what());
         tSystemError("Caught Exception: {}", e.what());

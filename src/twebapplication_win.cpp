@@ -91,7 +91,7 @@ void TWebApplication::watchLocalSocket()
 
 void TWebApplication::recvLocalSocket()
 {
-    QLocalServer *server = dynamic_cast<QLocalServer *>(QObject::sender());
+    QLocalServer *server = qobject_cast<QLocalServer *>(QObject::sender());
     if (server) {
         QLocalSocket *socket = server->nextPendingConnection();
         if (socket->waitForReadyRead(50)) {

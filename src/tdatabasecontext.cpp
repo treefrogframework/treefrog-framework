@@ -9,19 +9,19 @@
 #include "tkvsdatabasepool.h"
 #include "tsqldatabasepool.h"
 #include "tsystemglobal.h"
-#include <QSqlDatabase>
-#include <QThreadStorage>
-#include <QtCore>
 #include <TKvsDriver>
 #include <TCache>
+#include <TSystemGlobal>
 #include <TWebApplication>
+#include <QSqlDatabase>
+#include <QtCore>
 #include <ctime>
+#include <thread>
 
 namespace {
 // Stores a pointer to current database context into TLS
-//  - qulonglong type to prevent qThreadStorage_deleteData() function to work
-QThreadStorage<qulonglong> databaseContextPtrTls;
-QSqlDatabase invalidDb;
+thread_local TDatabaseContext *databaseContextPtrTls = nullptr;
+
 }
 
 /*!
@@ -30,10 +30,17 @@ QSqlDatabase invalidDb;
   database access.
 */
 
-TDatabaseContext::TDatabaseContext() :
-    sqlDatabases(),
-    kvsDatabases()
+TDatabaseContext::TDatabaseContext()
 {
+    const int count = Tf::app()->sqlDatabaseSettingsCount();
+
+    if (sqlTransactions.size() < (size_t)count) {
+        sqlTransactions.resize(count);
+    }
+
+    if (kvsDatabases.size() < (size_t)Tf::KvsEngine::Num) {
+        kvsDatabases.resize((size_t)Tf::KvsEngine::Num);
+    }
 }
 
 
@@ -44,65 +51,72 @@ TDatabaseContext::~TDatabaseContext()
 }
 
 
-QSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
+TSqlDatabase &TDatabaseContext::getSqlDatabase(int id)
 {
     if (id < 0) {
-        return invalidDb;  // invalid database
+        throw RuntimeException("error database id", __FILE__, __LINE__);
     }
 
     if (id >= Tf::app()->sqlDatabaseSettingsCount()) {
         throw RuntimeException("error database id", __FILE__, __LINE__);
     }
 
-    TSqlTransaction &tx = sqlDatabases[id];
-    QSqlDatabase &db = tx.database();
+    TSqlTransaction &tx = sqlTransactions[id];
+    TSqlDatabase::Handle &handle = tx.database();
 
-    if (db.isValid() && tx.isActive()) {
-        return db;
+    if (handle && handle->isValid()) {
+        return *handle;
     }
 
     int n = 0;
     do {
-        if (!db.isValid()) {
-            db = TSqlDatabasePool::instance()->database(id);
+        if (!handle || !handle->isValid()) {
+            handle = TSqlDatabasePool::instance()->database(id);
         }
 
         if (tx.begin()) {
             break;
         }
-        TSqlDatabasePool::instance()->pool(db, true);
+
+        handle = TSqlDatabase::Handle{};
     } while (++n < 2);  // try two times
 
     idleElapsed = (uint)std::time(nullptr);
-    return db;
+    return *handle;
 }
 
 
 void TDatabaseContext::releaseSqlDatabases()
 {
     rollbackTransactions();
-    sqlDatabases.clear();
+
+    for (auto &tx : sqlTransactions) {
+        if (tx.database()) {
+            tx.database() = TSqlDatabase::Handle{};
+        }
+    }
 }
 
 
-TKvsDatabase &TDatabaseContext::getKvsDatabase(Tf::KvsEngine engine)
+TKvsDatabase::Handle &TDatabaseContext::getKvsDatabase(Tf::KvsEngine engine)
 {
-    TKvsDatabase &db = kvsDatabases[(int)engine];
-    if (!db.isValid()) {
-        db = TKvsDatabasePool::instance()->database(engine);
+    auto &handle = kvsDatabases[(int)engine];
+    if (!handle || !handle->isValid()) {
+        handle = TKvsDatabasePool::instance()->database(engine);
     }
 
     idleElapsed = (uint)std::time(nullptr);
-    return db;
+    return handle;
 }
 
 
 void TDatabaseContext::releaseKvsDatabases()
 {
-    for (QMap<int, TKvsDatabase>::iterator it = kvsDatabases.begin(); it != kvsDatabases.end(); ++it) {
-        TKvsDatabasePool::instance()->pool(it.value());
+    for (auto &handle : kvsDatabases) {
+        if (handle) {
+            handle = TKvsDatabase::Handle{};
+        }
     }
-    kvsDatabases.clear();
 }
 
 
@@ -120,20 +134,19 @@ void TDatabaseContext::release()
 
 void TDatabaseContext::setTransactionEnabled(bool enable, int id)
 {
-    if (id < 0) {
+    if (id < 0 || id >= (int)sqlTransactions.size()) {
         Tf::error("Invalid database ID: {}", id);
         return;
     }
-    return sqlDatabases[id].setEnabled(enable);
+
+    sqlTransactions[id].setEnabled(enable);
 }
 
 
 void TDatabaseContext::commitTransactions()
 {
-    for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
-        TSqlTransaction &tx = it.value();
-        tx.commit();
-        TSqlDatabasePool::instance()->pool(tx.database());
+    for (auto it = sqlTransactions.begin(); it != sqlTransactions.end(); ++it) {
+        it->commit();
     }
 }
 
@@ -142,24 +155,21 @@ bool TDatabaseContext::commitTransaction(int id)
 {
     bool res = false;
 
-    if (id < 0 || id >= sqlDatabases.count()) {
+    if (id < 0 || id >= (int)sqlTransactions.size()) {
         Tf::error("Failed to commit transaction. Invalid database ID: {}", id);
         return res;
     }
 
-    TSqlTransaction &tx = sqlDatabases[id];
+    TSqlTransaction &tx = sqlTransactions[id];
     res = tx.commit();
-    TSqlDatabasePool::instance()->pool(sqlDatabases[id].database());
     return res;
 }
 
 
 void TDatabaseContext::rollbackTransactions()
 {
-    for (QMap<int, TSqlTransaction>::iterator it = sqlDatabases.begin(); it != sqlDatabases.end(); ++it) {
-        TSqlTransaction &tx = it.value();
-        tx.rollback();
-        TSqlDatabasePool::instance()->pool(tx.database(), true);
+    for (auto it = sqlTransactions.begin(); it != sqlTransactions.end(); ++it) {
+        it->rollback();
     }
 }
 
@@ -168,12 +178,11 @@ bool TDatabaseContext::rollbackTransaction(int id)
 {
     bool res = false;
 
-    if (id < 0 || id >= sqlDatabases.count()) {
+    if (id < 0 || id >= (int)sqlTransactions.size()) {
         Tf::error("Failed to rollback transaction. Invalid database ID: {}", id);
         return res;
     }
-    res = sqlDatabases[id].rollback();
-    TSqlDatabasePool::instance()->pool(sqlDatabases[id].database(), true);
+    res = sqlTransactions[id].rollback();
     return res;
 }
 
@@ -186,16 +195,16 @@ int TDatabaseContext::idleTime() const
 
 TDatabaseContext *TDatabaseContext::currentDatabaseContext()
 {
-    return reinterpret_cast<TDatabaseContext *>(databaseContextPtrTls.localData());
+    return databaseContextPtrTls;
 }
 
 
 void TDatabaseContext::setCurrentDatabaseContext(TDatabaseContext *context)
 {
-    if (context && databaseContextPtrTls.localData()) {
+    if (context && databaseContextPtrTls) {
         tSystemWarn("Duplicate set : setCurrentDatabaseContext()");
     }
-    databaseContextPtrTls.setLocalData((qulonglong)context);
+    databaseContextPtrTls = context;
 }
 
 

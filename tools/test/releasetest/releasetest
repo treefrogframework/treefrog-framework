@@ -128,7 +128,11 @@ test_app()
 
   # QMake build check
   cd $APPROOT
-  qmake -r || exit
+  if which qmake6 >/dev/null; then
+    qmake6 -r || exit
+  else
+    qmake -r || exit
+  fi
   make -j4
   make || exit
   $TREEFROG --show-routes || exit

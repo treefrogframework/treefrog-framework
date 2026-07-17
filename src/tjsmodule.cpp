@@ -120,7 +120,7 @@ TJSInstance TJSModule::callAsConstructor(const QString &constructorName, const Q
     QMutexLocker locker(&_mutex);
 
     QJSValue construct = evaluate(constructorName);
-    tSystemDebug("construct: {}", qUtf8Printable(construct.toString()));
+    tSystemDebug("construct: {}", construct.toString());
     QJSValue res = construct.callAsConstructor(args);
     if (res.isError()) {
         tSystemError("JS uncaught exception at {}:{} : {}", prop(res, "fileName"),

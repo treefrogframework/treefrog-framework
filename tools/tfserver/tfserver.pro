@@ -32,7 +32,7 @@ windows {
     TARGET = $$join(TARGET,,,d)
     LIBS += -ltreefrogd$${TF_VER_MAJ} ../../3rdparty/glog/build/Debug/glogd.lib dbghelp.lib
   } else {
-    LIBS += -ltreefrog$${TF_VER_MAJ}
+    LIBS += -ltreefrog$${TF_VER_MAJ} ../../3rdparty/glog/build/Release/glog.lib dbghelp.lib
   }
   INCLUDEPATH += ../../3rdparty/glog/build ../../3rdparty/glog/src
   LIBS += -L"$$target.path"
@@ -41,7 +41,7 @@ windows {
   # glog
   isEmpty( enable_shared_glog ) {
     # static link
-    LIBS += ../../3rdparty/glog/build/libglog.a $$system("pkg-config --libs gflags 2>/dev/null")
+    LIBS += ../../3rdparty/glog/build/libglog.a
     INCLUDEPATH += ../../3rdparty/glog/build ../../3rdparty/glog/src
   } else {
     # shared link '-lglog'
@@ -50,7 +50,7 @@ windows {
   # for linux
   linux-* {
     # -lunwind
-    LIBS += -lrt $$system("pkg-config --libs libunwind 2>/dev/null")
+    LIBS += -lrt -luring $$system("pkg-config --libs libunwind 2>/dev/null")
   }
 }
 

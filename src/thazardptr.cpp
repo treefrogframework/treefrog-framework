@@ -3,7 +3,7 @@
 
 
 THazardPtr::THazardPtr() :
-    rec(new THazardPtrRecord())
+    rec(new THazardPtrRecord{})
 {
     THazardPtrManager::instance().push(rec);
     THazardPtrManager::instance().gc();

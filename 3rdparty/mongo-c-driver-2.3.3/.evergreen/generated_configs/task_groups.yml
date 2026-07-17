@@ -1,0 +1,121 @@
+task_groups:
+  - name: test-oidc-azure-task-group
+    setup_group:
+      - func: fetch-det
+      - command: ec2.assume_role
+        params:
+          role_arn: ${aws_test_secrets_role}
+      - command: subprocess.exec
+        type: setup
+        params:
+          binary: bash
+          env:
+            AZUREOIDC_VMNAME_PREFIX: CDRIVER
+          include_expansions_in_env:
+            - AWS_ACCESS_KEY_ID
+            - AWS_SECRET_ACCESS_KEY
+            - AWS_SESSION_TOKEN
+          args:
+            - -c
+            - ./drivers-evergreen-tools/.evergreen/auth_oidc/azure/create-and-setup-vm.sh
+    setup_group_can_fail_task: true
+    tasks:
+      - oidc-azure-auth-test-task
+    teardown_group:
+      - command: subprocess.exec
+        type: setup
+        params:
+          binary: bash
+          args:
+            - -c
+            - ./drivers-evergreen-tools/.evergreen/auth_oidc/azure/delete-vm.sh
+    teardown_group_timeout_secs: 180
+  - name: test-oidc-gcp-task-group
+    setup_group:
+      - func: fetch-det
+      - command: ec2.assume_role
+        params:
+          role_arn: ${aws_test_secrets_role}
+      - command: subprocess.exec
+        type: setup
+        params:
+          binary: bash
+          env:
+            GCPOIDC_VMNAME_PREFIX: CDRIVER
+          include_expansions_in_env:
+            - AWS_ACCESS_KEY_ID
+            - AWS_SECRET_ACCESS_KEY
+            - AWS_SESSION_TOKEN
+          args:
+            - -c
+            - ./drivers-evergreen-tools/.evergreen/auth_oidc/gcp/setup.sh
+    setup_group_can_fail_task: true
+    tasks:
+      - oidc-gcp-auth-test-task
+    teardown_group:
+      - command: subprocess.exec
+        type: setup
+        params:
+          binary: bash
+          args:
+            - -c
+            - ./drivers-evergreen-tools/.evergreen/auth_oidc/gcp/teardown.sh
+    teardown_group_timeout_secs: 180
+  - name: test-oidc-k8s-task-group
+    setup_group:
+      - func: fetch-det
+      - command: ec2.assume_role
+        params:
+          role_arn: ${aws_test_secrets_role}
+      - command: subprocess.exec
+        type: setup
+        params:
+          binary: bash
+          include_expansions_in_env:
+            - AWS_ACCESS_KEY_ID
+            - AWS_SECRET_ACCESS_KEY
+            - AWS_SESSION_TOKEN
+          args:
+            - -c
+            - ./drivers-evergreen-tools/.evergreen/auth_oidc/k8s/setup.sh
+    setup_group_can_fail_task: true
+    tasks:
+      - oidc-k8s-auth-test-task
+    teardown_group:
+      - command: subprocess.exec
+        type: setup
+        params:
+          binary: bash
+          args:
+            - -c
+            - ./drivers-evergreen-tools/.evergreen/auth_oidc/k8s/teardown.sh
+    teardown_group_timeout_secs: 180
+  - name: test-oidc-task-group
+    setup_group:
+      - func: fetch-det
+      - command: ec2.assume_role
+        params:
+          role_arn: ${aws_test_secrets_role}
+      - command: subprocess.exec
+        type: setup
+        params:
+          binary: bash
+          include_expansions_in_env:
+            - AWS_ACCESS_KEY_ID
+            - AWS_SECRET_ACCESS_KEY
+            - AWS_SESSION_TOKEN
+          args:
+            - -c
+            - ./drivers-evergreen-tools/.evergreen/auth_oidc/setup.sh
+    setup_group_can_fail_task: true
+    tasks:
+      - oidc-auth-test-task
+    teardown_group:
+      - command: subprocess.exec
+        type: setup
+        params:
+          binary: bash
+          args:
+            - -c
+            - ./drivers-evergreen-tools/.evergreen/auth_oidc/teardown.sh
+    teardown_group_timeout_secs: 180

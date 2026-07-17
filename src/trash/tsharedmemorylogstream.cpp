@@ -38,10 +38,10 @@ TSharedMemoryLogStream::TSharedMemoryLogStream(const QList<TLogger *> loggers, i
         clearBuffer();
     } else {
         if (shareMem->error() != QSharedMemory::AlreadyExists) {
-            tSystemError("Shared memory create error: {}", qUtf8Printable(shareMem->errorString()));
+            tSystemError("Shared memory create error: {}", shareMem->errorString());
         } else {
             if (!shareMem->attach()) {
-                tSystemError("Shared memory attach error: {}", qUtf8Printable(shareMem->errorString()));
+                tSystemError("Shared memory attach error: {}", shareMem->errorString());
             }
         }
     }

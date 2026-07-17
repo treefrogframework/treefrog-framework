@@ -17,10 +17,10 @@
   an web application server for thread.
 */
 
-TStack<TActionThread *> *TThreadApplicationServer::threadPoolPtr()
+TLockStack<TActionThread *> &TThreadApplicationServer::threadPool()
 {
-    static TStack<TActionThread *> threadPool;
-    return &threadPool;
+    static TLockStack<TActionThread *> threadPool;
+    return threadPool;
 }
 
 
@@ -50,4 +50,19 @@ void TThreadApplicationServer::timerEvent(QTimerEvent *event)
             Tf::app()->exit(127);
         }
     }
+}
+
+
+TThreadApplicationServer *TThreadApplicationServer::instance(int listeningSocket, QObject *parent)
+{
+    static std::unique_ptr<TThreadApplicationServer> instance;
+    static std::once_flag once;
+
+    std::call_once(once, [&]() {
+        if (listeningSocket <= 0) {
+            throw StandardException("Invalid socket", __FILE__, __LINE__);
+        }
+        instance.reset(new TThreadApplicationServer(listeningSocket, parent));
+    });
+    return instance.get();
 }

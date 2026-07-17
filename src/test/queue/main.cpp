@@ -31,10 +31,10 @@ protected:
         try {
             uint64_t lastNum = 0;
             for (;;) {
-                uint64_t num;
-                if (intQueue.dequeue(num)) {
+                auto num = intQueue.dequeue();
+                if (num) {
                     //std::cout << "pop:" << intQueue.count() << std::endl;
-                    QVERIFY(num == lastNum);
+                    QVERIFY(num.value() == lastNum);
                     lastNum++;
                     std::this_thread::yield();
                 }
@@ -87,11 +87,9 @@ private slots:
 
 void TestQueue::initTestCase()
 {
-#if defined(Q_OS_UNIX) || !defined(QT_NO_DEBUG)
     // Setup signal handlers for SIGSEGV, SIGILL, SIGFPE, SIGABRT and SIGBUS
     google::InstallFailureWriter(writeFailure);
     google::InstallFailureSignalHandler();
-#endif
 }
 
 

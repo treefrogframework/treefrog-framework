@@ -37,29 +37,6 @@ TMongoQuery::TMongoQuery(Tf::KvsEngine engine, const QString &collection) :
 }
 
 /*!
-  Copy constructor.
-*/
-TMongoQuery::TMongoQuery(const TMongoQuery &other) :
-    _database(other._database),
-    _collection(other._collection),
-    _queryLimit(other._queryLimit),
-    _queryOffset(other._queryOffset)
-{
-}
-
-/*!
-  Assignment operator.
-*/
-TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
-{
-    _database = other._database;
-    _collection = other._collection;
-    _queryLimit = other._queryLimit;
-    _queryOffset = other._queryOffset;
-    return *this;
-}
-
-/*!
   Finds documents by the criteria \a criteria in the collection and
   returns the number of the documents. Use the \a fields parameter to
   control the fields to return.
@@ -67,7 +44,7 @@ TMongoQuery &TMongoQuery::operator=(const TMongoQuery &other)
 */
 bool TMongoQuery::find(const QVariantMap &criteria, const QVariantMap &orderBy, const QStringList &fields)
 {
-    if (!_database.isValid()) {
+    if (!_database || !_database->isValid()) {
         tSystemError("TMongoQuery::find : driver not loaded");
         return false;
     }
@@ -81,7 +58,7 @@ bool TMongoQuery::find(const QVariantMap &criteria, const QVariantMap &orderBy, 
 */
 bool TMongoQuery::next()
 {
-    if (!_database.isValid()) {
+    if (!_database || !_database->isValid()) {
         return false;
     }
     return driver()->cursor().next();
@@ -92,7 +69,7 @@ bool TMongoQuery::next()
 */
 QVariantMap TMongoQuery::value() const
 {
-    if (!_database.isValid()) {
+    if (!_database || !_database->isValid()) {
         return QVariantMap();
     }
     return driver()->cursor().value();
@@ -105,7 +82,7 @@ QVariantMap TMongoQuery::value() const
 */
 QVariantMap TMongoQuery::findOne(const QVariantMap &criteria, const QStringList &fields)
 {
-    if (!_database.isValid()) {
+    if (!_database || !_database->isValid()) {
         tSystemError("TMongoQuery::findOne : driver not loaded");
         return QVariantMap();
     }
@@ -131,7 +108,7 @@ QVariantMap TMongoQuery::findById(const QString &id, const QStringList &fields)
 */
 bool TMongoQuery::insert(QVariantMap &document)
 {
-    if (!_database.isValid()) {
+    if (!_database || !_database->isValid()) {
         tSystemError("TMongoQuery::insert : driver not loaded");
         return false;
     }
@@ -158,7 +135,7 @@ int TMongoQuery::remove(const QVariantMap &criteria)
 {
     int deletedCount = -1;
 
-    if (!_database.isValid()) {
+    if (!_database || !_database->isValid()) {
         tSystemError("TMongoQuery::remove : driver not loaded");
         return deletedCount;
     }
@@ -201,7 +178,7 @@ int TMongoQuery::update(const QVariantMap &criteria, const QVariantMap &document
     QVariantMap doc;
     QVariantMap tmp = document;
 
-    if (!_database.isValid()) {
+    if (!_database || !_database->isValid()) {
         tSystemError("TMongoQuery::update : driver not loaded");
         return modifiedCount;
     }
@@ -231,7 +208,7 @@ int TMongoQuery::updateMany(const QVariantMap &criteria, const QVariantMap &docu
     int modifiedCount = -1;
     QVariantMap doc;
 
-    if (!_database.isValid()) {
+    if (!_database || !_database->isValid()) {
         tSystemError("TMongoQuery::updateMany : driver not loaded");
         return modifiedCount;
     }
@@ -272,7 +249,7 @@ bool TMongoQuery::updateById(const QVariantMap &document)
 
 int TMongoQuery::count(const QVariantMap &criteria)
 {
-    if (!_database.isValid()) {
+    if (!_database || !_database->isValid()) {
         tSystemError("TMongoQuery::count : driver not loaded");
         return -1;
     }
@@ -311,13 +288,13 @@ QString TMongoQuery::lastErrorString() const
 TMongoDriver *TMongoQuery::driver()
 {
 #ifdef TF_NO_DEBUG
-    return (TMongoDriver *)_database.driver();
+    return (_database) ? (TMongoDriver *)_database->driver() : nullptr;
 #else
-    if (!_database.driver()) {
+    if (!_database || !_database->driver()) {
         return nullptr;
     }
 
-    TMongoDriver *driver = dynamic_cast<TMongoDriver *>(_database.driver());
+    TMongoDriver *driver = dynamic_cast<TMongoDriver *>(_database->driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }
@@ -331,13 +308,13 @@ TMongoDriver *TMongoQuery::driver()
 const TMongoDriver *TMongoQuery::driver() const
 {
 #ifdef TF_NO_DEBUG
-    return (const TMongoDriver *)_database.driver();
+    return (_database) ? (const TMongoDriver *)_database->driver() : nullptr;
 #else
-    if (!_database.driver()) {
+    if (!_database || !_database->driver()) {
         return nullptr;
     }
 
-    const TMongoDriver *driver = dynamic_cast<const TMongoDriver *>(_database.driver());
+    const TMongoDriver *driver = dynamic_cast<const TMongoDriver *>(_database->driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }

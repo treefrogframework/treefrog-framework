@@ -33,9 +33,9 @@ TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject 
     for (int i = 0; i < maxThreads; i++) {
         TActionThread *thread = new TActionThread(0);
         connect(thread, &TActionThread::finished, [=]() {
-            threadPoolPtr()->push(thread);
+            threadPool().push(thread);
         });
-        threadPoolPtr()->push(thread);
+        threadPool().push(thread);
     }
 }
 
@@ -108,16 +108,16 @@ void TThreadApplicationServer::run()
             int socketDescriptor = tf_accept4(listenSocket, nullptr, nullptr, (SOCK_CLOEXEC | SOCK_NONBLOCK));
             if (socketDescriptor > 0) {
                 tSystemDebug("incomingConnection  sd:{}  thread count:{}  max:{}", socketDescriptor, TActionThread::threadCount(), maxThreads);
-                TActionThread *thread;
+                std::optional<TActionThread*> thread;
 
-                while (!threadPoolPtr()->pop(thread)) {
+                while (!(thread = threadPool().pop())) {
                     std::this_thread::yield();
                     Tf::msleep(1);
                 }
 
-                tSystemDebug("thread ptr: {}", (quint64)thread);
-                thread->setSocketDescriptor(socketDescriptor);
-                thread->start();
+                tSystemDebug("thread ptr: {}", (quint64)*thread);
+                (*thread)->setSocketDescriptor(socketDescriptor);
+                (*thread)->start();
             }
         }
     }

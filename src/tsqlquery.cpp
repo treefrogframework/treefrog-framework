@@ -7,6 +7,7 @@
 
 #include "tsystemglobal.h"
 #include "tsqldatabase.h"
+#include "tsqldatabasepool.h"
 #include "tsqldriverextension.h"
 #include <TAppSettings>
 #include <TSqlQuery>
@@ -31,16 +32,15 @@ QMutex cacheMutex;
   Constructs a TSqlQuery object using the database \a databaseId.
 */
 TSqlQuery::TSqlQuery(int databaseId) :
-    QSqlQuery(QString(), Tf::currentSqlDatabase(databaseId))
+    QSqlQuery(QString(), Tf::currentSqlDatabase(databaseId).sqlDatabase()), _databaseId(databaseId)
 {
-    _connectionName = Tf::currentSqlDatabase(databaseId).connectionName();
 }
 
 
 TSqlQuery::TSqlQuery(const QSqlDatabase &db) :
     QSqlQuery(db)
 {
-    _connectionName = db.connectionName();
+    _databaseId = TSqlDatabasePool::databaseIdFromName(db.connectionName());
 }
 
 
@@ -58,11 +58,11 @@ bool TSqlQuery::load(const QString &filename)
 
     QDir dir(queryDirPath());
     QFile file(dir.filePath(filename));
-    tSystemDebug("SQL_QUERY_ROOT: {}", qUtf8Printable(dir.dirName()));
-    tSystemDebug("filename: {}", qUtf8Printable(file.fileName()));
+    tSystemDebug("SQL_QUERY_ROOT: {}", dir.dirName());
+    tSystemDebug("filename: {}", file.fileName());
 
     if (!file.open(QIODevice::ReadOnly)) {
-        tSystemError("Unable to open file: {}", qUtf8Printable(file.fileName()));
+        tSystemError("Unable to open file: {}", file.fileName());
         return false;
     }
 
@@ -101,7 +101,7 @@ void TSqlQuery::clearCachedQueries()
 */
 QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::IdentifierType type, int databaseId)
 {
-    return escapeIdentifier(identifier, type, Tf::currentSqlDatabase(databaseId).driver());
+    return escapeIdentifier(identifier, type, Tf::currentSqlDatabase(databaseId).sqlDatabase().driver());
 }
 
 /*!
@@ -124,7 +124,7 @@ QString TSqlQuery::escapeIdentifier(const QString &identifier, QSqlDriver::Ident
 */
 QString TSqlQuery::formatValue(const QVariant &val, const QMetaType &type, int databaseId)
 {
-    return formatValue(val, type, Tf::currentSqlDatabase(databaseId).driver());
+    return formatValue(val, type, Tf::currentSqlDatabase(databaseId).sqlDatabase().driver());
 }
 
 /*!
@@ -175,7 +175,8 @@ TSqlQuery &TSqlQuery::prepare(const QString &query)
 {
     QElapsedTimer time;
     time.start();
-    const auto &db = TSqlDatabase::database(_connectionName);
+
+    const auto &db = Tf::currentSqlDatabase(_databaseId);
     bool res = false;
 
     if (db.isPreparedStatementSupported()) {
@@ -215,7 +216,7 @@ bool TSqlQuery::exec()
     bool ret = false;
     QElapsedTimer time;
     time.start();
-    const auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = Tf::currentSqlDatabase(_databaseId);
 
     if (db.isPreparedStatementSupported()) {
         QString statement = db.driverExtension()->executeStatement(_boundValues);
@@ -251,7 +252,7 @@ bool TSqlQuery::exec()
 */
 TSqlQuery &TSqlQuery::bind(const QString &placeholder, const QVariant &val)
 {
-    const auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = Tf::currentSqlDatabase(_databaseId);
 
     if (db.isPreparedStatementSupported()) {
         Tf::error("Not supported colon-name placeholder of prepared statement for the database");
@@ -267,7 +268,7 @@ TSqlQuery &TSqlQuery::bind(const QString &placeholder, const QVariant &val)
 */
 TSqlQuery &TSqlQuery::bind(int pos, const QVariant &val)
 {
-    const auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = Tf::currentSqlDatabase(_databaseId);
 
     if (pos < 0) {
         return *this;
@@ -297,7 +298,7 @@ TSqlQuery &TSqlQuery::bind(int pos, const QVariant &val)
 */
 TSqlQuery &TSqlQuery::addBind(const QVariant &val)
 {
-    const auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = Tf::currentSqlDatabase(_databaseId);
 
     if (db.isPreparedStatementSupported()) {
         _boundValues.append(val);
@@ -310,14 +311,14 @@ TSqlQuery &TSqlQuery::addBind(const QVariant &val)
 
 QVariant TSqlQuery::boundValue(int pos) const
 {
-    const auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = Tf::currentSqlDatabase(_databaseId);
     return (db.isPreparedStatementSupported()) ? _boundValues.value(pos) : QSqlQuery::boundValue(pos);
 }
 
 
 QVariantList TSqlQuery::boundValues() const
 {
-    const auto &db = TSqlDatabase::database(_connectionName);
+    const auto &db = Tf::currentSqlDatabase(_databaseId);
     if (db.isPreparedStatementSupported()) {
         return _boundValues;
     } else {

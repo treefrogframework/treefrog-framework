@@ -30,8 +30,8 @@ TSqlTransaction::~TSqlTransaction()
 
 bool TSqlTransaction::begin()
 {
-    if (Q_UNLIKELY(!_database.isValid())) {
-        tSystemError("Can not begin transaction. Invalid database: {}", qUtf8Printable(_database.connectionName()));
+    if (!_database->isValid()) {
+        tSystemError("Can not begin transaction. Invalid database: {}", _database->connectionName());
         return false;
     }
 
@@ -39,25 +39,25 @@ bool TSqlTransaction::begin()
         return true;
     }
 
-    if (!_database.driver()->hasFeature(QSqlDriver::Transactions)) {
+    if (!_database->sqlDatabase().driver()->hasFeature(QSqlDriver::Transactions)) {
         return true;
     }
 
     if (_active) {
-        tSystemDebug("Has begun transaction already. database:{}", qUtf8Printable(_database.connectionName()));
+        tSystemDebug("Has begun transaction already. database:{}", _database->connectionName());
         return true;
     }
 
     QElapsedTimer time;
     time.start();
 
-    _active = _database.transaction();
-    _connectionName = _database.connectionName();
-    int id = TSqlDatabasePool::getDatabaseId(_database);
-    if (Q_LIKELY(_active)) {
-        Tf::traceQueryLog(time.elapsed(), "[BEGIN] [databaseId:{}] {}", id, qUtf8Printable(_connectionName));
+    _active = _database->sqlDatabase().transaction();
+    _connectionName = _database->sqlDatabase().connectionName();
+    int id = TSqlDatabasePool::getDatabaseId(_database->sqlDatabase());
+    if (_active) {
+        Tf::traceQueryLog(time.elapsed(), "[BEGIN] [databaseId:{}] {}", id, _connectionName);
     } else {
-        Tf::traceQueryLog(time.elapsed(), "[BEGIN Failed] [databaseId:{}] {}", id, qUtf8Printable(_connectionName));
+        Tf::traceQueryLog(time.elapsed(), "[BEGIN Failed] [databaseId:{}] {}", id, _connectionName);
     }
     return _active;
 }
@@ -72,19 +72,19 @@ bool TSqlTransaction::commit()
     }
 
     if (_active) {
-        if (!_database.isValid()) {
-            tSystemWarn("Database is invalid. [{}]  [{}:{}]", qUtf8Printable(_connectionName), __FILE__, __LINE__);
+        if (!_database->sqlDatabase().isValid()) {
+            tSystemWarn("Database is invalid. [{}]  [{}:{}]", _connectionName, __FILE__, __LINE__);
         } else {
             QElapsedTimer time;
             time.start();
 
-            res = _database.commit();
-            int id = TSqlDatabasePool::getDatabaseId(_database);
+            res = _database->sqlDatabase().commit();
+            int id = TSqlDatabasePool::getDatabaseId(_database->sqlDatabase());
 
             if (Q_LIKELY(res)) {
-                Tf::traceQueryLog(time.elapsed(), "[COMMIT] [databaseId:{}] {}", id, qUtf8Printable(_database.connectionName()));
+                Tf::traceQueryLog(time.elapsed(), "[COMMIT] [databaseId:{}] {}", id, qUtf8Printable(_database->connectionName()));
             } else {
-                Tf::traceQueryLog(time.elapsed(), "[COMMIT Failed] [databaseId:{}] {}", id, qUtf8Printable(_database.connectionName()));
+                Tf::traceQueryLog(time.elapsed(), "[COMMIT Failed] [databaseId:{}] {}", id, qUtf8Printable(_database->connectionName()));
             }
         }
     }
@@ -103,19 +103,19 @@ bool TSqlTransaction::rollback()
     }
 
     if (_active) {
-        if (!_database.isValid()) {
-            tSystemWarn("Database is invalid. [{}]  [{}:{}]", qUtf8Printable(_connectionName), __FILE__, __LINE__);
+        if (!_database->isValid()) {
+            tSystemWarn("Database is invalid. [{}]  [{}:{}]", _connectionName, __FILE__, __LINE__);
         } else {
             QElapsedTimer time;
             time.start();
 
-            res = _database.rollback();
-            int id = TSqlDatabasePool::getDatabaseId(_database);
+            res = _database->sqlDatabase().rollback();
+            int id = TSqlDatabasePool::getDatabaseId(_database->sqlDatabase());
 
             if (Q_LIKELY(res)) {
-                Tf::traceQueryLog(time.elapsed(), "[ROLLBACK] [databaseId:{}] {}", id, qUtf8Printable(_database.connectionName()));
+                Tf::traceQueryLog(time.elapsed(), "[ROLLBACK] [databaseId:{}] {}", id, qUtf8Printable(_database->connectionName()));
             } else {
-                Tf::traceQueryLog(time.elapsed(), "[ROLLBACK Failed] [databaseId:{}] {}", id, qUtf8Printable(_database.connectionName()));
+                Tf::traceQueryLog(time.elapsed(), "[ROLLBACK Failed] [databaseId:{}] {}", id, qUtf8Printable(_database->connectionName()));
             }
         }
     }

@@ -1,7 +1,7 @@
 #pragma once
-constexpr auto TF_VERSION_STR = "2.11.1";
-constexpr auto TF_VERSION_NUMBER = 0x020b01;
-constexpr auto TF_SRC_REVISION = 3050;
+constexpr auto TF_VERSION_STR = "2.12.0";
+constexpr auto TF_VERSION_NUMBER = 0x020c00;
+constexpr auto TF_SRC_REVISION = 3148;
 
 #include <QMetaType>
 #include <QIODevice>
@@ -165,14 +165,6 @@ constexpr auto TF_SRC_REVISION = 3050;
 #define T_VARIANT(VAR) (variant(QLatin1String(#VAR)).toString())
 
 
-#define tFatal TDebug(Tf::FatalLevel).fatal
-#define tError TDebug(Tf::ErrorLevel).error
-#define tWarn TDebug(Tf::WarnLevel).warn
-#define tInfo TDebug(Tf::InfoLevel).info
-#define tDebug TDebug(Tf::DebugLevel).debug
-#define tTrace TDebug(Tf::TraceLevel).trace
-
-
 #include "tfexception.h"
 #include "tfnamespace.h"
 #include "tdeclexport.h"
@@ -181,8 +173,136 @@ constexpr auto TF_SRC_REVISION = 3050;
 #include <cstring>
 #include <functional>
 #include <algorithm>
+
+
+T_CORE_EXPORT bool getAbortOnFatalFlag();
+
+
+inline TDebug tFatal()
+{
+    return TDebug(Tf::FatalLevel);
+}
+
+inline TDebug tError()
+{
+    return TDebug(Tf::ErrorLevel);
+}
+
+inline TDebug tWarn()
+{
+    return TDebug(Tf::WarnLevel);
+}
+
+inline TDebug tInfo()
+{
+    return TDebug(Tf::InfoLevel);
+}
+
+inline TDebug tDebug()
+{
+    return TDebug(Tf::DebugLevel);
+}
+
+inline TDebug tTrace()
+{
+    return TDebug(Tf::TraceLevel);
+}
+
+template <typename... Args>
+inline void tFatal(const char *fmt, Args&&... args)
+{
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).fatal("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).fatal(fmt, std::forward<Args>(args)...);
+    }
+
+    if (getAbortOnFatalFlag()) {
+#if defined(Q_OS_UNIX)
+        abort();  // trap; generates core dump
+#else
+        std::exit(-1);
+#endif
+    }
+}
+
+template <typename... Args>
+inline void tError(const char *fmt, Args&&... args)
+{
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).error("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).error(fmt, std::forward<Args>(args)...);
+    }
+}
+
+template <typename... Args>
+inline void tWarn(const char *fmt, Args&&... args)
+{
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).warn("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).warn(fmt, std::forward<Args>(args)...);
+    }
+}
+
+template <typename... Args>
+inline void tInfo(const char *fmt, Args&&... args)
+{
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).info("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).info(fmt, std::forward<Args>(args)...);
+    }
+}
+
+template <typename... Args>
+inline void tDebug(const char *fmt, Args&&... args)
+{
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).debug("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).debug(fmt, std::forward<Args>(args)...);
+    }
+}
+
+template <typename... Args>
+inline void tTrace(const char *fmt, Args&&... args)
+{
+    if constexpr (sizeof...(Args) == 0) {
+        TDebug(Tf::FatalLevel).trace("%s", fmt);
+    } else {
+        TDebug(Tf::FatalLevel).trace(fmt, std::forward<Args>(args)...);
+    }
+}
+
+
 #ifdef TF_HAVE_STD_FORMAT  // std::format
 #include <format>
+
+namespace std {
+    template<>
+    struct formatter<QByteArray, char> : formatter<string, char> {
+        auto format(const QByteArray &ba, format_context &ctx) const {
+            return formatter<string, char>::format(ba.toStdString(), ctx);
+        }
+    };
+
+    template<>
+    struct formatter<QString, char> : formatter<string, char> {
+        auto format(const QString &str, format_context &ctx) const {
+            return formatter<string, char>::format(str.toStdString(), ctx);
+        }
+    };
+
+    template<class S1, class S2>
+    struct formatter<QStringBuilder<S1, S2>, char> : formatter<string, char> {
+        auto format(const QStringBuilder<S1, S2> &sb, format_context &ctx) const {
+            return formatter<string, char>::format(QString(sb).toStdString(), ctx);
+        }
+    };
+}
+
 #endif
 
 class TWebApplication;
@@ -192,9 +312,10 @@ class TAbstractActionContext;
 class TAppSettings;
 class TDatabaseContext;
 class TCache;
-class QSqlDatabase;
+class TSqlDatabase;
 
 namespace Tf {
+
 T_CORE_EXPORT TWebApplication *app() noexcept;
 T_CORE_EXPORT TAppSettings *appSettings() noexcept;
 T_CORE_EXPORT const QVariantMap &conf(const QString &configName) noexcept;
@@ -211,8 +332,9 @@ T_CORE_EXPORT TCache *cache() noexcept;
 T_CORE_EXPORT TAbstractController *currentController();
 inline const TAbstractController *constCurrentController() { return currentController(); }
 T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
-T_CORE_EXPORT QSqlDatabase &currentSqlDatabase(int id) noexcept;
+T_CORE_EXPORT TSqlDatabase &currentSqlDatabase(int id) noexcept;
 T_CORE_EXPORT QMap<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
+//T_CORE_EXPORT std::map<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
 
 // LZ4 lossless compression algorithm
 T_CORE_EXPORT QByteArray lz4Compress(const char *data, int nbytes, int compressionLevel = 1) noexcept;
@@ -224,6 +346,16 @@ inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
 {
     return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
 }
+
+// Scope-Exit Function Class
+template<typename Func>
+class ScopeExitFunction {
+public:
+    explicit ScopeExitFunction(Func&& func) : _func(std::move(func)) {}
+    ~ScopeExitFunction() noexcept { _func(); }
+private:
+    Func _func;
+};
 
 #ifdef TF_HAVE_STD_FORMAT  // std::format
 
@@ -238,6 +370,14 @@ void fatal(const std::format_string<Args...> &fmt, Args&&... args)
 {
     std::string msg = std::format(fmt, std::forward<Args>(args)...);
     Tf::logging(Tf::FatalLevel, QByteArray::fromStdString(msg));
+
+    if (getAbortOnFatalFlag()) {
+#if defined(Q_OS_UNIX)
+        abort();  // trap; generates core dump
+#else
+        std::exit(-1);
+#endif
+    }
 }
 
 /*!
@@ -351,6 +491,14 @@ void fatal(const std::string &fmt, Args&&... args)
 {
     auto msg = simple_format(std::string(fmt), std::forward<Args>(args)...);
     Tf::logging(Tf::FatalLevel, msg);
+
+    if (getAbortOnFatalFlag()) {
+#if defined(Q_OS_UNIX)
+        abort();  // trap; generates core dump
+#else
+        std::exit(-1);
+#endif
+    }
 }
 
 template<typename... Args>

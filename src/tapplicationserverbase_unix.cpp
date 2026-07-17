@@ -38,7 +38,7 @@ int TApplicationServerBase::nativeListen(const QHostAddress &address, uint16_t p
     QTcpServer server;
 
     if (!server.listen(address, port)) {
-        tSystemError("Listen failed  address:{} port:{}", qUtf8Printable(address.toString()), port);
+        tSystemError("Listen failed  address:{} port:{}", address.toString(), port);
         return sd;
     }
 
@@ -94,7 +94,7 @@ int TApplicationServerBase::nativeListen(const QString &fileDomain, OpenFlag fla
     QFile file(fileDomain);
     if (file.exists()) {
         file.remove();
-        tSystemWarn("File for UNIX domain socket removed: {}", qUtf8Printable(fileDomain));
+        tSystemWarn("File for UNIX domain socket removed: {}", fileDomain);
     }
 
     // Bind

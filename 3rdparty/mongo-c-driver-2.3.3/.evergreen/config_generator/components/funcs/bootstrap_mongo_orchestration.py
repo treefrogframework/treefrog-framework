@@ -1,0 +1,22 @@
+from shrub.v3.evg_command import EvgCommandType, expansions_update
+
+from config_generator.etc.function import Function
+from config_generator.etc.utils import bash_exec
+
+
+class BootstrapMongoOrchestration(Function):
+    name = 'bootstrap-mongo-orchestration'
+    command_type = EvgCommandType.SETUP
+    commands = [
+        bash_exec(
+            command_type=command_type,
+            working_dir='mongoc',
+            script='.evergreen/scripts/integration-tests.sh',
+            add_expansions_to_env=True,
+        ),
+        expansions_update(command_type=command_type, file='mongoc/mo-expansion.yml'),
+    ]
+
+
+def functions():
+    return BootstrapMongoOrchestration.defn()

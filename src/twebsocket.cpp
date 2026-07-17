@@ -82,7 +82,7 @@ void TWebSocket::sendPong(const QByteArray &data)
 bool TWebSocket::canReadRequest() const
 {
     for (const auto &frm : frames) {
-        if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
+        if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::ProcessingState::Completed) {
             return true;
         }
     }
@@ -126,7 +126,7 @@ void TWebSocket::readRequest()
         while (!frames.isEmpty()) {
             TWebSocketFrame frm = frames.takeFirst();
             pay += frm.payload();
-            if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::Completed) {
+            if (frm.isFinalFrame() && frm.state() == TWebSocketFrame::ProcessingState::Completed) {
                 payloads << qMakePair(opcode, pay);
                 break;
             }
@@ -135,7 +135,7 @@ void TWebSocket::readRequest()
 
     if (!payloads.isEmpty()) {
         // Starts worker thread
-        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Receiving, this, reqHeader.path());
+        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::RunMode::Receiving, this, reqHeader.path());
         worker->setPayloads(payloads);
         startWorker(worker);
     }
@@ -144,7 +144,7 @@ void TWebSocket::readRequest()
 
 void TWebSocket::startWorkerForOpening(const TSession &session)
 {
-    TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Opening, this, reqHeader.path());
+    TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::RunMode::Opening, this, reqHeader.path());
     worker->setSession(session);
     startWorker(worker);
 }
@@ -153,7 +153,7 @@ void TWebSocket::startWorkerForOpening(const TSession &session)
 void TWebSocket::startWorkerForClosing()
 {
     if (!closing.load()) {
-        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::Closing, this, reqHeader.path());
+        TWebSocketWorker *worker = new TWebSocketWorker(TWebSocketWorker::RunMode::Closing, this, reqHeader.path());
         startWorker(worker);
     }
 }
@@ -216,7 +216,7 @@ void TWebSocket::sendRawData(const QByteArray &data)
 
         if (QTcpSocket::bytesToWrite() > 0) {
             if (Q_UNLIKELY(!waitForBytesWritten())) {
-                Tf::warn("websocket error: waitForBytesWritten function [{}]", qUtf8Printable(errorString()));
+                Tf::warn("websocket error: waitForBytesWritten function [{}]", errorString());
                 break;
             }
         }

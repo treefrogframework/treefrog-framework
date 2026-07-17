@@ -14,9 +14,9 @@ inline void threadFence()
 template <class T>
 class TAtomicPtr {
 public:
-    TAtomicPtr(T *value = nullptr);
+    explicit TAtomicPtr(T *value = nullptr);
     TAtomicPtr(const TAtomicPtr<T> &other);
-    ~TAtomicPtr() { }
+    ~TAtomicPtr() = default;
 
     operator T *() const;
     T *load(bool *mark = nullptr) const;
@@ -43,15 +43,13 @@ private:
 template <class T>
 inline TAtomicPtr<T>::TAtomicPtr(T *value) :
     atomicPtr((quintptr)value)
-{
-}
+{}
 
 
 template <class T>
 inline TAtomicPtr<T>::TAtomicPtr(const TAtomicPtr<T> &other) :
     atomicPtr(other.atomicPtr.load())
-{
-}
+{}
 
 
 template <class T>

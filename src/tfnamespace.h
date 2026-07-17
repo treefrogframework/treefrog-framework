@@ -8,12 +8,12 @@ class TWebApplication;
 */
 namespace Tf {
 
-enum QuotedStrSplitBehavior {
+enum class QuotedStrSplitBehavior {
     SplitWhereverSep = 0,
     SplitSkipQuotedString,
 };
 
-enum CaseSensitivity {
+enum class CaseSensitivity {
     CaseInsensitive = Qt::CaseInsensitive,
     CaseSensitive = Qt::CaseSensitive,
 };
@@ -31,7 +31,7 @@ enum HttpMethod {
     Patch,
 };
 
-enum HttpStatusCode {
+enum StatusCode {
     // Informational 1xx
     Continue = 100,
     SwitchingProtocols = 101,
@@ -80,7 +80,7 @@ enum HttpStatusCode {
 };
 
 // Common options for AJAX
-enum AjaxOption {
+enum class AjaxOption {
     Asynchronous = 0,  // true or false, default:true
     ContentType,  // default:"application/x-www-form-urlencoded"
     Encoding,  // default:"UTF-8"
@@ -93,7 +93,7 @@ enum AjaxOption {
     SanitizeJSON,  // true or false, See Prototype API docs
 };
 
-enum AjaxEvent {
+enum class AjaxEvent {
     Create = 100,  // Before request is initiated
     Uninitialized,  // Immediately after request is initiated and before loading
     Loading,  // When the remote response is being loaded by the browser
@@ -104,7 +104,7 @@ enum AjaxEvent {
     Complete,  // When the XMLHttpRequest is complete (fires after success or failure, if they are present)
 };
 
-enum ValidationRule {
+enum class ValidationRule {
     Required = 0,  // This value is required.
     MaxLength,  // This value is too long.
     MinLength,  // This value is too short.

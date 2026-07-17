@@ -1,11 +1,11 @@
 @echo off
 @setlocal
 
-set VERSION=2.11.1
+set VERSION=2.12.0
 set TFDIR=C:\TreeFrog\%VERSION%
-set MONBOC_VERSION=1.26.2
-set LZ4_VERSION=1.9.4
-set GLOG_VERSION=0.7.0
+set MONBOC_VERSION=2.3.3
+set LZ4_VERSION=1.10.0
+set GLOG_VERSION=0.7.1
 set BASEDIR=%~dp0
 set CL=/MP
 
@@ -101,18 +101,20 @@ if /i not "%Platform%" == "x64" (
 
 :: vcvarsall.bat setup
 set ENVSTR=Environment to build for 64-bit executable  MSVC / Qt
-if "%VisualStudioVersion%" == "17.0" (
+if "%VisualStudioVersion%" == "18.0" (
+  :: Visual Studio 2026
+  set VCVARSOPT=amd64
+  set CMAKEOPT=-A x64 -T v145
+) else if "%VisualStudioVersion%" == "17.0" (
   :: Visual Studio 2022
   set VCVARSOPT=amd64
   set CMAKEOPT=-A x64 -T v143
-  set MSVSVER=2022
 ) else if "%VisualStudioVersion%" == "16.0" (
   :: Visual Studio 2019
   set VCVARSOPT=amd64
   set CMAKEOPT=-A x64 -T v142
-  set MSVSVER=2019
 ) else (
-  echo Use Visual Studio 2022 or 2019
+  echo Use Visual Studio 2026, 2022 or 2019
   pause
   exit /b 1
 )
@@ -132,7 +134,7 @@ echo set TreeFrog_DIR=%TFDIR%>> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
 echo set QTENV="%QTENV%">> %TFENV%
 echo set VCVARSBAT="">> %TFENV%
-echo set VSVER=%MSVSVER%>> %TFENV%
+echo set VSVER=18 2022 2019>> %TFENV%
 echo set VSWHERE="%%ProgramFiles(x86)%%\Microsoft Visual Studio\Installer\vswhere.exe">> %TFENV%
 echo;>> %TFENV%
 echo if exist %%QTENV%% call %%QTENV%%>> %TFENV%
@@ -173,16 +175,16 @@ mklink /j mongo-driver mongo-c-driver-%MONBOC_VERSION% >nul 2>&1
 cd %BASEDIR%3rdparty\mongo-driver
 rd /s /q CMakeFiles >nul 2>&1
 del /f /q CMakeCache.txt Makefile >nul 2>&1
-set CMAKECMD=cmake %CMAKEOPT% -S . -DCMAKE_BUILD_TYPE=Release -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF
+set CMAKECMD=cmake %CMAKEOPT% -S . -DENABLE_STATIC=ON -DENABLE_SSL=OFF -DENABLE_SNAPPY=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF -DENABLE_SRV=OFF -DENABLE_SASL=OFF -DENABLE_ZLIB=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_TESTS=OFF
 echo %CMAKECMD%
 %CMAKECMD% >nul 2>&1
 
-set DEVENVCMD=devenv mongo-c-driver.sln /project mongoc_static /rebuild Release
-echo %DEVENVCMD%
-%DEVENVCMD% >nul 2>&1
+set BUILDCMD=cmake --build . --config Release --target mongoc_static --clean-first -j
+echo %BUILDCMD%
+%BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  %DEVENVCMD%
+  %BUILDCMD%
   echo;
   echo Build failed.
   echo MongoDB driver not available.
@@ -196,9 +198,13 @@ cd %BASEDIR%3rdparty
 rd /s /q  lz4 >nul 2>&1
 del /f /q lz4 >nul 2>&1
 mklink /j lz4 lz4-%LZ4_VERSION% >nul 2>&1
-rmdir /s /q lz4\build\cmake\build >nul 2>&1
-cmake %CMAKEOPT% -S lz4\build\cmake -B lz4\build\cmake\build -DBUILD_STATIC_LIBS=ON
-set BUILDCMD=cmake --build lz4\build\cmake\build --config Release --clean-first -j
+cd %BASEDIR%3rdparty\lz4
+rmdir /s /q bin >nul 2>&1
+set CMAKECMD=cmake %CMAKEOPT% -S build\cmake -B bin -DBUILD_STATIC_LIBS=ON
+echo %CMAKECMD%
+%CMAKECMD% >nul 2>&1
+
+set BUILDCMD=cmake --build bin --config Release --clean-first -j
 echo %BUILDCMD%
 %BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
@@ -219,15 +225,20 @@ del /f /q glog >nul 2>&1
 mklink /j glog glog-%GLOG_VERSION% >nul 2>&1
 cd %BASEDIR%3rdparty\glog
 rmdir /s /q build >nul 2>&1
-set CMAKECMD=cmake -S . -B build %CMAKEOPT% -DBUILD_SHARED_LIBS=OFF
+set CMAKECMD=cmake -S . -B build %CMAKEOPT% -DBUILD_SHARED_LIBS=OFF -DWITH_GFLAGS=OFF
 echo %CMAKECMD%
 %CMAKECMD%
-set CMAKECMD=cmake --build build -j
-echo %CMAKECMD%
-%CMAKECMD% >nul 2>&1
+
+if "%DEBUG%" == "yes" (
+  set BUILDCMD=cmake --build build --config Debug --clean-first -j
+) else (
+  set BUILDCMD=cmake --build build --config Release --clean-first -j
+)
+echo %BUILDCMD%
+%BUILDCMD% >nul 2>&1
 if ERRORLEVEL 1 (
   :: Shows error
-  %CMAKECMD%
+  %BUILDCMD%
   echo;
   echo Build failed.
   echo glog not available.

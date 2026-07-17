@@ -14,13 +14,6 @@
 #include <TLog>
 #include <TLogger>
 
-#undef tFatal
-#undef tError
-#undef tWarn
-#undef tInfo
-#undef tDebug
-#undef tTrace
-
 /*!
   \class TDebug
   \brief The TDebug class provides a file output stream for debugging information.
@@ -63,7 +56,7 @@ void Tf::setupAppLoggers(TLogger *logger)
             TLogger *lgr = TLoggerFactory::create(lg);
             if (lgr) {
                 loggers << lgr;
-                tSystemDebug("Logger added: {}", qUtf8Printable(lgr->key()));
+                tSystemDebug("Logger added: {}", lgr->key());
             }
         }
     }
@@ -152,10 +145,10 @@ void TDebug::fatal(const char *fmt, ...) const
     flushAppLoggers();
 
     if (Tf::appSettings()->value(Tf::ApplicationAbortOnFatal).toBool()) {
-#if (defined(Q_OS_UNIX) || defined(Q_CC_MINGW))
+#if defined(Q_OS_UNIX)
         abort();  // trap; generates core dump
 #else
-        _exit(-1);
+        std::exit(-1);
 #endif
     }
 }

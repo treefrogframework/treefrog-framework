@@ -1,2 +1,0 @@
-race:mongoc_counter*
-race:_mongoc_handshake_freeze

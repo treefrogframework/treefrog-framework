@@ -5,6 +5,8 @@
  * the New BSD License, which is incorporated herein by reference.
  */
 
+#include "tkvsdatabase.h"
+#include "tkvsdatabasepool.h"
 #include "tmongodriver.h"
 #include "tredisdriver.h"
 #include "tmemcacheddriver.h"
@@ -12,7 +14,6 @@
 #include <QMap>
 #include <QReadWriteLock>
 #include <QString>
-#include <TKvsDatabase>
 #include <TKvsDriver>
 #include <TSystemGlobal>
 
@@ -26,7 +27,7 @@ const char *const TKvsDatabase::defaultConnection = "tf_default_connection";
 
 
 // Map of connection name and database data
-class TKvsDatabaseDict : public QMap<QString, TKvsDatabaseData> {
+class TKvsDatabaseDict : public QMap<QString, TKvsDatabaseSettings> {
 public:
     mutable QReadWriteLock lock;
 };
@@ -34,8 +35,8 @@ public:
 
 static TKvsDatabaseDict *databaseDict()
 {
-    static TKvsDatabaseDict *dict = new TKvsDatabaseDict;
-    return dict;
+    static std::unique_ptr<TKvsDatabaseDict> dict = std::make_unique<TKvsDatabaseDict>();
+    return dict.get();
 }
 
 
@@ -57,28 +58,33 @@ static TKvsDriver *createDriver(const QString &driverName)
     } else if (name == QLatin1String("memory")) {
         driver = new TSharedMemoryKvsDriver();
     } else {
-        Tf::warn("TKvsDatabase: {} driver not found", qUtf8Printable(driverName));
+        Tf::warn("TKvsDatabase: {} driver not found", driverName);
         return driver;
     }
 
     if (!driver) {
-        Tf::warn("TKvsDatabase: {} driver not loaded", qUtf8Printable(driverName));
+        Tf::warn("TKvsDatabase: {} driver not loaded", driverName);
     }
     return driver;
 }
 
 
-TKvsDatabase TKvsDatabase::database(const QString &connectionName)
+std::unique_ptr<TKvsDatabase> TKvsDatabase::database(const QString &connectionName)
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
 
-    const TKvsDatabaseData &d = (*dict)[connectionName];
-    return TKvsDatabase(d.connectionName, d.driver);
+    if (!dict->contains(connectionName)) {
+        tSystemWarn("No such KVS database: {}", connectionName);
+        return std::unique_ptr<TKvsDatabase>{new TKvsDatabase{}};
+    }
+
+    const TKvsDatabaseSettings &d = (*dict)[connectionName];
+    return std::unique_ptr<TKvsDatabase>{new TKvsDatabase(d.connectionName, d.driver)};
 }
 
 
-TKvsDatabase TKvsDatabase::addDatabase(const QString &driver, const QString &connectionName)
+bool TKvsDatabase::addDatabase(const QString &driver, const QString &connectionName)
 {
     auto *dict = databaseDict();
     QWriteLocker locker(&dict->lock);
@@ -89,11 +95,11 @@ TKvsDatabase TKvsDatabase::addDatabase(const QString &driver, const QString &con
         delete data.driver;
     }
 
-    TKvsDatabaseData data;
+    TKvsDatabaseSettings data;
     data.connectionName = connectionName;
     data.driver = createDriver(driver);  // creates a driver
     dict->insert(connectionName, data);
-    return TKvsDatabase(data);
+    return true;
 }
 
 
@@ -105,11 +111,11 @@ void TKvsDatabase::removeDatabase(const QString &connectionName)
     TKvsDatabase db(dict->take(connectionName));
 
     db.close();
-    delete db.drv;
+    delete db._driver;
 }
 
 
-TKvsDatabaseData TKvsDatabase::settings(const QString &connectionName)
+TKvsDatabaseSettings TKvsDatabase::settings(const QString &connectionName)
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
@@ -117,32 +123,17 @@ TKvsDatabaseData TKvsDatabase::settings(const QString &connectionName)
 }
 
 
-TKvsDatabase::TKvsDatabase(const TKvsDatabase &other) :
-    connectName(other.connectName),
-    drv(other.drv)
-{
-}
-
-
 TKvsDatabase::TKvsDatabase(const QString &connectionName, TKvsDriver *driver) :
-    connectName(connectionName),
-    drv(driver)
+    _connectName(connectionName),
+    _driver(driver)
 {
 }
 
 
-TKvsDatabase::TKvsDatabase(const TKvsDatabaseData &data) :
-    connectName(data.connectionName),
-    drv(data.driver)
+TKvsDatabase::TKvsDatabase(const TKvsDatabaseSettings &data) :
+    _connectName(data.connectionName),
+    _driver(data.driver)
 {
-}
-
-
-TKvsDatabase &TKvsDatabase::operator=(const TKvsDatabase &other)
-{
-    connectName = other.connectName;
-    drv = other.drv;
-    return *this;
 }
 
 
@@ -156,7 +147,7 @@ bool TKvsDatabase::open()
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
-    const TKvsDatabaseData &data = (*dict)[connectName];
+    const TKvsDatabaseSettings &data = (*dict)[_connectName];
     return (driver()) ? driver()->open(data.databaseName, data.userName, data.password, data.hostName, data.port, data.connectOptions) : false;
 }
 
@@ -191,16 +182,16 @@ QString TKvsDatabase::databaseName() const
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
-    return (*dict)[connectName].databaseName;
+    return (*dict)[_connectName].databaseName;
 }
 
 
 void TKvsDatabase::setDatabaseName(const QString &name)
 {
-    if (!connectName.isEmpty()) {
+    if (!_connectName.isEmpty()) {
         auto *dict = databaseDict();
         QWriteLocker locker(&dict->lock);
-        (*dict)[connectName].databaseName = name;
+        (*dict)[_connectName].databaseName = name;
     }
 }
 
@@ -209,16 +200,16 @@ QString TKvsDatabase::hostName() const
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
-    return (*dict)[connectName].hostName;
+    return (*dict)[_connectName].hostName;
 }
 
 
 void TKvsDatabase::setHostName(const QString &hostName)
 {
-    if (!connectName.isEmpty()) {
+    if (!_connectName.isEmpty()) {
         auto *dict = databaseDict();
         QWriteLocker locker(&dict->lock);
-        (*dict)[connectName].hostName = hostName;
+        (*dict)[_connectName].hostName = hostName;
     }
 }
 
@@ -227,16 +218,16 @@ int TKvsDatabase::port() const
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
-    return (*dict)[connectName].port;
+    return (*dict)[_connectName].port;
 }
 
 
 void TKvsDatabase::setPort(int port)
 {
-    if (!connectName.isEmpty()) {
+    if (!_connectName.isEmpty()) {
         auto *dict = databaseDict();
         QWriteLocker locker(&dict->lock);
-        (*dict)[connectName].port = port;
+        (*dict)[_connectName].port = port;
     }
 }
 
@@ -245,16 +236,16 @@ QString TKvsDatabase::userName() const
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
-    return (*dict)[connectName].userName;
+    return (*dict)[_connectName].userName;
 }
 
 
 void TKvsDatabase::setUserName(const QString &userName)
 {
-    if (!connectName.isEmpty()) {
+    if (!_connectName.isEmpty()) {
         auto *dict = databaseDict();
         QWriteLocker locker(&dict->lock);
-        (*dict)[connectName].userName = userName;
+        (*dict)[_connectName].userName = userName;
     }
 }
 
@@ -263,16 +254,16 @@ QString TKvsDatabase::password() const
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
-    return (*dict)[connectName].password;
+    return (*dict)[_connectName].password;
 }
 
 
 void TKvsDatabase::setPassword(const QString &password)
 {
-    if (!connectName.isEmpty()) {
+    if (!_connectName.isEmpty()) {
         auto *dict = databaseDict();
         QWriteLocker locker(&dict->lock);
-        (*dict)[connectName].password = password;
+        (*dict)[_connectName].password = password;
     }
 }
 
@@ -281,16 +272,16 @@ QString TKvsDatabase::connectOptions() const
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
-    return (*dict)[connectName].connectOptions;
+    return (*dict)[_connectName].connectOptions;
 }
 
 
 void TKvsDatabase::setConnectOptions(const QString &options)
 {
-    if (!connectName.isEmpty()) {
+    if (!_connectName.isEmpty()) {
         auto *dict = databaseDict();
         QWriteLocker locker(&dict->lock);
-        (*dict)[connectName].connectOptions = options;
+        (*dict)[_connectName].connectOptions = options;
     }
 }
 
@@ -299,16 +290,16 @@ QStringList TKvsDatabase::postOpenStatements() const
 {
     auto *dict = databaseDict();
     QReadLocker locker(&dict->lock);
-    return (*dict)[connectName].postOpenStatements;
+    return (*dict)[_connectName].postOpenStatements;
 }
 
 
 void TKvsDatabase::setPostOpenStatements(const QStringList &statements)
 {
-    if (!connectName.isEmpty()) {
+    if (!_connectName.isEmpty()) {
         auto *dict = databaseDict();
         QWriteLocker locker(&dict->lock);
-        (*dict)[connectName].postOpenStatements = statements;
+        (*dict)[_connectName].postOpenStatements = statements;
     }
 }
 
@@ -318,4 +309,35 @@ void TKvsDatabase::moveToThread(QThread *targetThread)
     if (driver()) {
         driver()->moveToThread(targetThread);
     }
+}
+
+
+TKvsDatabase &TKvsDatabase::operator=(TKvsDatabase &&other)
+{
+    if (this != &other) {
+        _connectName = std::forward<QString>(other._connectName);
+        _driver = other._driver;
+        other._driver = nullptr;
+    }
+    return *this;
+}
+
+
+TKvsDatabase::Handle::~Handle()
+{
+    if (_dbptr) {
+        TKvsDatabasePool::instance()->pool(std::move(_dbptr));
+    }
+}
+
+
+TKvsDatabase::Handle &TKvsDatabase::Handle::operator=(TKvsDatabase::Handle &&other)
+{
+    if (this != &other) {
+        if (_dbptr) {
+            TKvsDatabasePool::instance()->pool(std::move(_dbptr));
+        }
+        _dbptr = std::move(other._dbptr);
+    }
+    return *this;
 }

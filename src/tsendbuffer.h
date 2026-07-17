@@ -30,7 +30,7 @@ private:
 
     TSendBuffer(const QByteArray &header, const QFileInfo &file, bool autoRemove, TAccessLogger &&logger);
     TSendBuffer(const QByteArray &header);
-    TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method);
+    TSendBuffer(Tf::StatusCode statusCode, const QHostAddress &address, const QByteArray &method);
     TSendBuffer();
 
     friend class TEpollSocket;

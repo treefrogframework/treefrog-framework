@@ -48,22 +48,22 @@ THttpSocket::~THttpSocket()
 }
 
 
-QList<THttpRequest> THttpSocket::read()
+THttpRequest THttpSocket::read()
 {
-    QList<THttpRequest> reqList;
+    THttpRequest request;
 
     if (canReadRequest()) {
         if (_fileBuffer.isOpen()) {
             _fileBuffer.close();
-            reqList << THttpRequest(_headerBuffer, _fileBuffer.fileName(), peerAddress(), _context);
+            request = THttpRequest(_headerBuffer, _fileBuffer.fileName(), peerAddress(), _context);
             _headerBuffer.resize(0);
         } else {
-            reqList = THttpRequest::generate(_readBuffer, peerAddress(), _context);
+            request = THttpRequest::generate(_readBuffer, peerAddress(), _context);
         }
 
         _lengthToRead = -1;
     }
-    return reqList;
+    return request;
 }
 
 
@@ -190,7 +190,7 @@ int64_t THttpSocket::writeRawData(const QByteArray &data)
 
 bool THttpSocket::waitForReadyReadRequest(int msecs)
 {
-    static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
+    static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
 
     int64_t buflen = _readBuffer.capacity() - _readBuffer.size();
     int64_t len = readRawData(_readBuffer.data() + _readBuffer.size(), buflen, msecs);
@@ -221,7 +221,7 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                 THttpRequestHeader header(_readBuffer);
 
                 if (Q_UNLIKELY(systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes)) {
-                    throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
+                    throw ClientErrorException((int)Tf::StatusCode::RequestEntityTooLarge);  // Request Entity Too Large
                 }
 
                 _lengthToRead = std::max(idx + 4 + header.contentLength() - (int64_t)_readBuffer.length(), (int64_t)0);
@@ -234,7 +234,7 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                     }
                     _fileBuffer.resize(0);  // truncate
                     if (_readBuffer.length() > idx + 4) {
-                        tSystemDebug("fileBuffer name: {}", qUtf8Printable(_fileBuffer.fileName()));
+                        tSystemDebug("fileBuffer name: {}", _fileBuffer.fileName());
                         if (_fileBuffer.write(_readBuffer.data() + idx + 4, _readBuffer.length() - (idx + 4)) < 0) {
                             throw RuntimeException(QLatin1String("write error: ") + _fileBuffer.fileName(), __FILE__, __LINE__);
                         }

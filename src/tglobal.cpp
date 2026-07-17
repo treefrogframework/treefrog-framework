@@ -21,6 +21,8 @@
 #ifdef Q_OS_LINUX
 #include <TMultiplexingServer>
 #include <TActionWorker>
+#include "turingserver.h"
+#include "tactioncontextroutine.h"
 #endif
 #ifdef Q_OS_WIN
 #define NOMINMAX
@@ -121,19 +123,34 @@ TCache *Tf::cache() noexcept
 
 TAbstractController *Tf::currentController()
 {
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Thread) {
+    switch (Tf::app()->multiProcessingModule()) {
+    case TWebApplication::MultiProcessingModule::Thread: {
         TActionThread *context = dynamic_cast<TActionThread *>(QThread::currentThread());
         if (Q_LIKELY(context)) {
             return context->currentController();
         }
-    }
+        break; }
 
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Epoll) {
+    case TWebApplication::MultiProcessingModule::Epoll:
 #ifdef Q_OS_LINUX
         return TMultiplexingServer::instance()->currentController();
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
+        break;
+
+    case TWebApplication::MultiProcessingModule::Uring: {
+#ifdef Q_OS_LINUX
+        if (auto context = TActionContext::currentActionContext(); context) {
+            return context->currentController();
+        }
+#else
+        tFatal("Unsupported MPM: uring");
+#endif
+        break; }
+
+    default:
+        break;
     }
 
     throw RuntimeException("Can not cast the current thread", __FILE__, __LINE__);
@@ -142,31 +159,47 @@ TAbstractController *Tf::currentController()
 
 TDatabaseContext *Tf::currentDatabaseContext()
 {
-    TDatabaseContext *context;
-
-    if (Tf::app()->multiProcessingModule() == TWebApplication::Epoll) {
-#ifdef Q_OS_LINUX
-        context = TMultiplexingServer::instance()->currentWorker();
-        if (context) {
+    switch (Tf::app()->multiProcessingModule()) {
+    case TWebApplication::MultiProcessingModule::Thread:
+        if (auto context = TDatabaseContext::currentDatabaseContext(); context) {
             return context;
         }
 
-        context = Tf::app()->mainDatabaseContext();
-        if (context) {
+        if (auto context = dynamic_cast<TDatabaseContext *>(QThread::currentThread()); context) {
+            return context;
+        }
+        break;
+
+    case TWebApplication::MultiProcessingModule::Epoll:
+#ifdef Q_OS_LINUX
+        if (auto context = TMultiplexingServer::instance()->currentWorker(); context) {
             return context;
         }
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
+        break;
+
+    case TWebApplication::MultiProcessingModule::Uring:
+#ifdef Q_OS_LINUX
+        if (auto context = dynamic_cast<TDatabaseContext *>(TActionContext::currentActionContext()); context) {
+            return context;
+        }
+
+        if (auto context = TDatabaseContext::currentDatabaseContext(); context) {
+            return context;
+        }
+#else
+        tFatal("Unsupported MPM: uring");
+#endif
+        break;
+
+    default:
+        tFatal("Unsupported MPM");
+        break;
     }
 
-    context = TDatabaseContext::currentDatabaseContext();
-    if (context) {
-        return context;
-    }
-
-    context = dynamic_cast<TDatabaseContext *>(QThread::currentThread());
-    if (context) {
+    if (auto context = Tf::app()->mainDatabaseContext(); context) {
         return context;
     }
 
@@ -174,7 +207,7 @@ TDatabaseContext *Tf::currentDatabaseContext()
 }
 
 
-QSqlDatabase &Tf::currentSqlDatabase(int id) noexcept
+TSqlDatabase &Tf::currentSqlDatabase(int id) noexcept
 {
     return currentDatabaseContext()->getSqlDatabase(id);
 }
@@ -296,6 +329,13 @@ int64_t Tf::getMSecsSinceEpoch()
 {
     auto p = std::chrono::system_clock::now();  // epoch of system_clock
     return std::chrono::duration_cast<std::chrono::milliseconds>(p.time_since_epoch()).count();
+}
+
+
+bool getAbortOnFatalFlag()
+{
+    static bool ret = Tf::appSettings()->value(Tf::ApplicationAbortOnFatal).toBool();
+    return ret;
 }
 
 

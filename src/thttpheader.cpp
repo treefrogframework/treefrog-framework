@@ -24,12 +24,12 @@ THttpHeader::THttpHeader() :
 /*!
   Copy constructor.
 */
-THttpHeader::THttpHeader(const THttpHeader &other) :
-    TInternetMessageHeader(*static_cast<const TInternetMessageHeader *>(&other)),
-    _majorVersion(other._majorVersion),
-    _minorVersion(other._minorVersion)
-{
-}
+// THttpHeader::THttpHeader(const THttpHeader &other) :
+//     TInternetMessageHeader(*static_cast<const TInternetMessageHeader *>(&other)),
+//     _majorVersion(other._majorVersion),
+//     _minorVersion(other._minorVersion)
+// {
+// }
 
 /*!
   Constructs an HTTP header by parsing \a str.
@@ -44,13 +44,13 @@ THttpHeader::THttpHeader(const QByteArray &str) :
   Assigns \a other to this HTTP header and returns a reference
   to this HTTP header.
 */
-THttpHeader &THttpHeader::operator=(const THttpHeader &other)
-{
-    TInternetMessageHeader::operator=(*static_cast<const TInternetMessageHeader *>(&other));
-    _majorVersion = other._majorVersion;
-    _minorVersion = other._minorVersion;
-    return *this;
-}
+// THttpHeader &THttpHeader::operator=(const THttpHeader &other)
+// {
+//     TInternetMessageHeader::operator=(*static_cast<const TInternetMessageHeader *>(&other));
+//     _majorVersion = other._majorVersion;
+//     _minorVersion = other._minorVersion;
+//     return *this;
+// }
 
 /*!
   Returns a byte array representation of the HTTP header.
@@ -85,20 +85,20 @@ QByteArray THttpHeader::toByteArray() const
 /*!
   Constructor.
 */
-THttpRequestHeader::THttpRequestHeader() :
-    THttpHeader()
-{
-}
+// THttpRequestHeader::THttpRequestHeader() :
+//     THttpHeader()
+// {
+// }
 
 /*!
   Copy constructor.
 */
-THttpRequestHeader::THttpRequestHeader(const THttpRequestHeader &other) :
-    THttpHeader(*static_cast<const THttpHeader *>(&other)),
-    _reqMethod(other._reqMethod),
-    _reqUri(other._reqUri)
-{
-}
+// THttpRequestHeader::THttpRequestHeader(const THttpRequestHeader &other) :
+//     THttpHeader(*static_cast<const THttpHeader *>(&other)),
+//     _reqMethod(other._reqMethod),
+//     _reqUri(other._reqUri)
+// {
+// }
 
 /*!
   Constructs an HTTP request header by parsing \a str.
@@ -197,13 +197,13 @@ QByteArray THttpRequestHeader::toByteArray() const
   Assigns \a other to this HTTP request header and returns a reference
   to this header.
 */
-THttpRequestHeader &THttpRequestHeader::operator=(const THttpRequestHeader &other)
-{
-    THttpHeader::operator=(*static_cast<const THttpHeader *>(&other));
-    _reqMethod = other._reqMethod;
-    _reqUri = other._reqUri;
-    return *this;
-}
+// THttpRequestHeader &THttpRequestHeader::operator=(const THttpRequestHeader &other)
+// {
+//     THttpHeader::operator=(*static_cast<const THttpHeader *>(&other));
+//     _reqMethod = other._reqMethod;
+//     _reqUri = other._reqUri;
+//     return *this;
+// }
 
 /*!
   \fn const QByteArray &THttpRequestHeader::method() const
@@ -225,20 +225,20 @@ THttpRequestHeader &THttpRequestHeader::operator=(const THttpRequestHeader &othe
 /*!
   Constructor.
 */
-THttpResponseHeader::THttpResponseHeader() :
-    THttpHeader()
-{
-}
+// THttpResponseHeader::THttpResponseHeader() :
+//     THttpHeader()
+// {
+// }
 
 /*!
   Copy constructor.
 */
-THttpResponseHeader::THttpResponseHeader(const THttpResponseHeader &other) :
-    THttpHeader(*static_cast<const THttpHeader *>(&other)),
-    _statusCode(other._statusCode),
-    _reasonPhrase(other._reasonPhrase)
-{
-}
+// THttpResponseHeader::THttpResponseHeader(const THttpResponseHeader &other) :
+//     THttpHeader(*static_cast<const THttpHeader *>(&other)),
+//     _statusCode(other._statusCode),
+//     _reasonPhrase(other._reasonPhrase)
+// {
+// }
 
 /*!
   Constructs an HTTP response header by parsing \a str.
@@ -271,9 +271,9 @@ THttpResponseHeader::THttpResponseHeader(const QByteArray &str) :
   Sets the status code to \a code, the reason phrase to \a text and
   the protocol-version to \a majorVer and \a minorVer.
 */
-void THttpResponseHeader::setStatusLine(int code, const QByteArray &text, int majorVer, int minorVer)
+void THttpResponseHeader::setStatusLine(Tf::StatusCode code, const QByteArray &text, int majorVer, int minorVer)
 {
-    _statusCode = code;
+    _statusCode = (int)code;
     _reasonPhrase = text;
     THttpHeader::_majorVersion = majorVer;
     THttpHeader::_minorVersion = minorVer;
@@ -305,13 +305,13 @@ QByteArray THttpResponseHeader::toByteArray() const
   Assigns \a other to this HTTP response header and returns a reference
   to this header.
 */
-THttpResponseHeader &THttpResponseHeader::operator=(const THttpResponseHeader &other)
-{
-    THttpHeader::operator=(*static_cast<const THttpHeader *>(&other));
-    _statusCode = other._statusCode;
-    _reasonPhrase = other._reasonPhrase;
-    return *this;
-}
+// THttpResponseHeader &THttpResponseHeader::operator=(const THttpResponseHeader &other)
+// {
+//     THttpHeader::operator=(*static_cast<const THttpHeader *>(&other));
+//     _statusCode = other._statusCode;
+//     _reasonPhrase = other._reasonPhrase;
+//     return *this;
+// }
 
 
 void THttpResponseHeader::clear()

@@ -14,6 +14,7 @@
 #include <TBson>
 #include <atomic>
 extern "C" {
+#include <mongoc/mongoc.h>
 #include <bson/bson.h>
 }
 
@@ -167,7 +168,7 @@ QVariantMap TBson::fromBson(const TBsonObject *obj)
             Tf::error("fromBson() unknown type: {}", (int)t);
             break;
         }
-        //tSystemDebug("fromBson : t:{} key:{} = {}", t, qUtf8Printable(key), qUtf8Printable(ret[key].toString()));
+        //tSystemDebug("fromBson : t:{} key:{} = {}", t, key, ret[key].toString());
     }
     return ret;
 }
@@ -237,7 +238,11 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
     case QMetaType::QVariantList:  // FALLTHRU
     case QMetaType::QStringList: {
         bson_t child;
+#if MONGOC_CHECK_VERSION(2, 3, 0)
+        BSON_APPEND_ARRAY_UNSAFE_BEGIN(bson, qUtf8Printable(key), &child);
+#else
         BSON_APPEND_ARRAY_BEGIN(bson, qUtf8Printable(key), &child);
+#endif
 
         int i = 0;
         for (auto &var : (const QList<QVariant> &)value.toList()) {
@@ -252,7 +257,7 @@ static bool appendBsonValue(bson_t *bson, const QString &key, const QVariant &va
         break;
 
     default:
-        Tf::error("toBson() failed to convert  name:{}  type:{}", qUtf8Printable(key), type);
+        Tf::error("toBson() failed to convert  name:{}  type:{}", key, type);
         ok = false;
         break;
     }

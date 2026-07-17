@@ -32,7 +32,7 @@ int64_t TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *bod
 
     // Check auto-remove
     bool autoRemove = false;
-    QFile *f = dynamic_cast<QFile *>(body);
+    QFile *f = qobject_cast<QFile *>(body);
     if (f) {
         QString filePath = f->fileName();
         if (TActionContext::autoRemoveFiles.contains(filePath)) {
@@ -44,7 +44,6 @@ int64_t TActionWorker::writeResponse(THttpResponseHeader &header, QIODevice *bod
     if (!TActionContext::stopped.load()) {
         _socket->sendData(header.toByteArray(), body, autoRemove, std::move(accessLogger));
     }
-    accessLogger.close();
     return 0;
 }
 
@@ -68,9 +67,10 @@ void TActionWorker::start(TEpollHttpSocket *sock)
     _socket = sock;
     _httpRequest += _socket->readRequest();
     _clientAddr = _socket->peerAddress();
-    QList<THttpRequest> requests = THttpRequest::generate(_httpRequest, _clientAddr, this);
+    THttpRequest request = THttpRequest::generate(_httpRequest, _clientAddr, this);
 
     // Loop for HTTP-pipeline requests
+    /*
     for (THttpRequest &req : requests) {
         // Executes a action context
         TActionContext::execute(req);
@@ -79,6 +79,8 @@ void TActionWorker::start(TEpollHttpSocket *sock)
             break;
         }
     }
+    */
+   TActionContext::execute(request);
 
     TActionContext::release();
     _httpRequest.clear();

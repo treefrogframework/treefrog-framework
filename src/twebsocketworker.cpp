@@ -56,7 +56,7 @@ void TWebSocketWorker::setSession(const TSession &session)
 
 void TWebSocketWorker::run()
 {
-    if (_mode == Receiving) {
+    if (_mode == RunMode::Receiving) {
         for (auto &p : (const QList<QPair<int, QByteArray>> &)_payloads) {
             execute(p.first, p.second);
         }
@@ -79,7 +79,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
     }
 
     try {
-        tSystemDebug("Found endpoint: {}", qUtf8Printable(es));
+        tSystemDebug("Found endpoint: {}", es);
         tSystemDebug("TWebSocketWorker opcode: {}", opcode);
 
         endpoint->sessionStore = _socket->session();  // Sets websocket session
@@ -93,7 +93,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
         }
 
         switch (_mode) {
-        case Opening: {
+        case RunMode::Opening: {
             bool res = endpoint->onOpen(_httpSession);
             if (res) {
                 // For switch response
@@ -105,17 +105,16 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
             } else {
                 endpoint->taskList.prepend(qMakePair((int)TWebSocketEndpoint::OpenError, QVariant()));
             }
-            break;
-        }
+            break; }
 
-        case Closing:
+        case RunMode::Closing:
             if (!_socket->closing.exchange(true)) {
                 endpoint->onClose(Tf::GoingAway);
                 endpoint->unsubscribeFromAll();
             }
             break;
 
-        case Receiving: {
+        case RunMode::Receiving: {
 
             switch (opcode) {
             case TWebSocketFrame::TextFrame:
@@ -139,8 +138,7 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
                     endpoint->unsubscribeFromAll();
                 }
                 endpoint->close(closeCode);  // close response or disconnect
-                break;
-            }
+                break; }
 
             case TWebSocketFrame::Ping:
                 endpoint->onPing(payload);
@@ -296,20 +294,20 @@ void TWebSocketWorker::execute(int opcode, const QByteArray &payload)
         Tf::warn("Caught ClientErrorException: status code:{}", e.statusCode());
         tSystemWarn("Caught ClientErrorException: status code:{}", e.statusCode());
     } catch (SqlException &e) {
-        Tf::error("Caught SqlException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught SqlException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught SqlException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught SqlException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
     } catch (KvsException &e) {
-        Tf::error("Caught KvsException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught KvsException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught KvsException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught KvsException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
     } catch (SecurityException &e) {
-        Tf::error("Caught SecurityException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught SecurityException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught SecurityException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught SecurityException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
     } catch (RuntimeException &e) {
-        Tf::error("Caught RuntimeException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught RuntimeException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught RuntimeException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught RuntimeException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
     } catch (StandardException &e) {
-        Tf::error("Caught StandardException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
-        tSystemError("Caught StandardException: {}  [{}:{}]", qUtf8Printable(e.message()), qUtf8Printable(e.fileName()), e.lineNumber());
+        Tf::error("Caught StandardException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
+        tSystemError("Caught StandardException: {}  [{}:{}]", e.message(), e.fileName(), e.lineNumber());
     } catch (std::exception &e) {
         Tf::error("Caught Exception: {}", e.what());
         tSystemError("Caught Exception: {}", e.what());

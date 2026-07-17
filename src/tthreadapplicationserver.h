@@ -1,5 +1,5 @@
 #pragma once
-#include "tstack.h"
+#include <TLockStack>
 #include <QBasicTimer>
 #include <QTcpServer>
 #include <QtGlobal>
@@ -19,13 +19,14 @@ public:
     void stop() override;
     void setAutoReloadingEnabled(bool enable) override;
     bool isAutoReloadingEnabled() override;
+    static TThreadApplicationServer *instance(int listeningSocket = 0, QObject *parent = nullptr);
 
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
     void timerEvent(QTimerEvent *event) override;
 
 private:
-    static TStack<TActionThread *> *threadPoolPtr();
+    static TLockStack<TActionThread *> &threadPool();
 
     int listenSocket {0};
     int maxThreads {0};
@@ -38,13 +39,13 @@ private:
 class T_CORE_EXPORT TThreadApplicationServer : public QThread, public TApplicationServerBase {
     Q_OBJECT
 public:
-    TThreadApplicationServer(int listeningSocket, QObject *parent = 0);
     ~TThreadApplicationServer() { }
 
     bool start(bool debugMode) override;
     void stop() override;
     void setAutoReloadingEnabled(bool enable) override;
     bool isAutoReloadingEnabled() override;
+    static TThreadApplicationServer *instance(int listeningSocket = 0, QObject *parent = nullptr);
 
 protected:
     void incomingConnection(qintptr socketDescriptor);
@@ -52,7 +53,8 @@ protected:
     void run() override;
 
 private:
-    static TStack<TActionThread *> *threadPoolPtr();
+    static TLockStack<TActionThread *> &threadPool();
+    TThreadApplicationServer(int listeningSocket, QObject *parent = nullptr);
 
     int listenSocket {0};
     int maxThreads {0};

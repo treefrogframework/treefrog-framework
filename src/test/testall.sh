@@ -7,6 +7,7 @@ WORKDIR=$(cd $(dirname $0) && pwd)
 cd $WORKDIR
 
 for e in `ls -d *`; do
+  [ -f "$e/$e" ] && rm -f "$e/$e"
   if [ -f "$e/Makefile" ]; then
     make -k -C $e clean
   fi
@@ -15,7 +16,12 @@ done
 [ -f Makefile ] && make -k distclean
 rm -f Makefile
 
-qmake -r
+if which qmake6 >/dev/null; then
+  qmake6 -r
+else
+  qmake -r
+fi
+
 make -j8
 if [ "$?" != 0 ]; then
   echo

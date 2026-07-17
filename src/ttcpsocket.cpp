@@ -57,9 +57,9 @@ bool TTcpSocket::waitUntil(bool (TEpollSocket::*method)(), int msecs)
             break;
         }
 
-        if (Tf::app()->multiProcessingModule() == TWebApplication::Epoll || epollMutex.tryLock()) {
+        if (Tf::app()->multiProcessingModule() == TWebApplication::MultiProcessingModule::Epoll || epollMutex.tryLock()) {
             int ret = _esocket->waitUntil(method, msecs);
-            if (Tf::app()->multiProcessingModule() != TWebApplication::Epoll) {
+            if (Tf::app()->multiProcessingModule() != TWebApplication::MultiProcessingModule::Epoll) {
                 epollMutex.unlock();
             }
             return ret;

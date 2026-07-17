@@ -21,6 +21,7 @@
 
 constexpr auto DEFAULT_INTERNET_MEDIA_TYPE = "text/plain";
 constexpr auto DEFAULT_DATABASE_ENVIRONMENT = "product";
+using enum TWebApplication::MultiProcessingModule;
 
 /*!
   \class TWebApplication
@@ -361,25 +362,33 @@ QString TWebApplication::validationErrorMessage(int rule) const
 TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() const
 {
     static TWebApplication::MultiProcessingModule module = [this]() {
-        if (_mpmTemp != Invalid) {
+        if (_mpmTemp != MultiProcessingModule::Invalid) {
             return _mpmTemp;
         }
 
         QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
         if (str == "thread") {
-            return Thread;
+            return MultiProcessingModule::Thread;
         } else if (str == "epoll") {
 #ifdef Q_OS_LINUX
-            return Epoll;
+            return MultiProcessingModule::Epoll;
 #else
             tSystemWarn("Unsupported MPM: epoll  (Linux only)");
             Tf::warn("Unsupported MPM: epoll  (Linux only)");
-            return Thread;
+            return MultiProcessingModule::Thread;
+#endif
+        } else if (str == "uring") {
+#ifdef Q_OS_LINUX
+            return MultiProcessingModule::Uring;
+#else
+            tSystemWarn("Unsupported MPM: uring  (Linux only)");
+            Tf::warn("Unsupported MPM: uring  (Linux only)");
+            return MultiProcessingModule::Thread;
 #endif
         }
-        tSystemWarn("Unsupported MPM: {}", qUtf8Printable(str));
-        Tf::warn("Unsupported MPM: {}", qUtf8Printable(str));
-        return Thread;
+        tSystemWarn("Unsupported MPM: {}", str);
+        Tf::warn("Unsupported MPM: {}", str);
+        return MultiProcessingModule::Thread;
     }();
     return module;
 }
@@ -414,13 +423,17 @@ int TWebApplication::maxNumberOfThreadsPerAppServer() const
         QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
 
         switch (Tf::app()->multiProcessingModule()) {
-        case TWebApplication::Thread:
+        case MultiProcessingModule::Thread:
             maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
             maxNum = (maxNum > 0) ? maxNum : 16;
             break;
 
-        case TWebApplication::Epoll:
+        case MultiProcessingModule::Epoll:
             maxNum = 128;
+            break;
+
+        case MultiProcessingModule::Uring:
+            maxNum = 128;  // TODO TODO TODO
             break;
 
         default:
@@ -531,7 +544,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
         const auto filist = dir.entryInfoList(filters);
 
         if (filist.isEmpty()) {
-            tSystemWarn("No such config, {}", qUtf8Printable(configName));
+            tSystemWarn("No such config, {}", configName);
         } else {
             for (auto &fi : filist) {
                 auto suffix = fi.completeSuffix().toLower();
@@ -556,7 +569,7 @@ const QVariantMap &TWebApplication::getConfig(const QString &configName)
                     }
 
                 } else {
-                    tSystemWarn("Invalid format config, {}", qUtf8Printable(fi.fileName()));
+                    tSystemWarn("Invalid format config, {}", fi.fileName());
                 }
             }
         }

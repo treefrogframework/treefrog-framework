@@ -125,7 +125,7 @@ bool TEpollHttpSocket::seekRecvBuffer(int pos)
     } else {
         if (systemLimitBodyBytes > 0 && _recvBuffer.length() > systemLimitBodyBytes) {
             _recvBuffer.resize(0);
-            throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request Entity Too Large
+            throw ClientErrorException((int)Tf::StatusCode::RequestEntityTooLarge);  // Request Entity Too Large
         }
 
         _lengthToRead = std::max(_lengthToRead - pos, (int64_t)0);
@@ -182,7 +182,7 @@ void TEpollHttpSocket::releaseWorker()
 void TEpollHttpSocket::parse()
 {
     if (Q_UNLIKELY(systemLimitBodyBytes < 0)) {
-        systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong() * 2;
+        systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
     }
 
     if (Q_LIKELY(_lengthToRead < 0)) {
@@ -192,7 +192,7 @@ void TEpollHttpSocket::parse()
 
             if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
                 _recvBuffer.resize(0);
-                throw ClientErrorException(Tf::RequestEntityTooLarge);  // Request EhttpBuffery Too Large
+                throw ClientErrorException((int)Tf::StatusCode::RequestEntityTooLarge);  // Request EhttpBuffery Too Large
             }
 
             _lengthToRead = std::max(idx + 4 + (int64_t)header.contentLength() - (int64_t)_recvBuffer.length(), (int64_t)0);

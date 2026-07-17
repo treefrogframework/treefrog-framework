@@ -108,12 +108,12 @@ void Pub::publish(const QByteArray &binary, const QObject *sender)
 
 TPublisher *TPublisher::instance()
 {
-    static TPublisher *globalInstance = []() {
-        auto *pub = new TPublisher();
-        connect(TSystemBus::instance(), SIGNAL(readyReceive()), pub, SLOT(receiveSystemBus()));
+    static std::unique_ptr<TPublisher> globalInstance = []() {
+        std::unique_ptr<TPublisher> pub {new TPublisher};
+        connect(TSystemBus::instance(), SIGNAL(readyReceive()), pub.get(), SLOT(receiveSystemBus()));
         return pub;
     }();
-    return globalInstance;
+    return globalInstance.get();
 }
 
 
@@ -124,7 +124,7 @@ TPublisher::TPublisher()
 
 void TPublisher::subscribe(const QString &topic, bool local, TAbstractWebSocket *socket)
 {
-    tSystemDebug("TPublisher::subscribe: {}", qUtf8Printable(topic));
+    tSystemDebug("TPublisher::subscribe: {}", topic);
     QMutexLocker locker(&mutex);
 
     Pub *pub = get(topic);
@@ -138,7 +138,7 @@ void TPublisher::subscribe(const QString &topic, bool local, TAbstractWebSocket 
 
 void TPublisher::unsubscribe(const QString &topic, TAbstractWebSocket *socket)
 {
-    tSystemDebug("TPublisher::unsubscribe: {}", qUtf8Printable(topic));
+    tSystemDebug("TPublisher::unsubscribe: {}", topic);
     QMutexLocker locker(&mutex);
 
     Pub *pub = get(topic);
@@ -162,7 +162,7 @@ void TPublisher::unsubscribeFromAll(TAbstractWebSocket *socket)
         pub->unsubscribe(castToObject(socket));
 
         if (pub->subscriberCounter() == 0) {
-            tSystemDebug("release topic: {}", qUtf8Printable(it.key()));
+            tSystemDebug("release topic: {}", it.key());
             it.remove();
             delete pub;
         }
@@ -177,15 +177,23 @@ QObject *TPublisher::castToObject(TAbstractWebSocket *socket)
     QObject *obj = nullptr;
 
     switch (Tf::app()->multiProcessingModule()) {
-    case TWebApplication::Thread:
+    case TWebApplication::MultiProcessingModule::Thread:
         obj = dynamic_cast<TWebSocket *>(socket);
         break;
 
-    case TWebApplication::Epoll:
+    case TWebApplication::MultiProcessingModule::Epoll:
 #ifdef Q_OS_LINUX
         obj = dynamic_cast<TEpollWebSocket *>(socket);
 #else
         tFatal("Unsupported MPM: epoll");
+#endif
+        break;
+
+    case TWebApplication::MultiProcessingModule::Uring:
+#ifdef Q_OS_LINUX
+        tFatal("TODO TODO TODO");
+#else
+        tFatal("Unsupported MPM: uring");
 #endif
         break;
 
@@ -266,7 +274,7 @@ Pub *TPublisher::create(const QString &topic)
     auto *pub = new Pub(topic);
     pub->moveToThread(Tf::app()->thread());
     pubobj.insert(topic, pub);
-    tSystemDebug("create topic: {}", qUtf8Printable(topic));
+    tSystemDebug("create topic: {}", topic);
     return pub;
 }
 
@@ -282,6 +290,6 @@ void TPublisher::release(const QString &topic)
     Pub *pub = pubobj.take(topic);
     if (pub) {
         delete pub;
-        tSystemDebug("release topic: {}  (total topics:{})", qUtf8Printable(topic), (qint64)pubobj.count());
+        tSystemDebug("release topic: {}  (total topics:{})", topic, (qint64)pubobj.count());
     }
 }

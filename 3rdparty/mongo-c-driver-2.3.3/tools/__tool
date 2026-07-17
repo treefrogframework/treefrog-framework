@@ -1,0 +1,418 @@
+#!/usr/bin/env sh
+
+# shellcheck disable=SC3043,SC1111
+
+true <<EOF
+    This script is intended for use with preparing a container environment, providing
+    a pile of common utilities that are useful for environment setup and management.
+
+    Basic usage:
+
+        __tool <subcommand> [args...]
+
+    where "<subcommand>" is any top-level function in this file.
+
+    The special '__init' subcommand installs several system-wide aliases for
+    common subcommands that are available in this file.
+
+    Running __init or __alias requires permission to install files into '/usr/local'.
+    Other commands, except for package management ones, do not require any special
+    permissions.
+EOF
+
+set -eu
+
+__init() {
+    __alias __alias        __tool __alias
+    __alias __bool         __tool __bool
+    __alias __boolstr      __tool __boolstr
+    __alias __can_install  __tool __can_install
+    __alias __do           __tool __do
+    __alias __download     __tool __download
+    __alias __fail         __tool __fail
+    __alias __have_command __tool __have_command
+    __alias __install      __tool __install
+    __alias __purpose      __tool __purpose
+    __alias __silently     __tool __silently
+    __alias __str          __tool __str
+}
+
+# ? __fail <f-string> [args...]
+#   This formats the given arguments using shell `printf` and writes the message
+#   to stderr, then immediately returns 1.
+__fail() {
+    # shellcheck disable=SC2059
+    printf "$@" 1>&2
+    printf "\n" 1>&2
+    return 1
+}
+
+# ? __alias <name> [command...]
+#   This subcommand will generate a system-wide persistent subcommand alias by
+#   the name `<name>`, installed in `/usr/local/bin`. The generated alias will
+#   execute the given `[command...]`. Any arguments passed to the generated alias
+#   command will be forwarded on to the underlying command cleanly.
+#
+#   No special quoting should be used for `command`.
+__alias() {
+    command='' name="$1"
+    shift
+    # Append each argument to the command with proper quoting
+    for x in "$@"; do
+        x=$(__quote "$x") || return
+        command="$command$x "
+    done
+    command="$command\"\$@\""
+    filename="/usr/local/bin/$name"
+
+    echo "#!/usr/bin/env sh" > "$filename" || return
+    echo "$command" >> "$filename" || return
+    chmod a+x "$filename" || return
+    echo "Created command alias '$filename' of [$command]" 1>&2 || return
+}
+
+# ? __bool <b>
+#   Evaluate a string `<b>` as a boolean, returning zero if it is truthy. This
+#   follows the same truthy-ness rules as CMake, and is case-insensitive.
+__bool() {
+    # Normalize the case of the passed argument
+    bool=$(echo "${1-}" | __str upper)
+    case "$bool" in
+        0|OFF|NO|FALSE|N|IGNORE|NOTFOUND|""|*-NOTFOUND)
+            return 1;;
+        *)
+            return 0;;
+    esac
+}
+
+# ? __boolstr <b>
+#   As with `__bool`, but instead of returning 0/1, it will print the word `true`
+#   or `false` to stdout, and always returns 0
+__boolstr() {
+    if __bool "$@"; then
+        printf "true"
+    else
+        printf "false"
+    fi
+}
+
+# ? __have_command <cmd>
+#   Test whether the command `<cmd>` can be executed by the shell, regardless of
+#   the underlying command type. Returns 0 if-and-only-if the command can be executed.
+__have_command() {
+    __silently type "$1"
+}
+
+# ? __do <message> [command...]
+#   Print `<message>`, and execute `command` silently, only printing its output
+#   if it exits non-zero.
+__do() {
+    printf '%s\n' "$1"
+    shift
+    local output
+    output="$("$@")"
+    rc=$?
+    if [ $rc != 0 ]; then
+        printf %s "$output"
+        return $rc
+    fi
+}
+
+# ? __download --from=<url> --to=<filepath> --hash=<hashspec>
+#   Download a file from the given `<url>` using Curl, saving to the filepath named by `<filepath>.
+#   If `<hashspec>` is the literal word "unchecked", then no hash verification will take place,
+#   otherwise `<hashspec>` should be in the form of `<program>=<expect-digest>`, and the __download
+#   tool will invoke `<program>` to calculate the hash digest, and compares the resulting hash to
+#   `<expect-digest>`. If the hash does not match, the download operation fails.
+#
+#   All arguments are required and must be specified in the `--foo=bar` format
+__download() {
+  # Split out the named arguments
+  local from='' to_file='' hash_arg='' hash_prog='' hash_expect='[placeholder]'
+  for arg in "$@"; do
+    case $arg in
+    --from=*) from=${arg#*=};;
+    --to=*) to_file=${arg#*=};;
+    --hash=*)
+      hash_arg="${arg#*=}"
+      hash_prog=${hash_arg%%=*}
+      hash_expect=${hash_arg#*=}
+      ;;
+    *)
+      __fail "Unkown __download argument: “%s”" "$arg" || return;;
+    esac
+  done
+
+  # Check required arguments
+  test "$from" || __fail "__download expects a --from=... argument" || return
+  test "$to_file" || __fail "__download requires a --to=... argument" || return
+  test "$hash_arg" || __fail "__download expects a --hash=<algo>=<digest> argument" || return
+
+  # We save to a temporary file while checking its hash
+  local tmp="$to_file.tmp"
+  # Create the destination directory for the file
+  local pardir
+  pardir="$(dirname "$tmp")" || return
+  mkdir -p "$pardir" || return
+
+  # Do the download now
+  if __have_command curl; then
+    curl --location --silent --fail --show-error --output "$tmp" "$from" || return
+  elif __have_command wget; then
+    wget --quiet --output-document="$tmp" "$from" || return
+  else
+    __fail "We require either Curl or Wget to be available to use __download" || return
+  fi
+
+  # If the hash argument was literal "unchecked", then we don't check the hash
+  if test "$hash_arg" != 'unchecked'; then
+    # Grab the actual hash by invoking the algorithm program:
+    local hash_actual
+    hash_actual=$("$hash_prog" "$tmp")
+    # Trim content to only the actual part that we want
+    hash_actual=${hash_actual%% *}
+
+    # Case-insensitive compare with the digest that the caller provided
+    if ! __str test "$hash_expect" -ieq "$hash_actual"; then
+      __fail "Downloaded file hash in an incorrect hash. Expected “%s”, but got “%s” (used %s)" \
+        "$hash_expect" "$hash_actual" "$hash_prog" || return
+    fi
+  fi
+
+  # Remove any possible destination file to overwrite it
+  rm -f -- "$to_file" || return
+  # Move the temporary into its final place
+  mv -- "$tmp" "$to_file" || return
+}
+
+# ? __install [pkgs...]
+#   Installs zero or more named packages using the platform's package manager.
+#   This script "just does the right thing" to install a package as a single step,
+#   primarily to improve caching and reliability in a container image build, as a bare
+#   "pkg-tool install" might be insufficient or subtly broken, and we only really
+#   care about installing a list of packages
+__install() {
+    if test $# = 0; then
+      return 0
+    fi
+    if test -f /etc/debian_version ; then
+        # We *must* do a repo update as part of the install step in a single cache
+        # layer, as a cached apt-get update can become stale and prevent a later
+        # apt-get install from working properly
+        apt-get -y update || return
+        # DEBIAN_FRONTEND suppresses all interactivity. For some reason some
+        # packages like to prompt as part of their config, even if we're not on
+        # a TTY.
+        test $# = 0 || env DEBIAN_FRONTEND=noninteractive \
+            apt-get -y install -- "$@" || return
+    elif test -f /etc/redhat-release || grep 'ID="amzn"' /etc/os-release >/dev/null 1>&2; then
+        # Install using dnf. This has been the preferred package manager command since
+        # RHEL 8, and has somewhat better behavior that Yum. If we want to support older
+        # systems, this block will need to be updated to detect Yum if dnf is unavailable.
+        test $# = 0 || dnf install -y "$@" || return
+    elif test -f /etc/SuSE-brand \
+        || (test -f /etc/os-release && grep "opensuse" /etc/os-release); then
+        test $# = 0 || zypper --non-interactive install "$@" || return
+    elif test -f /etc/arch-release; then
+        test $# = 0 || pacman --sync --refresh --sysupgrade --quiet --noconfirm -- "$@" || return
+    elif test -f /etc/alpine-release; then
+        test $# = 0 || apk add -- "$@" || return
+    else
+        echo "$0: We don't know how to manage packages on this system" 1>&2
+        return 1
+    fi
+}
+
+# ? __can_install [pkgs...]
+#   Test whether it is possible to install all of the given packages with the system package manager
+__can_install() {
+    # Refresh local package databases
+    if test -f /etc/debian_version; then
+        __silently apt-get -y update
+    elif test -f /etc/alpine-release; then
+        __silently apk update
+    elif test -f /etc/arch-release; then
+        __silently pacman --sync --refresh --quiet --noconfirm || :
+    fi
+    # If more than one package, test each one individually:
+    if test $# -ne 1; then
+        for pkg in "$@"; do
+            __can_install_1 "$pkg" || return
+        done
+        return 0
+    fi
+    __can_install_1 "$1"
+}
+
+__can_install_1() {
+    local package="$1"
+    # Package checks:
+    if test -f /etc/debian_version; then
+        __silently apt-cache show -- "$package"
+        return
+    elif test -f /etc/redhat-release; then
+        # "Yum" may be an alias for dnf, but this still works:
+        __silently yum info "$package"
+        return
+    elif test -f /etc/arch-release; then
+        __silently pacman --sync --info -- "$package"
+        return
+    elif test -f /etc/alpine-release; then
+        __silently apk info -- "$package"
+        return
+    elif __have_command zypper; then
+        __silently zypper info -- "$package"
+        return
+    else
+        echo "$0: We don't know how to manage packages on this system" 1>&2
+        return 1
+    fi
+}
+
+# ? __silently [command...]
+#   Execute the given shell command, but do it silently, supressing all output no
+#   matter what.
+__silently() {
+    "$@" > /dev/null 2>&1
+}
+
+__STR_HELP='Usage:
+  __str {lower,upper}
+  __str test
+
+Commands:
+  lower, upper
+    Convert input (stdin) to all-lowercase or all-uppercase, respectively
+
+  test <str1> (-ieq|-ine|-contains|-matches) <str2>
+    Like "test", but with additional string comparisons:
+      -ieq • case-insensitive equal
+      -ine • case-insensitive not-equal
+      -contains • Check if <str1> contains <str2>
+      -matches • Check if <str1> matches pattern <str2> (A grep -E pattern)
+'
+__str() {
+  local _Command="$1"
+  local _CommandIdent
+  _CommandIdent="$(echo "__str__$_Command" | sed '
+    s/-/_/g
+    s/\./__/g
+  ')"
+  shift
+  "$_CommandIdent" "$@"
+}
+
+__str__upper() {
+  __justStdin upper __upper "$@"
+}
+__upper() {
+  tr '[:lower:]' '[:upper:]'
+}
+
+__str__lower() {
+  __justStdin lower __lower "$@"
+}
+__lower() {
+  tr '[:upper:]' '[:lower:]'
+}
+
+__justStdin() {
+  if test $# -gt 2; then
+    __fail "Command '%s' does not take any arguments (write input into stdin)" "$1" || return
+  fi
+  "$2"
+}
+
+__str__help() {
+  printf %s "$__STR_HELP"
+}
+__str____help() {
+  __str help
+}
+__str___h() {
+  __str help
+}
+__str___help() {
+  __str help
+}
+
+__str__test() {
+  test "$#" -eq 3 || fail '“str test” expects three arguments (Got %d: “%s”)' $# "$*" \
+    || return
+  local lhs="$1"
+  local op="$2"
+  local rhs="$3"
+  local norm_lhs norm_rhs;
+  norm_lhs=$(echo "$lhs" | __str lower) || return
+  norm_rhs=$(echo "$rhs" | __str lower) || return
+  case $op in
+    -ieq)
+      test "$norm_lhs" = "$norm_rhs";;
+    -ine)
+      test "$norm_lhs" != "$norm_rhs";;
+    -matches)
+      printf %s "$lhs" | grep -qE -- "$rhs";;
+    -contains)
+      printf %s "$lhs" | grep -qF -- "$rhs";;
+    -*|=*)
+      # Just defer to the underlying test command
+      test "$lhs" "$op" "$rhs"
+  esac
+}
+
+# $ __strsub_inplace <varname> <needle> <repl>
+# Replace each occurrence of <needle> with <repl> within the string variable <varname>
+__strsub_inplace() {
+    test $# -eq 3 || __fail "__strsub_inplace expects three arguments (Got %s)" $# || return
+    local __strsub_varname="$1" __strsub_needle="$2" __strsub_repl="$3"
+    # Read the value of <varname> into __strsub_remaining
+    __readvar __strsub_remaining "$__strsub_varname"
+    # Accumulate into __strsub_acc
+    local __strsub_head __strsub_acc=''
+    while true; do
+        # Grab all content until the next needle:
+        __strsub_head=${__strsub_remaining%%"$__strsub_needle"*}
+        if test "$__strsub_head" = "$__strsub_remaining"; then
+            # Nothing match the needle, so we are done
+            __strsub_acc="$__strsub_acc$__strsub_remaining"
+            break
+        fi
+        # Everything after the needle:
+        __strsub_remaining=${__strsub_remaining#*"$__strsub_needle"}
+        # Accumulate the result:
+        __strsub_acc="$__strsub_acc$__strsub_head$__strsub_repl"
+    done
+    # Read the accumulated string back into the output variable:
+    __readvar "$__strsub_varname" __strsub_acc
+}
+
+_ESCAPES="$(printf '[][ \t\n\r\a*?!\\\$;()\\{\\}'"'"']')"
+__quote() {
+    local __quote_input="$1"
+    # shellcheck disable=SC2295
+    local __quote_tmp="${__quote_input#*$_ESCAPES}" || return
+    if test "$__quote_input" = ""; then
+        # Empty string: Just emit empty quotes
+        printf '""'
+        return
+    elif test "$__quote_tmp" = "$__quote_input"; then
+        # No special chars, so don't quote it:
+        printf %s "$__quote_input"
+        return
+    else
+        # Special chars. Escape any inner quotes, then wrap in quotes
+        __strsub_inplace __quote_input "'" "'\\''"
+        printf "'%s'" "$__quote_input"
+    fi
+}
+
+# Usage: __readvar <dest> <varname>
+# Read the value of the variable named by <varname> into a variable <dest>
+__readvar() {
+    local __readvar_tmp
+    eval "__readvar_tmp=\$(printf %s. \"\${$2}\"); $1=\${__readvar_tmp%.}"
+}
+
+cmd=$1
+shift
+"$cmd" "$@"

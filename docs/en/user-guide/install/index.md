@@ -14,15 +14,13 @@ In case of Ubuntu:
 Install the Qt libraries and dev tools:
 
 ```
- $ sudo apt-get install -y qt5-default qt5-qmake libqt5sql5-mysql libqt5sql5-psql
- libqt5sql5-odbc libqt5sql5-sqlite libqt5core5a libqt5qml5 libqt5xml5 qtbase5-dev
- qtdeclarative5-dev qtbase5-dev-tools gcc g++ make cmake
+ $ sudo apt install -y --no-install-recommends pkg-config qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 gcc g++ clang make cmake
 ```
 
 Now install the DB client libraries:
 
 ```
- $ sudo apt-get install -y libmysqlclient-dev libpq5 libodbc1 libmongoc-dev libbson-dev
+ $ sudo apt-get install -y libmongoc-dev libbson-dev
 ```
 
 ### Installation Instructions

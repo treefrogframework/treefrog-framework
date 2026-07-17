@@ -16,7 +16,7 @@ public:
     THttpSocket(QByteArray &readBuffer, TActionContext *context, QObject *parent = 0);
     virtual ~THttpSocket();
 
-    QList<THttpRequest> read();
+    THttpRequest read();
     bool waitForReadyReadRequest(int msecs = 5000);
     bool canReadRequest() const;
     int64_t write(const THttpHeader *header, QIODevice *body);

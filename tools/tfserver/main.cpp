@@ -8,8 +8,6 @@
 #include "tdispatcher.h"
 #include "thazardptrmanager.h"
 #include "tsystemglobal.h"
-#include <QMap>
-#include <QStringList>
 #include <TActionController>
 #include <TAppSettings>
 #include <TJSLoader>
@@ -18,8 +16,14 @@
 #include <TThreadApplicationServer>
 #include <TUrlRoute>
 #include <TWebApplication>
+#ifdef Q_OS_LINUX
+#include "turingserver.h"
+#endif
+#include <QMap>
+#include <QStringList>
 #include <cstdlib>
 #include <cstdio>
+#include <memory>
 #include <glog/logging.h>
 
 
@@ -53,12 +57,12 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 }
 
 
-#if defined(Q_OS_UNIX) || !defined(TF_NO_DEBUG)
 void writeFailure(const char *data, size_t size)
 {
-    tSystemError("{}", (const char *)QByteArray(data, size).replace('\n', "").data());
+    QByteArray message(data, qsizetype(size));
+    message.replace('\n', "");
+    tSystemError("{}", message.constData());
 }
-#endif
 
 
 QMap<QString, QString> convertArgs(const QStringList &args)
@@ -77,15 +81,15 @@ QMap<QString, QString> convertArgs(const QStringList &args)
     return map;
 }
 
-const QMap<int, QByteArray> methodDef = {
-    {TRoute::Match, QByteArray("match   ")},
-    {TRoute::Get, QByteArray("get     ")},
-    {TRoute::Head, QByteArray("head    ")},
-    {TRoute::Post, QByteArray("post    ")},
-    {TRoute::Options, QByteArray("options ")},
-    {TRoute::Put, QByteArray("put     ")},
-    {TRoute::Delete, QByteArray("delete  ")},
-    {TRoute::Trace, QByteArray("trace   ")},
+const QMap<TRoute::RouteDirective, QByteArray> methodDef = {
+    {TRoute::RouteDirective::Match, QByteArray("match   ")},
+    {TRoute::RouteDirective::Get, QByteArray("get     ")},
+    {TRoute::RouteDirective::Head, QByteArray("head    ")},
+    {TRoute::RouteDirective::Post, QByteArray("post    ")},
+    {TRoute::RouteDirective::Options, QByteArray("options ")},
+    {TRoute::RouteDirective::Put, QByteArray("put     ")},
+    {TRoute::RouteDirective::Delete, QByteArray("delete  ")},
+    {TRoute::RouteDirective::Trace, QByteArray("trace   ")},
 };
 
 
@@ -141,7 +145,7 @@ int showRoutes()
             } else {
                 action = QByteArrayLiteral("(not found)");
             }
-            std::printf("  %s%s  ->  %s\n", methodDef.value(route.method).data(), qUtf8Printable(path), qUtf8Printable(action));
+            std::printf("  %s%s  ->  %s\n", methodDef.value(static_cast<TRoute::RouteDirective>(route.method)).data(), qUtf8Printable(path), qUtf8Printable(action));
         }
         std::printf("\n");
     }
@@ -202,6 +206,10 @@ int main(int argc, char *argv[])
     bool showRoutesOption = args.contains(SHOW_ROUTES_OPTION);
     ushort portNumber = args.value(PORT_OPTION).toUShort();
 
+    // Setup signal handlers for SIGSEGV, SIGILL, SIGFPE, SIGABRT and SIGBUS
+    google::InstallFailureWriter(writeFailure);
+    google::InstallFailureSignalHandler();
+
 #ifdef Q_OS_UNIX
     webapp.watchUnixSignal(SIGTERM);
     if (!debug) {
@@ -211,12 +219,6 @@ int main(int argc, char *argv[])
     if (!debug) {
         webapp.ignoreConsoleSignal();
     }
-#endif
-
-#if defined(Q_OS_UNIX) || !defined(TF_NO_DEBUG)
-    // Setup signal handlers for SIGSEGV, SIGILL, SIGFPE, SIGABRT and SIGBUS
-    google::InstallFailureWriter(writeFailure);
-    google::InstallFailureSignalHandler();
 #endif
 
     // Sets the app locale
@@ -278,19 +280,27 @@ int main(int argc, char *argv[])
     }
 
     switch (webapp.multiProcessingModule()) {
-    case TWebApplication::Thread:
-        server = new TThreadApplicationServer(sock, &webapp);
+    case TWebApplication::MultiProcessingModule::Thread:
+        server = TThreadApplicationServer::instance(sock, &webapp);
 #ifdef Q_OS_LINUX
         TMultiplexingServer::instantiate(0); // For epoll eventloop
 #endif
         break;
 
-    case TWebApplication::Epoll:
+    case TWebApplication::MultiProcessingModule::Epoll:
 #ifdef Q_OS_LINUX
         // Sets a listening socket descriptor
         TMultiplexingServer::instantiate(sock);
         tSystemDebug("Set socket descriptor: {}", sock);
         server = TMultiplexingServer::instance();
+#else
+        tFatal("Unsupported MPM: epoll");
+#endif
+        break;
+
+    case TWebApplication::MultiProcessingModule::Uring:
+#ifdef Q_OS_LINUX
+        server = TUringServer::instance(sock);
 #else
         tFatal("Unsupported MPM: epoll");
 #endif
@@ -310,22 +320,10 @@ int main(int argc, char *argv[])
     // Initialize cache
     webapp.initializeCache();
 
-    QObject::connect(&webapp, &QCoreApplication::aboutToQuit, [=]() { server->stop(); });
+    QObject::connect(&webapp, &QCoreApplication::aboutToQuit, [&]() { server->stop(); });
     ret = webapp.exec();
 
 finish:
-    switch (webapp.multiProcessingModule()) {
-    case TWebApplication::Thread:
-        delete server;
-        break;
-
-    case TWebApplication::Epoll:
-        break;
-
-    default:
-        break;
-    }
-
     // Release loggers
     Tf::releaseAppLoggers();
     Tf::releaseQueryLogger();

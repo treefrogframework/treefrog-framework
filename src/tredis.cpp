@@ -49,13 +49,13 @@ TRedis::TRedis(Tf::KvsEngine engine) :
 TRedisDriver *TRedis::driver()
 {
 #ifdef TF_NO_DEBUG
-    return (TRedisDriver *)_database.driver();
+    return (_database) ? (TRedisDriver *)_database->driver() : nullptr;
 #else
-    if (!_database.driver()) {
+    if (!_database || !_database->driver()) {
         return nullptr;
     }
 
-    TRedisDriver *driver = dynamic_cast<TRedisDriver *>(_database.driver());
+    TRedisDriver *driver = dynamic_cast<TRedisDriver *>(_database->driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }
@@ -69,13 +69,13 @@ TRedisDriver *TRedis::driver()
 const TRedisDriver *TRedis::driver() const
 {
 #ifdef TF_NO_DEBUG
-    return (const TRedisDriver *)_database.driver();
+    return (_database) ? (TRedisDriver *)_database->driver() : nullptr;
 #else
-    if (!_database.driver()) {
+    if (!_database || !_database->driver()) {
         return nullptr;
     }
 
-    const TRedisDriver *driver = dynamic_cast<const TRedisDriver *>(_database.driver());
+    const TRedisDriver *driver = dynamic_cast<const TRedisDriver *>(_database->driver());
     if (!driver) {
         throw RuntimeException("cast error", __FILE__, __LINE__);
     }

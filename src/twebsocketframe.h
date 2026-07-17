@@ -43,7 +43,7 @@ public:
     QByteArray toByteArray() const;
 
 private:
-    enum ProcessingState {
+    enum class ProcessingState {
         Empty = 0,
         HeaderParsed,
         MoreData,
@@ -66,7 +66,7 @@ private:
     uint32_t _maskKey {0};
     uint64_t _payloadLength {0};
     QByteArray _payload;  // unmasked data stored
-    ProcessingState _state {Empty};
+    ProcessingState _state {ProcessingState::Empty};
     bool _valid {false};
 
     friend class TAbstractWebSocket;

@@ -22,12 +22,12 @@ constexpr auto SYSTEMBUS_DOMAIN_PREFIX = "treefrog_systembus_";
 
 TSystemBus *TSystemBus::instance()
 {
-    static TSystemBus *systemBus = []() {
-        auto *bus = new TSystemBus();
+    static std::unique_ptr<TSystemBus> systemBus = []() {
+        std::unique_ptr<TSystemBus> bus { new TSystemBus };
         bus->connect();
         return bus;
     }();
-    return systemBus;
+    return systemBus.get();
 }
 
 

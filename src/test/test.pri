@@ -17,18 +17,18 @@ windows {
     TARGET = $$join(TARGET,,,d)
     LIBS += -L../../debug -ltreefrogd$${TF_VER_MAJ} ../../../3rdparty/glog/build/Debug/glogd.lib dbghelp.lib
   } else {
-    LIBS += -L../../release -ltreefrog$${TF_VER_MAJ}
+    LIBS += -L../../release -ltreefrog$${TF_VER_MAJ} ../../../3rdparty/glog/build/Release/glog.lib dbghelp.lib
   }
   INCLUDEPATH += ../../../3rdparty/glog/build ../../../3rdparty/glog/src
 } else:unix {
   LIBS += -Wl,-rpath,../../ -L../../ -ltreefrog
   exists(../../3rdparty/glog/build/libglog.a) {
     # static link
-    LIBS += ../../../3rdparty/glog/build/libglog.a $$system("pkg-config --libs gflags 2>/dev/null")
+    LIBS += ../../../3rdparty/glog/build/libglog.a
     INCLUDEPATH += ../../../3rdparty/glog/build ../../../3rdparty/glog/src
   } else {
     # shared link '-lglog'
     LIBS += $$system("pkg-config --libs libglog 2>/dev/null")
   }
-  linux-*:LIBS += -lrt $$system("pkg-config --libs libunwind 2>/dev/null")
+  linux-*:LIBS += -lrt -luring $$system("pkg-config --libs libunwind 2>/dev/null")
 }

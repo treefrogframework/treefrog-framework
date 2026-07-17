@@ -13,6 +13,7 @@
 #include <QtSql>
 #include <TSqlObject>
 #include <TSqlQuery>
+#include <TDatabaseContext>
 #include <TSystemGlobal>
 
 const QByteArray LockRevision("lock_revision");
@@ -157,7 +158,7 @@ bool TSqlObject::create()
     values.reserve(255);
 
     ins += QLatin1String("INSERT INTO ");
-    ins += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database.driver());
+    ins += TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database.sqlDatabase().driver());
     ins += QLatin1String(" (");
 
     int autoidx = metaObject()->propertyOffset() + autoValueIndex();
@@ -167,9 +168,9 @@ bool TSqlObject::create()
         QVariant val = QObject::property(propName);
 
         if (i != autoidx) {
-            ins += TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, database.driver());
+            ins += TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, database.sqlDatabase().driver());
             ins += QLatin1Char(',');
-            values += TSqlQuery::formatValue(val, metaProp.metaType(), database);
+            values += TSqlQuery::formatValue(val, metaProp.metaType(), database.sqlDatabase());
             values += QLatin1Char(',');
         }
     }
@@ -180,7 +181,7 @@ bool TSqlObject::create()
     ins += values;
     ins += QLatin1Char(')');
 
-    TSqlQuery query(database);
+    TSqlQuery query(database.sqlDatabase());
     bool ret = query.exec(ins);
     sqlError = query.lastError();
     if (Q_LIKELY(ret)) {
@@ -188,7 +189,7 @@ bool TSqlObject::create()
         if (autoValueIndex() >= 0) {
             QVariant lastid = query.lastInsertId();
 
-            if (!lastid.isValid() && database.driver()->dbmsType() == QSqlDriver::PostgreSQL) {
+            if (!lastid.isValid() && database.sqlDatabase().driver()->dbmsType() == QSqlDriver::PostgreSQL) {
                 // For PostgreSQL without OIDS
                 ret = query.exec(QStringLiteral("SELECT LASTVAL()"));
                 sqlError = query.lastError();
@@ -243,7 +244,7 @@ bool TSqlObject::update()
             if (!ok || oldRevision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                     QString(), QSqlError::UnknownError);
-                Tf::error("Unable to convert the 'revision' property to an int, {}", qUtf8Printable(objectName()));
+                Tf::error("Unable to convert the 'revision' property to an int, {}", objectName());
                 return false;
             }
 
@@ -251,7 +252,7 @@ bool TSqlObject::update()
             revIndex = i;
 
             where.append(QLatin1String(propName));
-            where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(oldRevision, intMetaType, database));
+            where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(oldRevision, intMetaType, database.sqlDatabase()));
             where.append(QLatin1String(" AND "));
         } else {
             // continue
@@ -261,7 +262,7 @@ bool TSqlObject::update()
     QString upd;  // UPDATE Statement
     upd.reserve(512);
     upd.append(QLatin1String("UPDATE "));
-    upd.append(TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database.driver()));
+    upd.append(TSqlQuery::escapeIdentifier(tableName(), QSqlDriver::TableName, database.sqlDatabase().driver()));
     upd.append(QLatin1String(" SET "));
 
     int pkidx = metaObject()->propertyOffset() + primaryKeyIndex();
@@ -270,14 +271,14 @@ bool TSqlObject::update()
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        Tf::error("{}", qUtf8Printable(msg));
+        Tf::error("{}", msg);
         return false;
     }
 
     auto pkType = metaProp.metaType();
     QVariant origpkval = value(pkName);
     where.append(QLatin1String(pkName));
-    where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(origpkval, pkType, database));
+    where.append(QLatin1Char('=')).append(TSqlQuery::formatValue(origpkval, pkType, database.sqlDatabase()));
     // Restore the value of primary key
     QObject::setProperty(pkName, origpkval);
 
@@ -287,9 +288,9 @@ bool TSqlObject::update()
         QVariant newval = QObject::property(propName);
         QVariant recval = QSqlRecord::value(QLatin1String(propName));
         if (i != pkidx && recval.isValid() && recval != newval) {
-            upd.append(TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, database.driver()));
+            upd.append(TSqlQuery::escapeIdentifier(QLatin1String(propName), QSqlDriver::FieldName, database.sqlDatabase().driver()));
             upd.append(QLatin1Char('='));
-            upd.append(TSqlQuery::formatValue(newval, metaProp.metaType(), database));
+            upd.append(TSqlQuery::formatValue(newval, metaProp.metaType(), database.sqlDatabase()));
             upd.append(QLatin1Char(','));
         }
     }
@@ -303,7 +304,7 @@ bool TSqlObject::update()
     syncToSqlRecord();
     upd.append(where);
 
-    TSqlQuery query(database);
+    TSqlQuery query(database.sqlDatabase());
     bool ret = query.exec(upd);
     sqlError = query.lastError();
     if (ret) {
@@ -324,8 +325,7 @@ bool TSqlObject::update()
 */
 bool TSqlObject::save()
 {
-    auto &sqldb = getDatabase();
-    const auto &db = TSqlDatabase::database(sqldb.connectionName());
+    TSqlDatabase &db = getDatabase();
     QString lockrev;
 
     if (!db.isUpsertSupported() || !db.isUpsertEnabled()) {
@@ -374,7 +374,7 @@ bool TSqlObject::save()
         return (isNew()) ? create() : update();
     }
 
-    TSqlQuery query(sqldb);
+    TSqlQuery query(db.sqlDatabase());
     bool ret = query.exec(upst);
     sqlError = query.lastError();
     if (ret) {
@@ -402,7 +402,7 @@ bool TSqlObject::remove()
         return false;
     }
 
-    QSqlDatabase &database = getDatabase();
+    QSqlDatabase &database = getDatabase().sqlDatabase();
     QString del = database.driver()->sqlStatement(QSqlDriver::DeleteStatement, tableName(), *static_cast<QSqlRecord *>(this), false);
     if (del.isEmpty()) {
         sqlError = QSqlError(QLatin1String("Unable to delete row"),
@@ -425,7 +425,7 @@ bool TSqlObject::remove()
             if (!ok || revision <= 0) {
                 sqlError = QSqlError(QLatin1String("Unable to convert the 'revision' property to an int"),
                     QString(), QSqlError::UnknownError);
-                Tf::error("Unable to convert the 'revision' property to an int, {}", qUtf8Printable(objectName()));
+                Tf::error("Unable to convert the 'revision' property to an int, {}", objectName());
                 return false;
             }
 
@@ -443,7 +443,7 @@ bool TSqlObject::remove()
     if (primaryKeyIndex() < 0 || !pkName) {
         QString msg = QString("Primary key not found for table ") + tableName() + QLatin1String(". Create a primary key!");
         sqlError = QSqlError(msg, QString(), QSqlError::StatementError);
-        Tf::error("{}", qUtf8Printable(msg));
+        Tf::error("{}", msg);
         return false;
     }
     del.append(QLatin1String(pkName));
@@ -461,7 +461,7 @@ bool TSqlObject::remove()
                 sqlError = QSqlError(msg, QString(), QSqlError::UnknownError);
                 throw SqlException(msg, __FILE__, __LINE__);
             }
-            Tf::warn("Row was deleted by another transaction, {}", qUtf8Printable(tableName()));
+            Tf::warn("Row was deleted by another transaction, {}", tableName());
         }
         clear();
     }
@@ -524,8 +524,8 @@ void TSqlObject::syncToObject()
 */
 void TSqlObject::syncToSqlRecord()
 {
-    auto &db = getDatabase();
-    QSqlRecord::operator=(db.record(tableName()));
+    TSqlDatabase &db = getDatabase();
+    QSqlRecord::operator=(db.sqlDatabase().record(tableName()));
     const QMetaObject *metaObj = metaObject();
     for (int i = metaObj->propertyOffset(); i < metaObj->propertyCount(); ++i) {
         const char *propName = metaObj->property(i).name();
@@ -539,10 +539,7 @@ void TSqlObject::syncToSqlRecord()
 }
 
 
-QSqlDatabase &TSqlObject::getDatabase()
+TSqlDatabase &TSqlObject::getDatabase()
 {
-    if (!_database.isValid()) {
-        _database = Tf::currentSqlDatabase(databaseId());
-    }
-    return _database;
+    return Tf::currentSqlDatabase(databaseId());
 }

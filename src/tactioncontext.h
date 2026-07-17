@@ -33,13 +33,15 @@ public:
     THttpRequest &httpRequest() override { return *_httpRequest; }
     void flushResponse(TActionController *controller, bool immediate);
     static int keepAliveTimeout();
+    static TActionContext *currentActionContext();
+    static void setCurrentActionContext(TActionContext *context);
 
 protected:
     void execute(THttpRequest &request);
     void release();
     qintptr socketDescriptor() const { return socketDesc; }
-    int64_t writeResponse(int statusCode, THttpResponseHeader &header);
-    int64_t writeResponse(int statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, int64_t length);
+    int64_t writeResponse(Tf::StatusCode statusCode, THttpResponseHeader &header);
+    int64_t writeResponse(Tf::StatusCode statusCode, THttpResponseHeader &header, const QByteArray &contentType, QIODevice *body, int64_t length);
     int64_t writeResponse(THttpResponseHeader &header, QIODevice *body, int64_t length);
 
     virtual int64_t writeResponse(THttpResponseHeader &, QIODevice *) { return 0; }

@@ -34,7 +34,7 @@ void TWebApplication::watchUnixSignal(int sig, bool watch)
             sa.sa_handler = SIG_DFL;
         }
 
-        if (sigaction(sig, &sa, 0) != 0) {
+        if (::sigaction(sig, &sa, 0) != 0) {
             tSystemError("sigaction failed  errno:{}", errno);
         }
     }

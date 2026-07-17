@@ -7,7 +7,7 @@
 
 #include "tfcore_unix.h"
 #include "tfileaiowriter.h"
-#include "tqueue.h"
+#include "tlockqueue.h"
 #include <QQueue>
 #include <QList>
 #include <QMutexLocker>
@@ -25,7 +25,7 @@ public:
     QString fileName;
     int fileDescriptor {0};
 #if 0
-    TQueue<struct aiocb *> syncBuffer;
+    TLockQueue<struct aiocb *> syncBuffer;
 #else
     QQueue<struct aiocb *> syncBuffer;
 #endif

@@ -63,7 +63,7 @@ bool TFileAioLogger::open()
     if (d->fileDescriptor <= 0) {
         d->fileDescriptor = ::open(qUtf8Printable(d->fileName), (O_CREAT | O_WRONLY | O_APPEND | O_CLOEXEC), 0666);
         if (d->fileDescriptor < 0) {
-            tSystemError("file open failed: {}", qUtf8Printable(d->fileName));
+            tSystemError("file open failed: {}", d->fileName);
         }
     }
 

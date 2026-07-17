@@ -7,6 +7,7 @@ QT      += sql network xml qml
 # C++ Standards Support
 CONFIG += c++20
 windows:QMAKE_CXXFLAGS += /Zc:__cplusplus /std:c++20 /permissive-
+macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 14.0
 
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES += TF_MAKEDLL
@@ -36,7 +37,7 @@ INSTALLS += target
 
 windows {
   INCLUDEPATH += ../3rdparty/lz4/lib
-  LIBS += ../3rdparty/lz4/build/cmake/build/Release/lz4_static.lib
+  LIBS += ../3rdparty/lz4/bin/Release/lz4_static.lib
   header.files = $$HEADER_FILES $$HEADER_CLASSES
   header.files += $$MONGODB_FILES $$MONGODB_CLASSES
   QMAKE_CXXFLAGS += /wd 4819 /wd 4661
@@ -57,7 +58,7 @@ unix {
     CONFIG -= shared
     CONFIG += static
     INCLUDEPATH += ../include ../3rdparty/lz4/lib
-    OBJECTS += ../3rdparty/lz4/lib/liblz4.a
+    OBJECTS += ../3rdparty/lz4/bin/liblz4.a
     QT_WASM_PTHREAD_POOL_SIZE=32
     QT_WASM_INITIAL_MEMORY=1000MB
 
@@ -65,7 +66,7 @@ unix {
     # UNIX
     isEmpty( enable_shared_lz4 ) {
       # Static link
-      LIBS += ../3rdparty/lz4/lib/liblz4.a
+      LIBS += ../3rdparty/lz4/bin/liblz4.a
       INCLUDEPATH += ../include ../3rdparty/lz4/lib
     } else {
       LIBS += $$system("pkg-config --libs liblz4 2>/dev/null")
@@ -349,6 +350,10 @@ HEADERS += tsharedmemorykvs.h
 SOURCES += tsharedmemorykvs.cpp
 HEADERS += tfilesystemlogger.h
 SOURCES += tfilesystemlogger.cpp
+HEADERS += tactioncontextroutine.h
+SOURCES += tactioncontextroutine.cpp
+# HEADERS += tthreadpool.h
+# SOURCES += tthreadpool.cpp
 
 !wasm {
   HEADERS += tsmtpmailer.h
@@ -396,8 +401,16 @@ windows {
 linux-* {
   HEADERS += tmultiplexingserver.h
   SOURCES += tmultiplexingserver_linux.cpp
+  HEADERS += turingserver.h
+  SOURCES += turingserver_linux.cpp
+  HEADERS += turingcoroutine.h
+  SOURCES += turingcoroutine_linux.cpp
   HEADERS += tactionworker.h
   SOURCES += tactionworker.cpp
+  HEADERS += tthreadpoolawaiter.h
+  SOURCES += tthreadpoolawaiter.cpp
+#  HEADERS += tactionroutine.h
+#  SOURCES += tactionroutine.cpp
   HEADERS += tepoll.h
   SOURCES += tepoll.cpp
   HEADERS += tepollsocket.h
@@ -444,27 +457,31 @@ freebsd {
 
 windows {
   DEFINES += MONGOC_COMPILATION BSON_COMPILATION
-  INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
-  LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc-static-1.0.lib ../3rdparty/mongo-driver/src/libbson/Release/bson-static-1.0.lib
+  INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libbson/src
+  LIBS += ../3rdparty/mongo-driver/src/libmongoc/Release/mongoc2.lib ../3rdparty/mongo-driver/src/libbson/Release/bson2.lib
   LIBS += -lws2_32 -lpsapi -lAdvapi32
 }
 
 unix {
   wasm {
     # WASM
-    INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
-    OBJECTS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
+    INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libbson/src
+    OBJECTS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc2.a ../3rdparty/mongo-driver/src/libbson/libbson2.a
 
   } else {
     # UNIX
     isEmpty( enable_shared_mongoc ) {
       # Static link
-      INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src/mongoc ../3rdparty/mongo-driver/src/libbson/src
-      LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc-static-1.0.a ../3rdparty/mongo-driver/src/libbson/libbson-static-1.0.a
+      INCLUDEPATH += ../3rdparty/mongo-driver/src/libmongoc/src ../3rdparty/mongo-driver/src/libbson/src
+      LIBS += ../3rdparty/mongo-driver/src/libmongoc/libmongoc2.a ../3rdparty/mongo-driver/src/libbson/libbson2.a
     } else {
       # Shared link
+      LIBS += $$system("pkg-config --libs mongoc2 2>/dev/null")
+      QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I mongoc2 2>/dev/null")
       LIBS += $$system("pkg-config --libs libmongoc-1.0 2>/dev/null")
       QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I libmongoc-1.0 2>/dev/null")
+      LIBS += $$system("pkg-config --libs  openblas 2>/dev/null")
+      QMAKE_CXXFLAGS += $$system("pkg-config --cflags-only-I  openblas 2>/dev/null")
     }
   }
 }

@@ -36,7 +36,7 @@ bool TRedisDriver::open(const QString &, const QString &, const QString &, const
 
     _host = (host.isEmpty()) ? "localhost" : host;
     _port = (port == 0) ? DEFAULT_PORT : port;
-    tSystemDebug("Redis open host:{}  port:{}", qUtf8Printable(_host), _port);
+    tSystemDebug("Redis open host:{}  port:{}", _host, _port);
 
     _client = new TTcpSocket;
     _client->setSocketOption(IPPROTO_TCP, TCP_NODELAY, 1);

@@ -100,7 +100,7 @@ private:
     TSharedMemoryKvsDriver *driver();
     const TSharedMemoryKvsDriver *driver() const;
 
-    TKvsDatabase _database;
+    TKvsDatabase::Handle &_database;
     hash_header_t *_h {nullptr};
 
     friend class TCacheSharedMemoryStore;

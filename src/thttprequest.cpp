@@ -18,15 +18,15 @@
 
 
 const QMap<QString, Tf::HttpMethod> methodHash = {
-    {"get", Tf::Get},
-    {"head", Tf::Head},
-    {"post", Tf::Post},
-    {"options", Tf::Options},
-    {"put", Tf::Put},
-    {"delete", Tf::Delete},
-    {"trace", Tf::Trace},
-    {"connect", Tf::Connect},
-    {"patch", Tf::Patch},
+    {"get", Tf::HttpMethod::Get},
+    {"head", Tf::HttpMethod::Head},
+    {"post", Tf::HttpMethod::Post},
+    {"options", Tf::HttpMethod::Options},
+    {"put", Tf::HttpMethod::Put},
+    {"delete", Tf::HttpMethod::Delete},
+    {"trace", Tf::HttpMethod::Trace},
+    {"connect", Tf::HttpMethod::Connect},
+    {"patch", Tf::HttpMethod::Patch},
 };
 
 
@@ -42,17 +42,16 @@ static bool httpMethodOverride()
   \brief The THttpRequestData class is for shared THttpRequest data objects.
 */
 
-THttpRequestData::THttpRequestData(const THttpRequestData &other) :
-    QSharedData(other),
-    header(other.header),
-    bodyArray(other.bodyArray),
-    queryItems(other.queryItems),
-    formItems(other.formItems),
-    multipartFormData(other.multipartFormData),
-    jsonData(other.jsonData),
-    clientAddress(other.clientAddress)
-{
-}
+// THttpRequestData::THttpRequestData(const THttpRequestData &other) :
+//     header(other.header),
+//     bodyArray(other.bodyArray),
+//     queryItems(other.queryItems),
+//     formItems(other.formItems),
+//     multipartFormData(other.multipartFormData),
+//     jsonData(other.jsonData),
+//     clientAddress(other.clientAddress)
+// {
+// }
 
 /*!
   \class THttpRequest
@@ -64,29 +63,21 @@ THttpRequestData::THttpRequestData(const THttpRequestData &other) :
   Constructor.
 */
 THttpRequest::THttpRequest() :
-    d(new THttpRequestData)
-{
-}
-
-/*!
-  \fn THttpRequest::THttpRequest(const THttpRequest &other)
-  Copy constructor.
-*/
-THttpRequest::THttpRequest(const THttpRequest &other) :
-    d(other.d)
-{
-}
+    d(std::make_unique<THttpRequestData>())
+{}
 
 /*!
   Constructor with the header \a header and the body \a body.
 */
 THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress, TActionContext *context) :
-    d(new THttpRequestData)
+    d(std::make_unique<THttpRequestData>())
 {
     d->header = header;
     d->clientAddress = clientAddress;
-    d->bodyArray = body;
-    parseBody(d->bodyArray, d->header, context);
+    if (!body.isEmpty()) {
+        bodyArray() = body;
+    }
+    parseBody(body, d->header, context);
 }
 
 /*!
@@ -94,47 +85,21 @@ THttpRequest::THttpRequest(const THttpRequestHeader &header, const QByteArray &b
   reading the file \a filePath.
 */
 THttpRequest::THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context) :
-    d(new THttpRequestData)
+    d(std::make_unique<THttpRequestData>())
 {
-    d->header = THttpRequestHeader(header);
+    d->header = THttpRequestHeader{header};
     d->clientAddress = clientAddress;
 
     if (d->header.contentType().trimmed().toLower().startsWith(QByteArrayLiteral("multipart/form-data"))) {
-        d->multipartFormData = TMultipartFormData(filePath, boundary(), context);
-        d->formItems = d->multipartFormData.postParameters;
+        multipartFormData() = TMultipartFormData(filePath, boundary(), context);
+        formItemList() = multipartFormData().postParameters;
     } else {
         QFile file(filePath);
         if (file.open(QIODevice::ReadOnly)) {
-            d->bodyArray = file.readAll();
-            parseBody(d->bodyArray, d->header, context);
+            bodyArray() = file.readAll();
+            parseBody(bodyArray(), d->header, context);
         }
     }
-}
-
-/*!
-  Destructor.
-*/
-THttpRequest::~THttpRequest()
-{
-    if (bodyDevice) {
-        bodyDevice->close();
-        delete bodyDevice;
-    }
-}
-
-/*!
-  Assignment operator.
-*/
-THttpRequest &THttpRequest::operator=(const THttpRequest &other)
-{
-    if (bodyDevice) {
-        bodyDevice->close();
-        delete bodyDevice;
-        bodyDevice = nullptr;
-    }
-
-    d = other.d;
-    return *this;
 }
 
 /*!
@@ -146,15 +111,15 @@ THttpRequest &THttpRequest::operator=(const THttpRequest &other)
  */
 Tf::HttpMethod THttpRequest::method() const
 {
-    Tf::HttpMethod method = Tf::Invalid;
+    Tf::HttpMethod method = Tf::HttpMethod::Invalid;
     if (httpMethodOverride()) {
         method = queryItemMethod();  // query parameter named '_method'
-        if (method == Tf::Invalid) {
+        if (method == Tf::HttpMethod::Invalid) {
             method = getHttpMethodOverride();  // X-HTTP-* methods override
         }
     }
 
-    if (method == Tf::Invalid) {
+    if (method == Tf::HttpMethod::Invalid) {
         method = realMethod();
     }
     return method;
@@ -167,7 +132,7 @@ Tf::HttpMethod THttpRequest::method() const
 Tf::HttpMethod THttpRequest::realMethod() const
 {
     QString s = d->header.method().toLower();
-    return methodHash.value(s, Tf::Invalid);
+    return methodHash.value(s, Tf::HttpMethod::Invalid);
 }
 
 /*!
@@ -177,19 +142,19 @@ Tf::HttpMethod THttpRequest::getHttpMethodOverride() const
 {
     Tf::HttpMethod method;
     QString str = d->header.rawHeader(QByteArrayLiteral("X-HTTP-Method-Override")).toLower();
-    method = methodHash.value(str, Tf::Invalid);
-    if (method != Tf::Invalid) {
+    method = methodHash.value(str, Tf::HttpMethod::Invalid);
+    if (method != Tf::HttpMethod::Invalid) {
         return method;
     }
 
     str = d->header.rawHeader(QByteArrayLiteral("X-HTTP-Method")).toLower();
-    method = methodHash.value(str, Tf::Invalid);
-    if (method != Tf::Invalid) {
+    if (method != Tf::HttpMethod::Invalid) {
+        method = methodHash.value(str, Tf::HttpMethod::Invalid);
         return method;
     }
 
     str = d->header.rawHeader(QByteArrayLiteral("X-METHOD-OVERRIDE")).toLower();
-    method = methodHash.value(str, Tf::Invalid);
+    method = methodHash.value(str, Tf::HttpMethod::Invalid);
     return method;
 }
 
@@ -200,7 +165,7 @@ Tf::HttpMethod THttpRequest::getHttpMethodOverride() const
 Tf::HttpMethod THttpRequest::queryItemMethod() const
 {
     QString queryMethod = queryItemValue(QStringLiteral("_method"));
-    return methodHash.value(queryMethod, Tf::Invalid);
+    return methodHash.value(queryMethod, Tf::HttpMethod::Invalid);
 }
 
 
@@ -233,7 +198,7 @@ bool THttpRequest::hasItem(const QString &name, const QList<QPair<QString, QStri
  */
 bool THttpRequest::hasQueryItem(const QString &name) const
 {
-    return hasItem(name, d->queryItems);
+    return hasItem(name, queryItemList());
 }
 
 /*!
@@ -263,7 +228,7 @@ QString THttpRequest::itemValue(const QString &name, const QString &defaultValue
  */
 QString THttpRequest::queryItemValue(const QString &name, const QString &defaultValue) const
 {
-    return itemValue(name, defaultValue, d->queryItems);
+    return itemValue(name, defaultValue, queryItemList());
 }
 
 
@@ -285,7 +250,7 @@ QStringList THttpRequest::allItemValues(const QString &name, const QList<QPair<Q
  */
 QStringList THttpRequest::allQueryItemValues(const QString &name) const
 {
-    return allItemValues(name, d->queryItems);
+    return allItemValues(name, queryItemList());
 }
 
 /*!
@@ -308,7 +273,7 @@ QStringList THttpRequest::queryItemList(const QString &key) const
  */
 QVariantList THttpRequest::queryItemVariantList(const QString &key) const
 {
-    return itemVariantList(key, d->queryItems);
+    return itemVariantList(key, queryItemList());
 }
 
 /*!
@@ -317,7 +282,7 @@ QVariantList THttpRequest::queryItemVariantList(const QString &key) const
  */
 QVariantMap THttpRequest::queryItems(const QString &key) const
 {
-    return itemMap(key, d->queryItems);
+    return itemMap(key, queryItemList());
 }
 
 
@@ -336,7 +301,7 @@ QVariantMap THttpRequest::itemMap(const QList<QPair<QString, QString>> &items)
  */
 QVariantMap THttpRequest::queryItems() const
 {
-    return itemMap(d->queryItems);
+    return itemMap(queryItemList());
 }
 
 /*!
@@ -352,7 +317,7 @@ QVariantMap THttpRequest::queryItems() const
  */
 bool THttpRequest::hasFormItem(const QString &name) const
 {
-    return hasItem(name, d->formItems);
+    return hasItem(name, formItemList());
 }
 
 /*!
@@ -371,7 +336,7 @@ QString THttpRequest::formItemValue(const QString &name) const
  */
 QString THttpRequest::formItemValue(const QString &name, const QString &defaultValue) const
 {
-    return itemValue(name, defaultValue, d->formItems);
+    return itemValue(name, defaultValue, formItemList());
 }
 
 /*!
@@ -381,7 +346,7 @@ QString THttpRequest::formItemValue(const QString &name, const QString &defaultV
  */
 QStringList THttpRequest::allFormItemValues(const QString &name) const
 {
-    return allItemValues(name, d->formItems);
+    return allItemValues(name, formItemList());
 }
 
 /*!
@@ -425,7 +390,7 @@ QVariantList THttpRequest::itemVariantList(const QString &key, const QList<QPair
  */
 QVariantList THttpRequest::formItemVariantList(const QString &key) const
 {
-    return itemVariantList(key, d->formItems);
+    return itemVariantList(key, formItemList());
 }
 
 
@@ -473,7 +438,7 @@ QVariantMap THttpRequest::itemMap(const QString &key, const QList<QPair<QString,
  */
 QVariantMap THttpRequest::formItems(const QString &key) const
 {
-    return itemMap(key, d->formItems);
+    return itemMap(key, formItemList());
 }
 
 /*!
@@ -481,44 +446,44 @@ QVariantMap THttpRequest::formItems(const QString &key) const
 */
 QVariantMap THttpRequest::formItems() const
 {
-    return itemMap(d->formItems);
+    return itemMap(formItemList());
 }
 
 
 void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &header, TActionContext *context)
 {
     switch (method()) {
-    case Tf::Post:
-    case Tf::Put:
-    case Tf::Patch: {
+    case Tf::HttpMethod::Post:
+    case Tf::HttpMethod::Put:
+    case Tf::HttpMethod::Patch: {
         QString ctype = QString::fromLatin1(header.contentType().trimmed());
         if (ctype.startsWith(QLatin1String("application/x-www-form-urlencoded"), Qt::CaseInsensitive)) {
             if (!body.isEmpty()) {
-                d->formItems = THttpUtility::fromFormUrlEncoded(body);
+                formItemList() = THttpUtility::fromFormUrlEncoded(body);
             }
         } else if (ctype.startsWith(QLatin1String("application/json"), Qt::CaseInsensitive)) {
             QJsonParseError error;
-            d->jsonData = QJsonDocument::fromJson(body, &error);
+            jsonData() = QJsonDocument::fromJson(body, &error);
             if (error.error != QJsonParseError::NoError) {
-                tSystemWarn("Json data: {}\n error: {}\n at: {}", body.data(), qUtf8Printable(error.errorString()),
+                tSystemWarn("Json data: {}\n error: {}\n at: {}", body.data(), error.errorString(),
                     error.offset);
             }
         } else if (ctype.startsWith(QLatin1String("multipart/form-data"), Qt::CaseInsensitive)) {
             // multipart/form-data
-            d->multipartFormData = TMultipartFormData(body, boundary(), context);
-            d->formItems = d->multipartFormData.postParameters;
+            multipartFormData() = TMultipartFormData(body, boundary(), context);
+            formItemList() = multipartFormData().postParameters;
         } else {
-            tSystemWarn("unsupported content-type: {}", qUtf8Printable(ctype));
+            tSystemWarn("unsupported content-type: {}", ctype);
         }
     } /* FALLTHRU */
 
-    case Tf::Get: {
+    case Tf::HttpMethod::Get: {
         // query parameter
         QByteArrayList data = header.path().split('?');
         QString query = QString::fromLatin1(data.value(1));
 
         if (!query.isEmpty()) {
-            d->queryItems = THttpRequest::fromQuery(query);
+            queryItemList() = THttpRequest::fromQuery(query);
         }
         break;
     }
@@ -583,29 +548,30 @@ QList<TCookie> THttpRequest::cookies() const
  */
 QVariantMap THttpRequest::allParameters() const
 {
-    auto params = d->queryItems;
-    params << d->formItems;
+    auto params = queryItemList();
+    params << formItemList();
     return itemMap(params);
 }
 
 
-QList<THttpRequest> THttpRequest::generate(QByteArray &byteArray, const QHostAddress &address, TActionContext *context)
+THttpRequest THttpRequest::generate(QByteArray &byteArray, const QHostAddress &address, TActionContext *context)
 {
-    QList<THttpRequest> reqList;
+    THttpRequest request;
     int from = 0;
-    int headidx;
 
-    while ((headidx = byteArray.indexOf(Tf::CRLFCRLF, from)) > 0) {
+    if (int headidx = byteArray.indexOf(Tf::CRLFCRLF, from); headidx > 0) {
         headidx += 4;
         THttpRequestHeader header(byteArray.mid(from));
 
         int contlen = header.contentLength();
         if (contlen <= 0) {
-            reqList << THttpRequest(header, QByteArray(), address, context);
+            request = THttpRequest(header, QByteArray(), address, context);
         } else {
-            reqList << THttpRequest(header, byteArray.mid(headidx, contlen), address, context);
+            request = THttpRequest(header, byteArray.mid(headidx, contlen), address, context);
         }
         from = headidx + contlen;
+    } else {
+        return request;
     }
 
     if (from >= byteArray.length()) {
@@ -613,7 +579,7 @@ QList<THttpRequest> THttpRequest::generate(QByteArray &byteArray, const QHostAdd
     } else {
         byteArray.remove(0, from);
     }
-    return reqList;
+    return request;
 }
 
 /*!
@@ -668,13 +634,102 @@ QHostAddress THttpRequest::originatingClientAddress() const
 QIODevice *THttpRequest::rawBody()
 {
     if (!bodyDevice) {
-        if (!d->multipartFormData.bodyFile.isEmpty()) {
-            bodyDevice = new QFile(d->multipartFormData.bodyFile);
+        if (d->multipartFormData && !multipartFormData().bodyFile.isEmpty()) {
+            auto p = new QFile(multipartFormData().bodyFile);
+            bodyDevice.reset(p);
         } else {
-            bodyDevice = new QBuffer(&d->bodyArray);
+            auto p = new QBuffer(d->bodyArray.get());
+            bodyDevice.reset(p);
         }
     }
-    return bodyDevice;
+    return bodyDevice.get();
+}
+
+
+QJsonDocument &THttpRequest::jsonData()
+{
+    if (!d->jsonData) {
+        d->jsonData.reset(new QJsonDocument{});
+    }
+    return *(d->jsonData);
+}
+
+
+const QJsonDocument &THttpRequest::jsonData() const
+{
+    if (!d->jsonData) {
+        d->jsonData.reset(new QJsonDocument{});
+    }
+    return *(d->jsonData);
+}
+
+
+TMultipartFormData &THttpRequest::multipartFormData()
+{
+    if (!d->multipartFormData) {
+        d->multipartFormData.reset(new TMultipartFormData{});
+    }
+    return *(d->multipartFormData);
+}
+
+
+const QByteArray &THttpRequest::bodyArray() const
+{
+    static const QByteArray dummy;
+
+    if (!d->bodyArray) {
+        return dummy;
+    }
+    return *(d->bodyArray);
+}
+
+
+QByteArray &THttpRequest::bodyArray()
+{
+    if (!d->bodyArray) {
+        d->bodyArray.reset(new QByteArray{});
+    }
+    return *(d->bodyArray);
+}
+
+
+const QList<QPair<QString, QString>> &THttpRequest::queryItemList() const
+{
+    static const QList<QPair<QString, QString>> dummy;
+
+    if (!d->queryItemList) {
+        return dummy;
+    }
+    return *(d->queryItemList);
+}
+
+
+QList<QPair<QString, QString>> &THttpRequest::queryItemList()
+{
+    if (!d->queryItemList) {
+        d->queryItemList.reset(new QList<QPair<QString, QString>>{});
+    }
+    return *(d->queryItemList);
+}
+
+
+const QList<QPair<QString, QString>> &THttpRequest::formItemList() const
+{
+    static const QList<QPair<QString, QString>> dummy;
+
+    if (!d->formItemList) {
+        return dummy;
+    }
+    return *(d->formItemList);
+}
+
+
+QList<QPair<QString, QString>> &THttpRequest::formItemList()
+{
+    if (!d->formItemList) {
+        d->formItemList.reset(new QList<QPair<QString, QString>>{});
+    }
+    return *(d->formItemList);
 }
 
 

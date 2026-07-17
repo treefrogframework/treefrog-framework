@@ -125,7 +125,7 @@ bool FileWriter::write(const QString &data, bool overwrite) const
                     break;
 
                 } else if (c == 'Q' || c == 'q') {
-                    ::_exit(1);
+                    std::exit(1);
                     return false;
 
                 } else if (c == 'D' || c == 'd') {

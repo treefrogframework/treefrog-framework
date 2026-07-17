@@ -25,7 +25,7 @@ TSendBuffer::TSendBuffer(const QByteArray &header, const QFileInfo &file, bool a
     if (file.exists() && file.isFile()) {
         _bodyFile = new QFile(file.absoluteFilePath());
         if (!_bodyFile->open(QIODevice::ReadOnly)) {
-            tSystemWarn("file open failed: {}", qUtf8Printable(file.absoluteFilePath()));
+            tSystemWarn("file open failed: {}", file.absoluteFilePath());
             release();
         }
     }
@@ -38,9 +38,8 @@ TSendBuffer::TSendBuffer(const QByteArray &header) :
 }
 
 
-TSendBuffer::TSendBuffer(int statusCode, const QHostAddress &address, const QByteArray &method)
+TSendBuffer::TSendBuffer(Tf::StatusCode statusCode, const QHostAddress &address, const QByteArray &method)
 {
-    _accesslogger.open();
     _accesslogger.setStatusCode(statusCode);
     _accesslogger.setTimestamp(QDateTime::currentDateTime());
     _accesslogger.setRemoteHost(address.toString().toLatin1());
@@ -71,7 +70,6 @@ void TSendBuffer::release()
         delete _bodyFile;
         _bodyFile = nullptr;
     }
-    _accesslogger.close();
 }
 
 
@@ -95,7 +93,7 @@ void *TSendBuffer::getData(int &size)
     _arrayBuffer.reserve(size);
     size = _bodyFile->read(_arrayBuffer.data(), size);
     if (Q_UNLIKELY(size < 0)) {
-        tSystemError("file read error: {}", qUtf8Printable(_bodyFile->fileName()));
+        tSystemError("file read error: {}", _bodyFile->fileName());
         size = 0;
         release();
         return nullptr;
