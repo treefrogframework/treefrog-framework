@@ -4,7 +4,7 @@
 :: Edit this line to run the batch file for Qt environment.
 ::
 
-:: 10行目、28行目、39行目を編集
+:: 10行目、27行目、28行目、38行目、39行目を編集
 
 
 set VERSION=2.12.0
@@ -25,7 +25,7 @@ set LIB=
 set PATH=C:\WINDOWS\system32;C:\WINDOWS
 
 call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-call :build_msi "%QTBASE%\6.9.1\msvc2022_64\bin\qtenv2.bat"      6.9
+call :build_msi "%QTBASE%\6.11.1\msvc2022_64\bin\qtenv2.bat"      6.11
 
 :: Clear environment variables
 set VCToolsVersion=
@@ -36,7 +36,7 @@ set LIB=
 set PATH=C:\WINDOWS\system32;C:\WINDOWS
 
 call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-call :build_msi "%QTBASE%\6.8.3\msvc2022_64\bin\qtenv2.bat"      6.8
+call :build_msi "%QTBASE%\6.10.3\msvc2022_64\bin\qtenv2.bat"      6.10
 
 call :build_setup treefrog-%VERSION%-msvc_64-setup.exe
 

@@ -105,17 +105,14 @@ if "%VisualStudioVersion%" == "18.0" (
   :: Visual Studio 2026
   set VCVARSOPT=amd64
   set CMAKEOPT=-A x64 -T v145
-  set MSVSVER=2026
 ) else if "%VisualStudioVersion%" == "17.0" (
   :: Visual Studio 2022
   set VCVARSOPT=amd64
   set CMAKEOPT=-A x64 -T v143
-  set MSVSVER=2022
 ) else if "%VisualStudioVersion%" == "16.0" (
   :: Visual Studio 2019
   set VCVARSOPT=amd64
   set CMAKEOPT=-A x64 -T v142
-  set MSVSVER=2019
 ) else (
   echo Use Visual Studio 2026, 2022 or 2019
   pause
@@ -137,7 +134,7 @@ echo set TreeFrog_DIR=%TFDIR%>> %TFENV%
 echo set QMAKESPEC=%QMAKESPEC%>> %TFENV%
 echo set QTENV="%QTENV%">> %TFENV%
 echo set VCVARSBAT="">> %TFENV%
-echo set VSVER=%MSVSVER%>> %TFENV%
+echo set VSVER=18 2022 2019>> %TFENV%
 echo set VSWHERE="%%ProgramFiles(x86)%%\Microsoft Visual Studio\Installer\vswhere.exe">> %TFENV%
 echo;>> %TFENV%
 echo if exist %%QTENV%% call %%QTENV%%>> %TFENV%
@@ -233,9 +230,9 @@ echo %CMAKECMD%
 %CMAKECMD%
 
 if "%DEBUG%" == "yes" (
-  set BUILDCMD=cmake --build build --config Debug -j
+  set BUILDCMD=cmake --build build --config Debug --clean-first -j
 ) else (
-  set BUILDCMD=cmake --build build --config Release -j
+  set BUILDCMD=cmake --build build --config Release --clean-first -j
 )
 echo %BUILDCMD%
 %BUILDCMD% >nul 2>&1
