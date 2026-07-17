@@ -24,7 +24,7 @@ windows {
   LIBS += -Wl,-rpath,../../ -L../../ -ltreefrog
   exists(../../3rdparty/glog/build/libglog.a) {
     # static link
-    LIBS += ../../../3rdparty/glog/build/libglog.a $$system("pkg-config --libs gflags 2>/dev/null")
+    LIBS += ../../../3rdparty/glog/build/libglog.a
     INCLUDEPATH += ../../../3rdparty/glog/build ../../../3rdparty/glog/src
   } else {
     # shared link '-lglog'
