@@ -17,7 +17,7 @@ windows {
     TARGET = $$join(TARGET,,,d)
     LIBS += -L../../debug -ltreefrogd$${TF_VER_MAJ} ../../../3rdparty/glog/build/Debug/glogd.lib dbghelp.lib
   } else {
-    LIBS += -L../../release -ltreefrog$${TF_VER_MAJ}
+    LIBS += -L../../release -ltreefrog$${TF_VER_MAJ} ../../../3rdparty/glog/build/Release/glog.lib dbghelp.lib
   }
   INCLUDEPATH += ../../../3rdparty/glog/build ../../../3rdparty/glog/src
 } else:unix {
