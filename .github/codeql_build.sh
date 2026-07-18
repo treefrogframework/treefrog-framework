@@ -1,8 +1,8 @@
 #!/bin/bash
-# Build script for CodeQL on Ubuntu 22.04
+# Build script for CodeQL on Ubuntu 26.04
 
-sudo apt-get update -qq
-sudo apt-get install -y --no-install-recommends qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev gcc g++ clang make cmake
+sudo apt update -qq
+sudo apt install -y --no-install-recommends qmake6 qt6-base-dev qt6-base-dev-tools qt6-tools-dev-tools qt6-declarative-dev libqt6sql6-mysql libqt6sql6-psql libqt6sql6-odbc libqt6sql6-sqlite libqt6core6 libqt6qml6 libqt6xml6 libpq5 libodbc2 libmongoc-dev libbson-dev liburing-dev gcc g++ clang make cmake yarnpkg
 
 ./configure --spec=linux-clang
 make -j4 -C src && sudo make -C src install && make -j4 -C tools && sudo make -C tools install
