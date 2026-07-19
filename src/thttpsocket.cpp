@@ -55,7 +55,8 @@ THttpRequest THttpSocket::read()
     if (canReadRequest()) {
         if (_fileBuffer.isOpen()) {
             _fileBuffer.close();
-            request = THttpRequest(_headerBuffer, _fileBuffer.fileName(), peerAddress(), _context);
+            THttpRequestHeader header{_headerBuffer};
+            request = THttpRequest(header, _fileBuffer.fileName(), peerAddress(), _context);
             _headerBuffer.resize(0);
         } else {
             request = THttpRequest::generate(_readBuffer, peerAddress(), _context);

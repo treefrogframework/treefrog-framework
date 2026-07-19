@@ -39,7 +39,7 @@ class T_CORE_EXPORT THttpRequest {
 public:
     THttpRequest();
     THttpRequest(const THttpRequestHeader &header, const QByteArray &body, const QHostAddress &clientAddress, TActionContext *context);
-    THttpRequest(const QByteArray &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context);
+    THttpRequest(const THttpRequestHeader &header, const QString &filePath, const QHostAddress &clientAddress, TActionContext *context);
     virtual ~THttpRequest() = default;
     THttpRequest(const THttpRequest &) = delete;
     THttpRequest &operator=(const THttpRequest &) = delete;

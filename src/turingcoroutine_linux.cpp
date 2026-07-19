@@ -11,8 +11,11 @@
 #include <cstddef>
 #include <sys/eventfd.h>
 #include <sys/mman.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
-constexpr uint READ_THRESHOLD_LENGTH = 4 * 1024 * 1024;  // bytes
+constexpr uint READ_THRESHOLD_LENGTH = 2 * 1024 * 1024;  // bytes
 
 
 class AsyncRecv : public TAwaitBase {
@@ -200,6 +203,36 @@ private:
 };
 
 
+static QHostAddress getPeerAddress(int fd)
+{
+    sockaddr_storage addr;
+    socklen_t len = sizeof(addr);
+
+    if (::getpeername(fd, reinterpret_cast<sockaddr *>(&addr), &len) < 0) {
+        return {};
+    }
+
+    if (addr.ss_family == AF_INET) {
+        const auto *ad = reinterpret_cast<const sockaddr_in *>(&addr);
+        return QHostAddress{ntohl(ad->sin_addr.s_addr)};
+    }
+
+    if (addr.ss_family == AF_INET6) {
+        const auto *ad = reinterpret_cast<const sockaddr_in6 *>(&addr);
+        Q_IPV6ADDR ipv6;
+        std::memcpy(ipv6.c, &ad->sin6_addr, sizeof(ipv6.c));
+        return QHostAddress{ipv6};
+    }
+
+    return {};
+}
+
+
+TUringCoroutine::TUringCoroutine(int socketDescriptor) :
+    _sd(socketDescriptor), _peer(getPeerAddress(socketDescriptor))
+{}
+
+
 TUringCoroutine::~TUringCoroutine()
 {
     //tSystemDebug("~TUringCoroutine: sd:{}", _sd);
@@ -213,7 +246,7 @@ TUringTask TUringCoroutine::start()
 {
     static const int64_t systemLimitBodyBytes = Tf::appSettings()->value(Tf::LimitRequestBody).toLongLong();
     static int keepAlivetimeout = Tf::appSettings()->value(Tf::HttpKeepAliveTimeout).toInt();
-    constexpr int64_t bufsize = 8 * 1024;
+    constexpr int64_t BUF_SIZE = 16 * 1024;
 
     ScopeExitFunction closing([this]{
         TUringServer::instance()->registerForGC(this);
@@ -225,18 +258,18 @@ TUringTask TUringCoroutine::start()
     while (timeout > 0) {
         //int res;
         int64_t lengthToRead = INT64_MAX;
-        int64_t readLength = 0;
+        int64_t readContentLength = 0;
+        int64_t buflen = std::min(BUF_SIZE, lengthToRead);
 
         // ソケット受信
         QByteArray readBuffer;
-        QByteArray headerBuffer;
         TTemporaryFile fileBuffer;
+        THttpRequestHeader header;
 
         while (lengthToRead > 0) {
-            int64_t buflen = std::min(bufsize, lengthToRead);
-            readBuffer.reserve(readLength + buflen);
+            readBuffer.reserve(readBuffer.length() + buflen);
 
-            int len = co_await AsyncRecv(_sd, readBuffer.data() + readLength, buflen, timeout);
+            int len = co_await AsyncRecv(_sd, readBuffer.data() + readBuffer.length(), buflen, timeout);
             if (len < 0) {
                 // timeout or error
                 if (len == -ETIME) {
@@ -251,40 +284,61 @@ TUringTask TUringCoroutine::start()
                 co_return;
             }
 
-            readLength += len;
-            readBuffer.resize(readLength);
-            tSystemDebug("readBuffer size:{}", readBuffer.size());
+            readBuffer.resize(readBuffer.length() + len);
+            readContentLength += len;
 
-            int idx = readBuffer.indexOf(Tf::CRLFCRLF);
-            if (idx > 0) {
-                THttpRequestHeader header(readBuffer);
+            if (header.isEmpty()) {
+                int idx = readBuffer.indexOf(Tf::CRLFCRLF);
+                if (idx > 0) {
+                    header = THttpRequestHeader{readBuffer};
+                    readBuffer.remove(0, idx + 4);
+                    readContentLength = readBuffer.length();
+                    tSystemDebug("Header size: {}  Content-Length: {}", idx + 4, header.contentLength());
 
-                if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
-                    throw ClientErrorException((int)Tf::StatusCode::RequestEntityTooLarge);  // Request Entity Too Large
-                }
-
-                lengthToRead = std::max(idx + 4 + header.contentLength() - (int64_t)readBuffer.length(), (int64_t)0);
-
-                if (header.contentLength() > READ_THRESHOLD_LENGTH || (header.contentLength() > 0 && header.contentType().trimmed().startsWith("multipart/form-data"))) {
-                    headerBuffer = readBuffer.mid(0, idx + 4);
-                    // Writes to file buffer
-                    if (!fileBuffer.open()) {
-                        throw RuntimeException(QLatin1String("temporary file open error: ") + fileBuffer.fileTemplate(), __FILE__, __LINE__);
+                    if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
+                        throw ClientErrorException((int)Tf::StatusCode::RequestEntityTooLarge);  // Request Entity Too Large
                     }
-                    fileBuffer.resize(0);  // truncate
-                    if (readBuffer.length() > idx + 4) {
-                        tSystemDebug("fileBuffer name: {}", fileBuffer.fileName());
-                        if (fileBuffer.write(readBuffer.data() + idx + 4, readBuffer.length() - (idx + 4)) < 0) {
-                            throw RuntimeException(QLatin1String("write error: ") + fileBuffer.fileName(), __FILE__, __LINE__);
+
+                    if (header.contentLength() > READ_THRESHOLD_LENGTH || (header.contentLength() > 0 && header.contentType().trimmed().startsWith("multipart/form-data"))) {
+                        // Writes to file buffer
+                        if (!fileBuffer.open()) {
+                            tSystemError("temporary file open error: {}  [{}:{}]", fileBuffer.fileTemplate(), __FILE__, __LINE__);
+                            throw RuntimeException(QLatin1String("temporary file open error: ") + fileBuffer.fileTemplate(), __FILE__, __LINE__);
                         }
+                        tSystemDebug("fileBuffer name: {}", fileBuffer.fileName());
+                        fileBuffer.resize(0);  // truncate
+                    } else {
+                        // Memory buffer
+                        buflen = header.contentLength();
                     }
-                    readBuffer.resize(0);
+                } else {
+                    continue;
                 }
+            }
+
+            lengthToRead = std::max(header.contentLength() - (int64_t)readContentLength, (int64_t)0);
+            tSystemDebug("lengthToRead: {}  readContentLength: {}", lengthToRead, readContentLength);
+
+            if (readBuffer.length() > 0 && fileBuffer.isOpen()) {
+                int len = fileBuffer.write(readBuffer.data(), readBuffer.length());
+                if (len < 0) {
+                    throw RuntimeException(QLatin1String("write error: ") + fileBuffer.fileName(), __FILE__, __LINE__);
+                }
+                //tSystemDebug("fileBuffer size:{}  write len:{}", fileBuffer.size(), len);
+                readBuffer.resize(0);
+                buflen = 256 * 1024;  // 256KB
             }
         }
 
         auto result = co_await TThreadPoolAwaiter([&] {
-            routine.start(readBuffer);
+            if (fileBuffer.isOpen()) {
+                fileBuffer.close();
+                THttpRequest request{header, fileBuffer.fileName(), _peer, &routine};
+                routine.start(request);
+            } else {
+                THttpRequest request{header, readBuffer, _peer, &routine};
+                routine.start(request);
+            }
             return routine.result;
         });
         _response = std::move(result.response);
@@ -314,35 +368,10 @@ TUringTask TUringCoroutine::start()
                 tSystemError("fstat error: {}", strerror(errno));
                 co_return;
             }
+
             const auto fileSize = st.st_size;
-#if 0
-            void *mapped = mmap(nullptr, fileSize, PROT_READ, MAP_PRIVATE, fd, 0);
-            if (mapped == MAP_FAILED) {
-                tSystemError("mmap error: {}\n", strerror(errno));
-                co_return;
-            }
-
-            const int64_t slice_len = 16 * 1024;
-            int64_t sent_len = 0;
-            while (sent_len < fileSize) {
-                int64_t send_len = std::min(fileSize - sent_len, slice_len);
-                res = co_await AsyncSend(_sd, (char*)mapped + sent_len, send_len);
-                if (res <= 0) {
-                    if (res == -EAGAIN || res == -ENOMEM) {
-                        continue;
-                    }
-                    tSystemError("Send error sd={} res={}", _sd, res);
-                    break;
-                }
-                sent_len += res;
-            }
-
-            munmap(mapped, fileSize);
-#else
             int res = co_await AsyncSendFile(_sd, fd, fileSize);
             tSystemDebug("AsyncSendFile: res:{}", res);
-
-#endif
             _fileName.resize(0);
         }
 

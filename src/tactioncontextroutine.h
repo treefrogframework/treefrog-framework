@@ -1,12 +1,14 @@
 #pragma once
 #include <TActionContext>
 
+class THttpRequest;
+
 
 class T_CORE_EXPORT TActionContextRoutine : public TActionContext {
 public:
     TActionContextRoutine() = default;
     ~TActionContextRoutine() = default;
-    void start(QByteArray &readBuffer);
+    void start(THttpRequest &request);
 
     class Result {
     public:
