@@ -22,16 +22,6 @@ THttpHeader::THttpHeader() :
 }
 
 /*!
-  Copy constructor.
-*/
-// THttpHeader::THttpHeader(const THttpHeader &other) :
-//     TInternetMessageHeader(*static_cast<const TInternetMessageHeader *>(&other)),
-//     _majorVersion(other._majorVersion),
-//     _minorVersion(other._minorVersion)
-// {
-// }
-
-/*!
   Constructs an HTTP header by parsing \a str.
 */
 THttpHeader::THttpHeader(const QByteArray &str) :
@@ -39,18 +29,6 @@ THttpHeader::THttpHeader(const QByteArray &str) :
 {
     parse(str);
 }
-
-/*!
-  Assigns \a other to this HTTP header and returns a reference
-  to this HTTP header.
-*/
-// THttpHeader &THttpHeader::operator=(const THttpHeader &other)
-// {
-//     TInternetMessageHeader::operator=(*static_cast<const TInternetMessageHeader *>(&other));
-//     _majorVersion = other._majorVersion;
-//     _minorVersion = other._minorVersion;
-//     return *this;
-// }
 
 /*!
   Returns a byte array representation of the HTTP header.
@@ -83,32 +61,17 @@ QByteArray THttpHeader::toByteArray() const
 */
 
 /*!
-  Constructor.
-*/
-// THttpRequestHeader::THttpRequestHeader() :
-//     THttpHeader()
-// {
-// }
-
-/*!
-  Copy constructor.
-*/
-// THttpRequestHeader::THttpRequestHeader(const THttpRequestHeader &other) :
-//     THttpHeader(*static_cast<const THttpHeader *>(&other)),
-//     _reqMethod(other._reqMethod),
-//     _reqUri(other._reqUri)
-// {
-// }
-
-/*!
   Constructs an HTTP request header by parsing \a str.
 */
 THttpRequestHeader::THttpRequestHeader(const QByteArray &str)
 {
+    const int headerlen = str.indexOf(Tf::CRLFCRLF);
     int i = str.indexOf('\n');
+
     if (i > 0) {
         // Parses the string
-        parse(str.mid(i + 1));
+        int len = (headerlen > 0) ? headerlen - i - 1 : -1;
+        parse(str.mid(i + 1, len));
 
         QByteArray line = str.left(i).trimmed();
         i = line.indexOf(' ');
@@ -194,16 +157,14 @@ QByteArray THttpRequestHeader::toByteArray() const
 }
 
 /*!
-  Assigns \a other to this HTTP request header and returns a reference
-  to this header.
-*/
-// THttpRequestHeader &THttpRequestHeader::operator=(const THttpRequestHeader &other)
-// {
-//     THttpHeader::operator=(*static_cast<const THttpHeader *>(&other));
-//     _reqMethod = other._reqMethod;
-//     _reqUri = other._reqUri;
-//     return *this;
-// }
+    Clears this header data.
+ */
+void THttpRequestHeader::clear()
+{
+    THttpHeader::clear();
+    _reqMethod.resize(0);
+    _reqUri.resize(0);
+}
 
 /*!
   \fn const QByteArray &THttpRequestHeader::method() const

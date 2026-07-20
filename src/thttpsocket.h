@@ -48,7 +48,7 @@ private:
     ushort _peerPort {0};
     int64_t _lengthToRead {-1};
     QByteArray &_readBuffer;
-    QByteArray _headerBuffer;
+    THttpRequestHeader _header;
     TTemporaryFile _fileBuffer;
     uint64_t _idleElapsed {0};
     TActionContext *_context {nullptr};

@@ -55,14 +55,19 @@ THttpRequest THttpSocket::read()
     if (canReadRequest()) {
         if (_fileBuffer.isOpen()) {
             _fileBuffer.close();
-            THttpRequestHeader header{_headerBuffer};
-            request = THttpRequest(header, _fileBuffer.fileName(), peerAddress(), _context);
-            _headerBuffer.resize(0);
+            request = THttpRequest(_header, _fileBuffer.fileName(), peerAddress(), _context);
         } else {
-            request = THttpRequest::generate(_readBuffer, peerAddress(), _context);
+            QByteArray body;
+            int headidx = _readBuffer.indexOf(Tf::CRLFCRLF);
+            if (headidx > 0) {
+                body = _readBuffer.mid(headidx + 4);
+            }
+            request = THttpRequest(_header, body, peerAddress(), _context);
         }
 
         _lengthToRead = -1;
+        _header.clear();
+        _readBuffer.resize(0);
     }
     return request;
 }
@@ -219,16 +224,17 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
         } else if (_lengthToRead < 0) {
             int idx = _readBuffer.indexOf(Tf::CRLFCRLF);
             if (idx > 0) {
-                THttpRequestHeader header(_readBuffer);
+                if (_header.isEmpty()) {
+                    _header = THttpRequestHeader{_readBuffer};
+                }
 
-                if (Q_UNLIKELY(systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes)) {
+                if (Q_UNLIKELY(systemLimitBodyBytes > 0 && _header.contentLength() > systemLimitBodyBytes)) {
                     throw ClientErrorException((int)Tf::StatusCode::RequestEntityTooLarge);  // Request Entity Too Large
                 }
 
-                _lengthToRead = std::max(idx + 4 + header.contentLength() - (int64_t)_readBuffer.length(), (int64_t)0);
+                _lengthToRead = std::max(idx + 4 + _header.contentLength() - (int64_t)_readBuffer.length(), (int64_t)0);
 
-                if (header.contentLength() > READ_THRESHOLD_LENGTH || (header.contentLength() > 0 && header.contentType().trimmed().startsWith("multipart/form-data"))) {
-                    _headerBuffer = _readBuffer.mid(0, idx + 4);
+                if (_header.contentLength() > READ_THRESHOLD_LENGTH || (_header.contentLength() > 0 && _header.contentType().trimmed().startsWith("multipart/form-data"))) {
                     // Writes to file buffer
                     if (Q_UNLIKELY(!_fileBuffer.open())) {
                         throw RuntimeException(QLatin1String("temporary file open error: ") + _fileBuffer.fileTemplate(), __FILE__, __LINE__);
@@ -242,8 +248,9 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                     }
                     _readBuffer.resize(0);
                 } else {
+                    // Memory buffer
                     if (_lengthToRead > 0) {
-                        _readBuffer.reserve((idx + 4 + header.contentLength()) * 1.1);
+                        _readBuffer.reserve((idx + 4 + _header.contentLength()) * 1.1);
                     }
                 }
             } else {
@@ -286,7 +293,6 @@ void THttpSocket::abort()
 
 void THttpSocket::deleteLater()
 {
-    //socketManager[_sid].compareExchange(this, nullptr);  // clear
     QObject::deleteLater();
 }
 
