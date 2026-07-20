@@ -29,6 +29,7 @@ enum HttpMethod {
     Trace,
     Connect,
     Patch,
+    Query,
 };
 
 enum StatusCode {
@@ -70,6 +71,16 @@ enum StatusCode {
     UnsupportedMediaType = 415,
     RequestedRangeNotSatisfiable = 416,
     ExpectationFailed = 417,
+    MisdirectedRequest = 421,
+    UnprocessableContent = 422,
+    Locked = 423,
+    FailedDependency = 424,
+    TooEarly = 425,
+    UpgradeRequired = 426,
+    PreconditionRequired = 427,
+    TooManyRequests = 429,
+    RequestHeaderFieldsTooLarge = 431,
+    UnavailableForLegalReasons = 451,
     // Server Error 5xx
     InternalServerError = 500,
     NotImplemented = 501,

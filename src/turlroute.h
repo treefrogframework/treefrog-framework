@@ -17,6 +17,7 @@ public:
         Trace = (int)Tf::HttpMethod::Trace,
         Connect = (int)Tf::HttpMethod::Connect,
         Patch = (int)Tf::HttpMethod::Patch,
+        Query = (int)Tf::HttpMethod::Query,
         Invalid = 0xff,
     };
 

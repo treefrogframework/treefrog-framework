@@ -39,6 +39,7 @@ public:
     QByteArray cookie(const QString &name) const;
     QList<TCookie> cookies() const;
     virtual QByteArray toByteArray() const;
+    void clear();
     inline bool isEmpty() const { return THttpHeader::isEmpty() && _reqUri.isEmpty(); }
 
 private:

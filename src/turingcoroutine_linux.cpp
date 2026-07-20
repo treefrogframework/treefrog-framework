@@ -256,20 +256,18 @@ TUringTask TUringCoroutine::start()
     int timeout = 5000;
 
     while (timeout > 0) {
-        //int res;
-        int64_t lengthToRead = INT64_MAX;
         int64_t readContentLength = 0;
-        int64_t buflen = std::min(BUF_SIZE, lengthToRead);
+        int64_t buflen = BUF_SIZE;
 
         // ソケット受信
         QByteArray readBuffer;
         TTemporaryFile fileBuffer;
         THttpRequestHeader header;
 
-        while (lengthToRead > 0) {
-            readBuffer.reserve(readBuffer.length() + buflen);
+        while (header.isEmpty() || header.contentLength() > readContentLength) {
+            readBuffer.reserve(readBuffer.size() + buflen);
 
-            int len = co_await AsyncRecv(_sd, readBuffer.data() + readBuffer.length(), buflen, timeout);
+            int len = co_await AsyncRecv(_sd, readBuffer.data() + readBuffer.size(), readBuffer.capacity() - readBuffer.size(), timeout);
             if (len < 0) {
                 // timeout or error
                 if (len == -ETIME) {
@@ -284,16 +282,15 @@ TUringTask TUringCoroutine::start()
                 co_return;
             }
 
-            readBuffer.resize(readBuffer.length() + len);
-            readContentLength += len;
+            readBuffer.resize(readBuffer.size() + len);
 
             if (header.isEmpty()) {
                 int idx = readBuffer.indexOf(Tf::CRLFCRLF);
                 if (idx > 0) {
                     header = THttpRequestHeader{readBuffer};
                     readBuffer.remove(0, idx + 4);
-                    readContentLength = readBuffer.length();
-                    tSystemDebug("Header size: {}  Content-Length: {}", idx + 4, header.contentLength());
+                    //readContentLength = readBuffer.size();
+                    //tSystemDebug("Header size: {}  Content-Length: {}", idx + 4, header.contentLength());
 
                     if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
                         throw ClientErrorException((int)Tf::StatusCode::RequestEntityTooLarge);  // Request Entity Too Large
@@ -307,26 +304,34 @@ TUringTask TUringCoroutine::start()
                         }
                         tSystemDebug("fileBuffer name: {}", fileBuffer.fileName());
                         fileBuffer.resize(0);  // truncate
-                    } else {
-                        // Memory buffer
-                        buflen = header.contentLength();
                     }
                 } else {
+                    if (readBuffer.size() > 32 * 1024) {  // Header size over 32KB
+                        throw ClientErrorException((int)Tf::StatusCode::RequestHeaderFieldsTooLarge);  // Request Header Fields Too Large
+                    }
                     continue;
                 }
             }
 
-            lengthToRead = std::max(header.contentLength() - (int64_t)readContentLength, (int64_t)0);
-            tSystemDebug("lengthToRead: {}  readContentLength: {}", lengthToRead, readContentLength);
+            //lengthToRead = std::max(header.contentLength() - (int64_t)readContentLength, (int64_t)0);
+            //tSystemDebug("lengthToRead: {}  readContentLength: {}", lengthToRead, readContentLength);
 
-            if (readBuffer.length() > 0 && fileBuffer.isOpen()) {
-                int len = fileBuffer.write(readBuffer.data(), readBuffer.length());
-                if (len < 0) {
-                    throw RuntimeException(QLatin1String("write error: ") + fileBuffer.fileName(), __FILE__, __LINE__);
+            if (readBuffer.size() > 0) {
+                if (fileBuffer.isOpen()) {
+                    // Writes file buffer
+                    int len = fileBuffer.write(readBuffer.data(), readBuffer.size());
+                    if (len < 0) {
+                        throw RuntimeException(QLatin1String("write error: ") + fileBuffer.fileName(), __FILE__, __LINE__);
+                    }
+                    //tSystemDebug("fileBuffer size:{}  write len:{}", fileBuffer.size(), len);
+                    readContentLength += len;
+                    readBuffer.resize(0);
+                    buflen = 256 * 1024;  // 256KB
+                } else {
+                    // Memory buffer
+                    readContentLength = readBuffer.size();
+                    buflen = std::max(header.contentLength() - (int64_t)readBuffer.size(), BUF_SIZE);
                 }
-                //tSystemDebug("fileBuffer size:{}  write len:{}", fileBuffer.size(), len);
-                readBuffer.resize(0);
-                buflen = 256 * 1024;  // 256KB
             }
         }
 

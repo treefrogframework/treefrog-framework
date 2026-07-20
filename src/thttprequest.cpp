@@ -27,6 +27,7 @@ const QMap<QString, Tf::HttpMethod> methodHash = {
     {"trace", Tf::HttpMethod::Trace},
     {"connect", Tf::HttpMethod::Connect},
     {"patch", Tf::HttpMethod::Patch},
+    {"query", Tf::HttpMethod::Query},
 };
 
 
@@ -36,22 +37,6 @@ static bool httpMethodOverride()
     return (bool)method;
 }
 
-
-/*!
-  \class THttpRequestData
-  \brief The THttpRequestData class is for shared THttpRequest data objects.
-*/
-
-// THttpRequestData::THttpRequestData(const THttpRequestData &other) :
-//     header(other.header),
-//     bodyArray(other.bodyArray),
-//     queryItems(other.queryItems),
-//     formItems(other.formItems),
-//     multipartFormData(other.multipartFormData),
-//     jsonData(other.jsonData),
-//     clientAddress(other.clientAddress)
-// {
-// }
 
 /*!
   \class THttpRequest
@@ -455,7 +440,8 @@ void THttpRequest::parseBody(const QByteArray &body, const THttpRequestHeader &h
     switch (method()) {
     case Tf::HttpMethod::Post:
     case Tf::HttpMethod::Put:
-    case Tf::HttpMethod::Patch: {
+    case Tf::HttpMethod::Patch:
+    case Tf::HttpMethod::Query: {
         QString ctype = QString::fromLatin1(header.contentType().trimmed());
         if (ctype.startsWith(QLatin1String("application/x-www-form-urlencoded"), Qt::CaseInsensitive)) {
             if (!body.isEmpty()) {
@@ -581,6 +567,7 @@ THttpRequest THttpRequest::generate(QByteArray &byteArray, const QHostAddress &a
     }
     return request;
 }
+
 
 /*!
  Returns a originating IP address of the client by parsing the 'X-Forwarded-For'
