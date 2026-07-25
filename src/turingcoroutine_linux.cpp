@@ -55,7 +55,7 @@ public:
         int res = TUringServer::instance()->addSendZc(_sd, _buf, _len, this);
 
         if (res < 0) {
-            tSystemError("addSend error: {}", strerror(errno));
+            tSystemError("addSendZc error: {}", strerror(errno));
         }
     }
 
@@ -146,7 +146,7 @@ public:
             size_t len = std::min<size_t>(SPLICE_LEN, _fileSize - _offset);
             int res = TUringServer::instance()->addSendFile(_sd, _fd, _offset, len, _pipefd, this);
             if (res < 0) {
-                tSystemError("addSend error: {}", strerror(errno));
+                tSystemError("addSendFile error: {}", strerror(errno));
                 _cqeres = -1;
             } else {
                 _state = State::Sending;
@@ -190,6 +190,34 @@ private:
     size_t _offset {0};
     int _pipefd[2] {0};
     State _state {State::Idle};
+};
+
+
+class AsyncWrite : public TAwaitBase {
+public:
+    AsyncWrite(int fd, const void *buf, size_t len) :
+        _fd(fd), _buf(buf), _len(len) { }
+
+    void await_suspend(std::coroutine_handle<TUringTask::promise_type> handle)
+    {
+        _handle = handle;
+        int res = TUringServer::instance()->addWrite(_fd, _buf, _len, this);
+
+        if (res < 0) {
+            tSystemError("addWrite error: {}", strerror(errno));
+        }
+    }
+
+    inline int await_resume()
+    {
+        tSystemDebug("await_resume : _len:{} _cqeflags:{} _cqeres:{}", _len, _cqeflags, _cqeres);
+        return (_cqeflags == IORING_CQE_F_NOTIF) ? _len : _cqeres;
+    }
+
+private:
+    int _fd {0};
+    const void* _buf {nullptr};
+    size_t _len {0};
 };
 
 
@@ -289,11 +317,24 @@ TUringTask TUringCoroutine::start()
                 if (idx > 0) {
                     header = THttpRequestHeader{readBuffer};
                     readBuffer.remove(0, idx + 4);
-                    //readContentLength = readBuffer.size();
-                    //tSystemDebug("Header size: {}  Content-Length: {}", idx + 4, header.contentLength());
 
                     if (systemLimitBodyBytes > 0 && header.contentLength() > systemLimitBodyBytes) {
                         throw ClientErrorException((int)Tf::StatusCode::RequestEntityTooLarge);  // Request Entity Too Large
+                    }
+
+                    // WebSocket?
+                    //TODO TODO TODO
+                    QByteArray connectionHeader = header.rawHeader(QByteArrayLiteral("Connection")).toLower();
+                    if (!connectionHeader.isEmpty() && connectionHeader.contains("upgrade")) {
+                        QByteArray upgradeHeader = header.rawHeader(QByteArrayLiteral("Upgrade")).toLower();
+                        tSystemDebug("Upgrade: {}", upgradeHeader.data());
+                        if (upgradeHeader == "websocket") {
+                            // Switch to WebSocket
+                            // if (!handshakeForWebSocket(request.header())) {
+                            //     goto socket_error;
+                            // }
+                            co_return;
+                        }
                     }
 
                     if (header.contentLength() > READ_THRESHOLD_LENGTH || (header.contentLength() > 0 && header.contentType().trimmed().startsWith("multipart/form-data"))) {
@@ -313,17 +354,19 @@ TUringTask TUringCoroutine::start()
                 }
             }
 
-            //lengthToRead = std::max(header.contentLength() - (int64_t)readContentLength, (int64_t)0);
-            //tSystemDebug("lengthToRead: {}  readContentLength: {}", lengthToRead, readContentLength);
-
             if (readBuffer.size() > 0) {
                 if (fileBuffer.isOpen()) {
                     // Writes file buffer
-                    int len = fileBuffer.write(readBuffer.data(), readBuffer.size());
-                    if (len < 0) {
-                        throw RuntimeException(QLatin1String("write error: ") + fileBuffer.fileName(), __FILE__, __LINE__);
+                    int len = 0;
+                    while (len < readBuffer.size()) {
+                        int written = co_await AsyncWrite(fileBuffer.handle(), readBuffer.data() + len, readBuffer.size() - len);
+                        if (written < 0) {
+                            // Error
+                            tSystemError("Write error fd:{} error:{}", fileBuffer.handle(), strerror(-written));
+                            co_return;
+                        }
+                        len += written;
                     }
-                    //tSystemDebug("fileBuffer size:{}  write len:{}", fileBuffer.size(), len);
                     readContentLength += len;
                     readBuffer.resize(0);
                     buflen = 256 * 1024;  // 256KB

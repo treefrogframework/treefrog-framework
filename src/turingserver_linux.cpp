@@ -442,6 +442,23 @@ int TUringServer::addPoll(int sd, unsigned int poll_mask, TAwaitBase *await) con
     return io_uring_submit(&_ring);
 }
 
+//
+// Prepare a write request
+//
+int TUringServer::addWrite(int fd, const void* buf, size_t len, TAwaitBase* await) const
+{
+    io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
+    if (!sqe) {
+        tSystemError("io_uring_get_sqe error: {} [{}:{}]", strerror(errno), __FILE__, __LINE__);
+        return -1;
+    }
+    io_uring_prep_write(sqe, fd, buf, len, -1);
+    if (await) {
+        await->clear();
+        io_uring_sqe_set_data(sqe, await);
+    }
+    return io_uring_submit(&_ring);
+}
 
 //
 // Prepare a event request

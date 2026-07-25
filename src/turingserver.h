@@ -80,6 +80,7 @@ public:
     int addSendZc(int sd, const void* buf, size_t len, TAwaitBase *await = nullptr) const;
     int addSendFile(int sd, int fd, int offset, size_t len, int pipefd[2], TAwaitBase* await) const;
     int addPoll(int sd, unsigned int poll_mask, TAwaitBase *await = nullptr) const;
+    int addWrite(int fd, const void* buf, size_t len, TAwaitBase* await = nullptr) const;
     void addResumeHandle(std::coroutine_handle<TUringTask::promise_type> handle);
 
 protected:
