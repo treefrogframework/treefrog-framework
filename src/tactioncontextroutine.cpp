@@ -14,6 +14,7 @@ void TActionContextRoutine::start(THttpRequest &request)
 {
     TActionContext::setCurrentActionContext(this);
     execute(request);
+    release();
     TActionContext::setCurrentActionContext(nullptr);
 }
 

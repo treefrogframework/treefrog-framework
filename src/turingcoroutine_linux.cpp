@@ -409,7 +409,7 @@ TUringTask TUringCoroutine::start()
                 co_return;
             }
 
-            ScopeExitFunction fd_closing([fd]{ ::close(fd); });
+            ScopeExitFunction fd_closing([fd]{ tf_close(fd); });
 
             struct stat st{};
             if (fstat(fd, &st) != 0) {

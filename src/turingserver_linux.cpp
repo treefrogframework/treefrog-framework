@@ -378,24 +378,6 @@ int TUringServer::addSendZc(int fd, const void* buf, size_t len, TAwaitBase* awa
     return io_uring_submit(&_ring);
 }
 
-// int TUringServer::addSendFile(int sd, int fd, int offset, size_t slice_len, TAwaitBase* await)
-// {
-//     size_t file_size = lseek(fd, 0, SEEK_END);
-//     if (file_size < 0) {
-//         tSystemError("lseek error: {}\n", strerror(err));
-//         return -1;
-//     }
-//     lseek(fd, 0, SEEK_SET);
-
-//     void *mapped = mmap(nullptr, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
-//     if (mapped == MAP_FAILED) {
-//         tSystemError("mmap error: {}\n", strerror(err));
-//         return -1;
-//     }
-
-//     return addSend(sd, const void* bu, size_t slice_len, await);
-// }
-
 
 int TUringServer::addSendFile(int sd, int fd, int offset, size_t len, int pipefd[2], TAwaitBase* await) const
 {

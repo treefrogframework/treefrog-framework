@@ -361,12 +361,10 @@ QString TWebApplication::validationErrorMessage(int rule) const
 */
 TWebApplication::MultiProcessingModule TWebApplication::multiProcessingModule() const
 {
-    static TWebApplication::MultiProcessingModule module = [this]() {
-        if (_mpmTemp != MultiProcessingModule::Invalid) {
-            return _mpmTemp;
-        }
-
+    static TWebApplication::MultiProcessingModule module = []() {
         QString str = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
+        tSystemDebug("Multi-Processing Module: {}", qUtf8Printable(str));
+
         if (str == "thread") {
             return MultiProcessingModule::Thread;
         } else if (str == "epoll") {
@@ -424,6 +422,7 @@ int TWebApplication::maxNumberOfThreadsPerAppServer() const
 
         switch (Tf::app()->multiProcessingModule()) {
         case MultiProcessingModule::Thread:
+        case MultiProcessingModule::Uring:
             maxNum = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
             maxNum = (maxNum > 0) ? maxNum : 16;
             break;
@@ -432,13 +431,10 @@ int TWebApplication::maxNumberOfThreadsPerAppServer() const
             maxNum = 128;
             break;
 
-        case MultiProcessingModule::Uring:
-            maxNum = 128;  // TODO TODO TODO
-            break;
-
         default:
             break;
         }
+        tSystemDebug("MaxThreadsPerAppServer: {}", maxNum);
         return maxNum;
     }();
 

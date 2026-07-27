@@ -22,12 +22,7 @@ TThreadApplicationServer::TThreadApplicationServer(int listeningSocket, QObject 
     listenSocket(listeningSocket),
     reloadTimer()
 {
-    QString mpm = Tf::appSettings()->value(Tf::MultiProcessingModule).toString().toLower();
-    maxThreads = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxThreadsPerAppServer").toInt();
-    if (maxThreads == 0) {
-        maxThreads = Tf::appSettings()->readValue(QLatin1String("MPM.") + mpm + ".MaxServers", "128").toInt();
-    }
-    tSystemDebug("MaxThreads: {}", maxThreads);
+    maxThreads = std::max(Tf::app()->maxNumberOfThreadsPerAppServer(), 1);
 
     // Thread pooling
     for (int i = 0; i < maxThreads; i++) {

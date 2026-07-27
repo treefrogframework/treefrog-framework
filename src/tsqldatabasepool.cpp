@@ -91,8 +91,6 @@ void TSqlDatabasePool::init()
         return;
     }
 
-    //QMutexLocker locker(&_mutex);
-
     if (lastCachedTime) {
         return;
     }
@@ -260,8 +258,6 @@ bool TSqlDatabasePool::setDatabaseSettings(TSqlDatabase &database, int databaseI
 
 void TSqlDatabasePool::pool(SqlDbPtr dbptr, bool forceClose)
 {
-    //QMutexLocker locker(&_mutex);
-
     if (dbptr->isValid()) {
         int databaseId = getDatabaseId(dbptr->sqlDatabase());
 
