@@ -334,18 +334,12 @@ inline const TAbstractController *constCurrentController() { return currentContr
 T_CORE_EXPORT TDatabaseContext *currentDatabaseContext();
 T_CORE_EXPORT TSqlDatabase &currentSqlDatabase(int id) noexcept;
 T_CORE_EXPORT QMap<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
-//T_CORE_EXPORT std::map<QByteArray, std::function<QObject *()>> *objectFactories() noexcept;
 
 // LZ4 lossless compression algorithm
 T_CORE_EXPORT QByteArray lz4Compress(const char *data, int nbytes, int compressionLevel = 1) noexcept;
 T_CORE_EXPORT QByteArray lz4Compress(const QByteArray &data, int compressionLevel = 1) noexcept;
 T_CORE_EXPORT QByteArray lz4Uncompress(const char *data, int nbytes) noexcept;
 T_CORE_EXPORT QByteArray lz4Uncompress(const QByteArray &data) noexcept;
-
-inline bool strcmp(const QByteArray &str1, const QByteArray &str2)
-{
-    return str1.length() == str2.length() && !std::strncmp(str1.data(), str2.data(), str1.length());
-}
 
 // Scope-Exit Function Class
 template<typename Func>

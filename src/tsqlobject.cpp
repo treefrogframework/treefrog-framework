@@ -133,9 +133,9 @@ bool TSqlObject::create()
         const char *propName = metaObject()->property(i).name();
         QByteArray prop = QByteArray(propName).toLower();
 
-        if (Tf::strcmp(prop, CreatedAt) || Tf::strcmp(prop, UpdatedAt) || Tf::strcmp(prop, ModifiedAt)) {
+        if (prop == CreatedAt || prop == UpdatedAt || prop == ModifiedAt) {
             setProperty(propName, QDateTime::currentDateTime());
-        } else if (Tf::strcmp(prop, LockRevision)) {
+        } else if (prop == LockRevision) {
             // Sets the default value of 'revision' property
             setProperty(propName, 1);  // 1 : default value
         } else {
@@ -233,11 +233,11 @@ bool TSqlObject::update()
         const char *propName = metaObject()->property(i).name();
         QByteArray prop = QByteArray(propName).toLower();
 
-        if (!updflag && (Tf::strcmp(prop, UpdatedAt) || Tf::strcmp(prop, ModifiedAt))) {
+        if (!updflag && (prop == UpdatedAt || prop == ModifiedAt)) {
             setProperty(propName, QDateTime::currentDateTime());
             updflag = true;
 
-        } else if (revIndex < 0 && Tf::strcmp(prop, LockRevision)) {
+        } else if (revIndex < 0 && prop == LockRevision) {
             bool ok;
             int oldRevision = property(propName).toInt(&ok);
 
@@ -337,9 +337,9 @@ bool TSqlObject::save()
         const char *propName = metaObject()->property(i).name();
         QByteArray prop = QByteArray(propName).toLower();
 
-        if (Tf::strcmp(prop, CreatedAt) || Tf::strcmp(prop, UpdatedAt) || Tf::strcmp(prop, ModifiedAt)) {
+        if (prop == CreatedAt || prop == UpdatedAt || prop == ModifiedAt) {
             setProperty(propName, QDateTime::currentDateTime());
-        } else if (Tf::strcmp(prop, LockRevision)) {
+        } else if (prop == LockRevision) {
             // Sets the default value of 'revision' property
             setProperty(propName, 1);  // 1 : default value
             lockrev = LockRevision;
@@ -418,7 +418,7 @@ bool TSqlObject::remove()
         const char *propName = metaObject()->property(i).name();
         QByteArray prop = QByteArray(propName).toLower();
 
-        if (Tf::strcmp(prop, LockRevision)) {
+        if (prop == LockRevision) {
             bool ok;
             int revision = property(propName).toInt(&ok);
 

@@ -49,8 +49,6 @@ private slots:
     void benchStrcmp2();
     void benchComparison1();
     void benchComparison2();
-    void benchTfcmp1();
-    void benchTfcmp2();
     void benchQStringCmp1();
     void benchQStringCmp2();
 };
@@ -124,26 +122,6 @@ void TestCmp::benchComparison2()
     QBENCHMARK {
         b |= (str1 == str3);
         b |= (str3 == str1);
-    }
-    Q_UNUSED(b);
-}
-
-void TestCmp::benchTfcmp1()
-{
-    bool b = false;
-    QBENCHMARK {
-        b |= Tf::strcmp(str1, str2);
-        b |= Tf::strcmp(str2, str1);
-    }
-    Q_UNUSED(b);
-}
-
-void TestCmp::benchTfcmp2()
-{
-    bool b = false;
-    QBENCHMARK {
-        b |= Tf::strcmp(str1, str3);
-        b |= Tf::strcmp(str3, str1);
     }
     Q_UNUSED(b);
 }
