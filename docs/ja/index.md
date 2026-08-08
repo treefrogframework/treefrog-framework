@@ -40,14 +40,19 @@ Webアプリの開発において、開発効率と動作速度はトレード�
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> お知らせ
 
-### 2026/7/18  TreeFrog Framework バージョン2.12.0 （安定版）リリース <span style="color: red;">New!</span>
+### 2026/8/8  TreeFrog Framework 2.12.1 リリース <span style="color: red;">New!</span>
+
+- RequestHeaderFieldsTooLarge ステータスコードを返す処理を追加
+- NULL バイトによる切り詰めの不具合を修正
+
+ [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
+
+### 2026/7/18  TreeFrog Framework バージョン2.12.0 リリース
 
  - macOS 26 の shm_open() で無効なパラメータ エラーを引き起こすバグを修正
  - LimitRequestBody を超える HTTP リクエストを受信した際に発生する ERR_CONNECTION_RESET エラーを修正
  - セットアップ構成スクリプトを修正、Visual Studio 2026 をサポート
  - Linux で io_uring を使用した非同期 I/O の実験的実装
-
- [<i class="fas fa-download"></i> ダウンロードはこちらから](/ja/download/)
 
 ### 2025/9/27  TreeFrog Framework バージョン2.11.2 （安定版）リリース
 

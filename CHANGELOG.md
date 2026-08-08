@@ -2,7 +2,7 @@
 
 ## 2.12.1
  - Added support for returning the RequestHeaderFieldsTooLarge status code.
- - Fixed a NUL-byte truncation bug.
+ - Fixed a NULL-byte truncation bug.
 
 ## 2.12.0
  - Fix a bug of invalid parameter for shm_open() on macOS 26.

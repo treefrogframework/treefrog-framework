@@ -37,15 +37,21 @@ Try TreeFrog Framework which combines high productivity and high speed operation
 
 ## <i class="fa fa-bell" aria-hidden="true"></i> News
 
+Aug. 8, 2026
+### TreeFrog Framework 2.12.1 release <span style="color: red;">New!</span>
+
+ - Added support for returning the RequestHeaderFieldsTooLarge status code.
+ - Fixed a NULL-byte truncation bug.
+
+  [<i class="fas fa-download"></i> Download this version](/en/download/)
+
 Jul. 18, 2026
-### TreeFrog Framework version 2.12.0 (stable) release <span style="color: red;">New!</span>
+### TreeFrog Framework version 2.12.0 release
 
  - Fix a bug that caused an invalid parameter error in shm_open() on macOS 26.
  - Fix ERR_CONNECTION_RESET errors that occur after receiving an HTTP request that exceeds LimitRequestBody.
  - Added support for Visual Studio 2026 by modifiying the setup configuration scripts.
  - Implemented asynchronous I/O using io_uring on Linux. [Experimental]
-
-  [<i class="fas fa-download"></i> Download this version](/en/download/)
 
 Sep. 27, 2025
 ### TreeFrog Framework version 2.11.2 (stable) release
