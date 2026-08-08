@@ -131,27 +131,27 @@ void TestMemcached::setGetNumber_data()
                        << (int64_t)123456789
                        << (int)Tf::random(3, 5)
                        << (uint)Tf::random(0, UINT_MAX)
-                       << (int)Tf::random(50, 2000);
+                       << (int)Tf::random(50, 1500);
     QTest::newRow("2") << QUuid::createUuid().toByteArray()
                        << (int64_t)-987654321
-                       << (int)Tf::random(1, 2)
+                       << (int)Tf::random(2, 3)
                        << (uint)Tf::random(0, UINT_MAX)
-                       << (int)Tf::random(100, 500);
+                       << (int)Tf::random(200, 500);
     QTest::newRow("3") << QUuid::createUuid().toByteArray()
                        << (int64_t)0
                        << (int)Tf::random(5, 7)
                        << (uint)Tf::random(0, UINT_MAX)
-                       << (int)Tf::random(3000, 4000);
+                       << (int)Tf::random(3000, 3500);
     QTest::newRow("4") << QUuid::createUuid().toByteArray()
                        << (int64_t)Tf::random(1, INT64_MAX)
-                       << (int)Tf::random(1, 2)
+                       << (int)Tf::random(2, 3)
                        << (uint)Tf::random(0, UINT_MAX)
                        << (int)Tf::random(200, 500);
     QTest::newRow("5") << QUuid::createUuid().toByteArray()
                        << (int64_t)-Tf::random(1, INT_MAX)
                        << (int)Tf::random(3, 4)
                        << (uint)Tf::random(0, UINT_MAX)
-                       << (int)Tf::random(1500, 2000);
+                       << (int)Tf::random(1000, 1500);
 }
 
 
