@@ -254,6 +254,10 @@ bool THttpSocket::waitForReadyReadRequest(int msecs)
                     }
                 }
             } else {
+                if (_readBuffer.size() > 16 * 1024) {  // Header size over 16KB
+                    throw ClientErrorException((int)Tf::StatusCode::RequestHeaderFieldsTooLarge);  // Request Header Fields Too Large
+                }
+
                 if (_readBuffer.size() > _readBuffer.capacity() * 0.8) {
                     _readBuffer.reserve(_readBuffer.capacity() * 2);
                 }

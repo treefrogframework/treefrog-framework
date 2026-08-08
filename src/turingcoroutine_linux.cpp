@@ -347,7 +347,7 @@ TUringTask TUringCoroutine::start()
                         fileBuffer.resize(0);  // truncate
                     }
                 } else {
-                    if (readBuffer.size() > 32 * 1024) {  // Header size over 32KB
+                    if (readBuffer.size() > 16 * 1024) {  // Header size over 16KB
                         throw ClientErrorException((int)Tf::StatusCode::RequestHeaderFieldsTooLarge);  // Request Header Fields Too Large
                     }
                     continue;
