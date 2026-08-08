@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 2.12.1
+ - Added support for returning the RequestHeaderFieldsTooLarge status code.
+ - Fixed a NUL-byte truncation bug.
+
 ## 2.12.0
  - Fix a bug of invalid parameter for shm_open() on macOS 26.
  - Fix ERR_CONNECTION_RESET errors that occur after receiving an HTTP request that exceeds LimitRequestBody.
