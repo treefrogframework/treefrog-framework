@@ -36,7 +36,7 @@ TSystemBus::TSystemBus() :
 {
     QObject::connect(busSocket, SIGNAL(readyRead()), this, SLOT(readBus()));
     QObject::connect(busSocket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
-    QObject::connect(busSocket, SIGNAL(error(QLocalSocket::LocalSocketError)), this, SLOT(handleError(QLocalSocket::LocalSocketError)));
+    QObject::connect(busSocket, SIGNAL(errorOccurred(QLocalSocket::LocalSocketError)), this, SLOT(handleError(QLocalSocket::LocalSocketError)));
 }
 
 
