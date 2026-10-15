@@ -497,7 +497,7 @@ QByteArray THttpUtility::getUTCTimeString()
 #endif
     QByteArray buf;
     buf.reserve(31);
-    int len = std::strftime(buf.data(), 31, "%a, %d %b %Y %H:%M:%S GMT", &tm);
+    auto len = std::strftime(buf.data(), 31, "%a, %d %b %Y %H:%M:%S GMT", &tm);
     buf.resize(len);
     return buf;
 #endif
